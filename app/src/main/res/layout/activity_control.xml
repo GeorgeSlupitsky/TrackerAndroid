@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.micro_gis.microgistracker.ControlActivity">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout2"
+        android:layout_alignParentTop="true">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:layout_alignParentTop="true"
+            android:weightSum="1">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="90dp"
+            android:text="Sensor 0"
+            android:id="@+id/button0"
+            android:layout_weight="0.50"
+            android:layout_gravity="center" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="90dp"
+            android:text="SENSOR 1 "
+            android:id="@+id/button1"
+            android:layout_weight="0.5"
+            android:layout_gravity="center" /></LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:weightSum="1">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="90dp"
+            android:text="Sensor 2"
+            android:id="@+id/button2"
+            android:layout_weight="0.50"
+            android:layout_gravity="center" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="90dp"
+            android:text="SENSOR 3"
+            android:id="@+id/button3"
+            android:layout_weight="0.5"
+            android:layout_gravity="center" /></LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="90dp"
+            android:text="SENSOR 4"
+            android:id="@+id/button4"
+            android:layout_weight="0.5"
+            android:layout_gravity="center" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="90dp"
+            android:text="SENSOR 5"
+            android:id="@+id/button5"
+            android:layout_weight="0.5"
+            android:layout_gravity="center" /></LinearLayout>
+
+    </LinearLayout>
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SOS"
+        android:id="@+id/sos"
+        android:layout_marginBottom="76dp"
+        android:textSize="25dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignWithParentIfMissing="false"
+        android:allowUndo="false"
+        android:enabled="true"
+        android:clickable="false"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginRight="50dp"
+        android:layout_marginLeft="50dp" />
+
+    <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Goto info"-->
+        <!--android:id="@+id/info"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_marginBottom="20dp" />-->
+
+</RelativeLayout>

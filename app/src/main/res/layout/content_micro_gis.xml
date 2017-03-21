@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.micro_gis.microgistracker.MicroGisActivity"
+    tools:showIn="@layout/app_bar_micro_gis">
+
+    <WebView
+        android:id="@+id/webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/menuBtn"
+        android:background="@drawable/menu_2x"
+        android:paddingLeft="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="35dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/fab"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_gravity="bottom|end"
+        android:layout_alignWithParentIfMissing="false"
+        android:baselineAlignBottom="false"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="35dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/gps_2x"
+        android:layout_alignParentStart="false" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="#130f0f"
+        android:weightSum="1"
+        android:layout_alignParentTop="false">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="  Waiting GPS"
+            android:id="@+id/gpsSignal"
+            android:layout_weight="0.25"
+            android:textColor="#fc0505" />
+
+        <Chronometer
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/chronometer"
+            android:textColor="#d6d9d6"
+            android:textColorHighlight="#090404"
+            android:textIsSelectable="false"
+            android:textColorHint="#030101"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_weight="0.25" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text=" 0 m"
+            android:id="@+id/lenghtTrack"
+            android:layout_weight="0.25"
+            android:textColor="#d6d9d6" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text=" 0 km/h"
+            android:id="@+id/speedOnTrack"
+            android:layout_weight="0.25"
+            android:textColor="#d6d9d6" />
+    </LinearLayout>
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/cleanlayers"
+        android:background="@drawable/clean"
+        android:layout_above="@+id/fab"
+        android:layout_alignLeft="@+id/menuBtn"
+        android:layout_alignStart="@+id/menuBtn"
+        android:layout_marginBottom="8dp"
+        android:singleLine="false" />
+
+    <Button
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:id="@+id/request_server"
+        android:background="@drawable/disconnect"
+        android:layout_marginTop="72dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/start"
+        android:layout_alignStart="@+id/start" />
+
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/start"
+        android:background="@drawable/resive"
+        android:layout_alignTop="@+id/cleanlayers"
+        android:layout_alignLeft="@+id/fab"
+        android:layout_alignStart="@+id/fab"
+        android:layout_marginBottom="8dp" />
+
+
+</RelativeLayout>

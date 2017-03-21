@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MicroGIS Tracker</string>
+    <string name="title_activity_settings">Настройки</string>
+
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="title_activity_micro_gis">MicroGIS Tracker</string>
+
+    <!--navbar menu-->
+
+    <string name = "info">Информация</string>
+    <string name = "sensors">Сенсоры</string>
+    <string name = "my_tracks">Треки</string>
+    <string name = "app_setting">Настройки</string>
+    <string name = "my_place">Маркеры</string>
+    <string name = "exit">Выход</string>
+    <!--app strings -->
+
+    <!--setting screen-->
+    <string name="server_monitoring_message_corect">Пожалуйста, заполните все поля в " Мониторинг сервера" корректно.</string>
+
+    <string name="server_setting_title">Атрибуты</string>
+    <string name="sending_to_server">Отправка на сервер:</string>
+    <string name="sensor_name_settings">Имена сенсоров</string>
+    <string name="server_field">Сервер:</string>
+    <string name="port_field">Порт:</string>
+    <string name="time_period_field">Период(cек):</string>
+    <string name="distance_field">Дистанcия(м):</string>
+    <string name="andle_field">Кут(град):</string>
+    <string name="filters">Фильтры</string>
+    <string name="start">Старт</string>
+    <string name="stop">Стоп</string>
+    <string name="server_monitoring">Мониторинг сервера</string>
+    <string name="done">Да</string>
+    <string name="ok">Да</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="cancel">Отмена</string>
+    <string name="deleting_track">Удаления трека</string>
+    <string name="delete">Удалить</string>
+    <string name="track">трек</string>
+    <string name="closing_app_msg">Вы хотите закрыть приложения?</string>
+    <string name="you_are_here">Вы здесь</string>
+    <string name="deletig_marker">Удалить маркер?</string>
+    <string name="marker">маркер</string>
+    <string name="enter_name_of_place">Введите имя маркера:</string>
+    <string name="save_marker">Сохранения маркера</string>
+    <string name="edit_marker">Редактирование маркера</string>
+
+    <string name="description">Описания:</string>
+    <string name="chose_marker_ic">Оберите иконку для маркера:</string>
+
+    <string name="track_color">Цвет трека:</string>
+    <string name="track_width">Ширина треку(px):</string>
+    <string name="min_satelites">Минумум сателлитов:</string>
+    <string name="min_speed">Минимальная скорость(км/ч):</string>
+    <string name="max_speed">Максимальная скорость(км/ч):</string>
+    <string name="save">Сохранить</string>
+    <string name="rlace_turn_oo_gps">Пожалуйста, включите GPS!</string>
+    <string name="please_add_server_settings">Пожалуйста, добавьте настройки сервера!</string>
+    <string name="please_add_server_monitoring_settings">Пожалуйста, добавьте настройки мониторинга сервера!</string>
+
+    <string name="spisok_pust">Список пуст</string>
+    <string name="action_settings">Settings</string>
+</resources>

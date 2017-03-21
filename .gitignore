@@ -1,0 +1,17 @@
+*.iml
+.gradle
+/local.properties
+.DS_Store
+/build
+/captures
+/.idea/
+/_linux/
+/inspection/
+/diff.xml
+/editor.codeinsinght.xml
+/file.template.settings.xml
+/ide.general.xml
+/IntelliLang.xml
+/other.xml
+/web-browsers.xml
+/bin/

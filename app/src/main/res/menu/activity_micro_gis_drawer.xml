@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/infoTracking"
+            android:title="@string/info"
+            android:icon="@drawable/info"/>
+        <item
+            android:id="@+id/places"
+            android:title="@string/my_place"
+            android:icon="@drawable/marker"/>
+
+        <item
+            android:id="@+id/tracks"
+            android:title="@string/my_tracks"
+            android:icon="@drawable/track"/>
+        <item
+            android:id="@+id/sensors"
+            android:title="@string/sensors"
+            android:icon="@drawable/sensor"/>
+        <item
+            android:id="@+id/setting"
+            android:title="@string/app_setting"
+            android:icon="@drawable/settings"/>
+        <item
+            android:id="@+id/exit"
+            android:title="@string/exit"
+            android:icon="@drawable/exit"/>
+    </group>
+
+
+</menu>

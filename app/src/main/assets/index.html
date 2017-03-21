@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="file:///android_asset/leaflet.css" />
+    <script src="file:///android_asset/leaflet.js"></script>
+
+<!--    <link rel="stylesheet" href="file:///android_asset/leaflet-search.css" />-->
+    <!--<script src="file:///android_asset/leaflet-search.js"></script>-->
+    <script src="file:///android_asset/geosearch/js/l.control.geosearch.js"></script>
+    <script src="file:///android_asset/geosearch/js/l.geosearch.provider.google.js"></script>
+
+    <link rel="stylesheet" href="file:///android_asset/geosearch/css/l.geosearch.css" />
+
+    <style>
+        body {
+        padding: 0;
+        margin: 0;
+        }
+        html, body, #map {
+        height: 100%;
+        }
+    </style>
+</head>
+
+
+<body>
+
+<div id="map"></div>
+<script src="file:///android_asset/event.js"></script>
+<script src="file:///android_asset/storage.js"></script>
+<script src="file:///android_asset/run.js"></script>
+<script>
+
+// set osm recognition
+var osmAttr = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                    maxZoom: 20,
+                    attribution: 'OSM contributors'});
+
+var trav = new L.tileLayer('http://onlinemaps.micro-gis.com:8080/geoserver/gwc/service/tms/1.0.0/global:world@EPSG%3A900913@png/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    tms: true,
+                    attribution: '2016 MicroGIS'
+                });
+
+var genshtab = new L.tileLayer.wms("http://onlinemaps.micro-gis.com:8080/geoserver/gwc/service/wms", {
+					layers: 'global:genshtab',
+					format: 'image/png',
+					attribution: '2016 MicroGIS',
+					request: 'GetMap',
+					service: 'WMS',
+					tiled: true,
+					srs: 'EPSG:4326',
+					version: '1.1.1',
+					transparent: true,
+					maxZoom: '13',
+					styles: ''
+				});
+
+// init map element
+var map = new L.map('map', {fullscreenControl: true, center: new L.LatLng(48.9, 31.4), zoom: 5, twoFingerZoom: true, zoomAnimation: true, layers: [osmAttr]});
+var marker;
+var beginMarker;
+var startMarker;
+var endMarker;
+var polyline;
+var sensMarker0;var sensMarker1;var sensMarker2;var sensMarker3;var sensMarker4;var sensMarker5;var sensMarker6;
+// Add base layer
+var baseMaps = {
+					  'MicroGIS':trav, 'Ukraine genshtab':genshtab,'OSM':osmAttr};
+
+	var layerControl = new L.Control.Layers(baseMaps).addTo(map);
+<!--var baseLayer = L.tileLayer({-->
+    <!--attribution: osmAttr-->
+<!--}).addTo(map);-->
+
+new L.Control.GeoSearch({
+				provider: new L.GeoSearch.Provider.Google()
+		}).addTo(map);
+L.control.scale().addTo(map);
+
+
+//to yours location
+function toYourLoc(latIntent, lonIntent){
+    map.setView([parseFloat(latIntent), parseFloat(lonIntent)], 14);
+
+if(typeof(marker)==='undefined')
+ {
+  marker = new L.marker([parseFloat(latIntent), parseFloat(lonIntent)]);
+  marker.addTo(map);
+ }
+ else
+ {
+  marker.setLatLng([parseFloat(latIntent), parseFloat(lonIntent)]).addTo(map);
+ }
+     marker.bindPopup("<b>You are here!</b>").openPopup();
+}
+//1111111
+function toYourLoc1(latIntent, lonIntent){
+    map.setView([parseFloat(latIntent), parseFloat(lonIntent)], 14);
+
+if(typeof(marker)==='undefined')
+ {
+  marker = new L.marker([parseFloat(latIntent), parseFloat(lonIntent)]);
+  marker.addTo(map);
+ }
+ else
+ {
+  marker.setLatLng([parseFloat(latIntent), parseFloat(lonIntent)]).addTo(map);
+ }
+     marker.bindPopup("<b>Ви тут!</b>").openPopup();
+}
+///222222
+function toYourLoc2(latIntent, lonIntent){
+    map.setView([parseFloat(latIntent), parseFloat(lonIntent)], 14);
+
+if(typeof(marker)==='undefined')
+ {
+  marker = new L.marker([parseFloat(latIntent), parseFloat(lonIntent)]);
+  marker.addTo(map);
+ }
+ else
+ {
+  marker.setLatLng([parseFloat(latIntent), parseFloat(lonIntent)]).addTo(map);
+ }
+     marker.bindPopup("<b>Вы здесь!</b>").openPopup();
+}
+
+
+
+//dashArray: '10,7'
+
+//lineTrack
+var polyline;
+function lineTrack(trackIntent,begin,end){
+
+polyline = new L.Polyline(trackIntent, {
+opacity: 0.5,
+smoothFactor: 1
+});
+polyline.addTo(map);
+
+if(typeof(beginMarker)==='undefined')
+ {
+  beginMarker = new L.marker(begin);
+  beginMarker.addTo(map).addTo(map);
+ }
+ else
+ {
+  beginMarker.setLatLng(begin).addTo(map);
+ }
+if(typeof(endMarker)==='undefined')
+ {
+  endMarker = new L.marker(end);
+  endMarker.addTo(map);
+ }
+ else
+ {
+  endMarker.setLatLng(end).addTo(map);
+ }
+
+ beginMarker.bindPopup("  start").openPopup();
+ endMarker.bindPopup("  finish").openPopup();
+}
+
+
+
+//actual track
+var navig;
+function onlineTrack(trackIntent,begin,end){
+var polylineOnline = new L.Polyline(trackIntent, {
+color: 'red',
+weight: 3,
+opacity: 0.5,
+smoothFactor: 1
+});
+polylineOnline.addTo(map);
+
+if(typeof(startMarker)==='undefined')
+ {
+  startMarker = new L.marker(begin);
+  startMarker.addTo(map);
+  startMarker.bindPopup("  start").openPopup();
+ }
+ if(typeof(startMarker)==='undefined'){
+ navig}
+
+}
+
+
+var markers = new Array();
+//sensors
+function sensorInTrack0(point, nameSens){
+var RedIcon = L.Icon.Default.extend({
+            options: {
+            	    iconUrl: 'file:///android_res/drawable/ic_sen_0.png',
+            	     shadowSize:   [0, 0],
+
+            }
+         });
+         var redIcon = new RedIcon();
+
+sensMarker0 = new L.marker(point,{icon: redIcon}).bindPopup(nameSens).addTo(map);
+markers.push(sensMarker0);}
+
+function sensorInTrack1(point, nameSens){
+var RedIcon = L.Icon.Default.extend({
+            options: {
+            	    iconUrl: 'file:///android_res/drawable/ic_sen_1.png',
+            	     shadowSize:   [0, 0],
+
+            }
+         });
+         var redIcon = new RedIcon();
+
+sensMarker1 = new L.marker(point,{icon: redIcon}).bindPopup(nameSens).addTo(map);
+markers.push(sensMarker1);
+}
+function sensorInTrack2(point, nameSens){
+var RedIcon = L.Icon.Default.extend({
+            options: {
+            	    iconUrl: 'file:///android_res/drawable/ic_sen_2.png',
+            	     shadowSize:   [0, 0],
+
+            }
+         });
+         var redIcon = new RedIcon();
+
+sensMarker2 = new L.marker(point,{icon: redIcon}).bindPopup(nameSens).addTo(map);
+markers.push(sensMarker2);}
+function sensorInTrack3(point, nameSens){
+var RedIcon = L.Icon.Default.extend({
+            options: {
+            	    iconUrl: 'file:///android_res/drawable/ic_sen_3.png',
+            	     shadowSize:   [0, 0],
+
+            }
+         });
+         var redIcon = new RedIcon();
+
+sensMarker3 = new L.marker(point,{icon: redIcon}).bindPopup(nameSens).addTo(map);
+markers.push(sensMarker3);}
+function sensorInTrack4(point, nameSens){
+var RedIcon = L.Icon.Default.extend({
+            options: {
+            	    iconUrl: 'file:///android_res/drawable/ic_sen_4.png',
+            	     shadowSize:   [0, 0],
+
+            }
+         });
+         var redIcon = new RedIcon();
+sensMarker4 = new L.marker(point,{icon: redIcon}).bindPopup(nameSens).addTo(map);
+markers.push(sensMarker4);}
+
+function sensorInTrack5(point, nameSens){
+var RedIcon = L.Icon.Default.extend({
+            options: {
+            	    iconUrl: 'file:///android_res/drawable/ic_sen_5.png',
+            	     shadowSize:   [0, 0],
+
+            }
+         });
+         var redIcon = new RedIcon();
+
+sensMarker5 = new L.marker(point,{icon: redIcon}).bindPopup(nameSens).addTo(map);
+markers.push(sensMarker5);}
+
+function sensorInTrackSos(point, nameSens){
+var RedIcon = L.Icon.Default.extend({
+            options: {
+            	    iconUrl: 'file:///android_res/drawable/ic_sos.png',
+            	     shadowSize:   [0, 0],
+
+            }
+         });
+         var redIcon = new RedIcon();
+
+sensMarker6 = new L.marker(point,{icon: redIcon}).bindPopup(nameSens).addTo(map);
+markers.push(sensMarker6);}
+
+
+
+var mitka;
+ map.on('dblclick', onMapClick);
+ function onMapClick(e) {
+if(typeof(mitka)==='undefined')
+ {
+  mitka = new L.marker(e.latlng).addTo(map);
+}else{
+ mitka.setLatLng(e.latlng).addTo(map);
+}
+
+
+   <!--mitka.bindPopup(e.latlng.toString().split("(")[1].split(",")[0]).openPopup();-->
+
+   mitka.bindPopup($('<a href="#" class="speciallink" ><font size="4">'+"["+e.latlng.toString().split("(")[1].split(",")[0]+", "+e.latlng.toString().split("(")[1].split(",")[1].split(")")[0]+"]"+' </font></a>').click(function() {
+   Android.getMarker("["+e.latlng.toString().split("(")[1].split(",")[0]+", "+e.latlng.toString().split("(")[1].split(",")[1].split(")")[0]+"]");})[0]).openPopup();
+
+ }
+
+function addPushpinMD (lat, lng, ppIconName, ancX, ancY,name){
+try {
+console.log(ppIconName);
+var myIcon = new L.icon({
+iconUrl: 'file:///android_asset/images/'+ppIconName+'.png', // image name
+iconSize: [64,64],
+shadowUrl: null,
+shadowSize: null,
+iconAnchor: [ancX, ancY],
+popupAnchor: [16, 0]
+});
+
+<!--marker.typeMarker = 'arrow'+i;-->
+
+if(typeof(name)==='undefined')
+ {
+ name = new L.marker([lat,lng], {icon: myIcon}).addTo(map);
+}else{
+ name.setLatLng([lat, lng]).addTo(map);
+}
+} catch(e) {
+console.log("AddPushpinM ERROR: " + e);
+}
+};
+
+</script>
+</body>
+
+</html>

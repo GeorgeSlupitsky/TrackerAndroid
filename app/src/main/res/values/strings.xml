@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MicroGIS Tracker</string>
+    <string name="title_activity_settings">Settings</string>
+
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="title_activity_micro_gis">MicroGIS Tracker</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!--navbar menu-->
+    <string name="info">INFO</string>
+    <string name="sensors">SENSORS</string>
+    <string name="my_tracks">MY TRACKS</string>
+    <string name="app_setting">SETTINGS</string>
+    <string name="my_place">MY POINT</string>
+    <string name="exit">EXIT</string>
+
+    <!--setting screen-->
+    <string name="server_setting_title">Attributes</string>
+    <string name="filters">Filters</string>
+    <string name="sending_to_server">Sending to server:</string>
+    <string name="sensor_name_settings">Sensors name</string>
+    <string name="server_monitoring">Server monitoring</string>
+    <string name="server_field">Server:</string>
+    <string name="port_field">Port:</string>
+    <string name="time_period_field">Time period(sec):</string>
+    <string name="distance_field">Distance(meters):</string>
+    <string name="andle_field">Angle(deg):</string>
+
+    <!--dialog strings -->
+    <string name="done">Done</string>
+    <string name="ok">Ok</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="cancel">Cancel</string>
+    <string name="deleting_track">Deleting track</string>
+    <string name="deletig_marker">Deleting marker?</string>
+    <string name="delete">Delete</string>
+    <string name="track">track</string>
+    <string name="marker">marker</string>
+    <string name="closing_app_msg">Do you want close app?</string>
+    <string name="you_are_here">You are here</string>
+    <string name="enter_name_of_place">Enter name of marker:</string>
+    <string name="save_marker">Save marker</string>
+    <string name="edit_marker">Edit marker</string>
+    <string name="description">Description:</string>
+    <string name="chose_marker_ic">Chose marker icon:</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="server_monitoring_message_corect">Please complete all fields in the "Monitoring Server " correctly.</string>
+    <string name="track_color">Track color:</string>
+    <string name="track_width">Track width (px):</string>
+    <string name="min_satelites">Min satellites:</string>
+    <string name="min_speed">Min speed (km/h):</string>
+    <string name="max_speed">Max speed (km/h):</string>
+    <string name="save">Save</string>
+    <string name="spisok_pust">List is empty</string>
+    <string name="please_add_server_settings">Please, add server settings!</string>
+    <string name="please_add_server_monitoring_settings">Please, add server monitoring settings!</string>
+
+    <string name="rlace_turn_oo_gps">Please, TURN ON GPS!</string>
+</resources>
