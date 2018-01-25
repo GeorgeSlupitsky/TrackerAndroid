@@ -29,6 +29,7 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -458,7 +459,6 @@ toast.show();
                     }
                 }catch (Exception e){
 //                    if(isStart) {
-                        Log.i("*************************" + getNMEARMC(mLastLocation), getNMEAGGA(mLastLocation));
                         httpPost.send(imeis, getNMEARMC(mLastLocation), getNMEAGGA(mLastLocation) + "$Sensor=0:0,1:0,2:0,3:0,4:0,5:0,6:0");
 //                    }
                 }
@@ -635,14 +635,23 @@ toast.show();
         time = Integer.parseInt(sharedpreferences.getString("periodKey", "0"));
         angle = Integer.parseInt(sharedpreferences.getString("angleKey", "0"));
         distance = Integer.parseInt(sharedpreferences.getString("distanceKey", "0"));
-        TelephonyManager mngr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        try {
-            imeis = mngr.getDeviceId();
-        } catch (Exception e) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                imeis = mngr.getDeviceId(0);
+        		try{
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+				ContextCompat.checkSelfPermission( this, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+			requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE}, 1);
+            TelephonyManager mngr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+            try {
+                imeis = mngr.getDeviceId();
+            } catch (Exception e) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    imeis = mngr.getDeviceId(0);
+                }
             }
-        }
+		}
+		}catch (Exception e){
+
+		}
+
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
 
