@@ -1,6 +1,8 @@
 package com.micro_gis.microgistracker;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -83,6 +85,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         points = new ArrayList<>();
         dbHelper = new DBHelper(this);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -105,22 +112,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 //        gprmcT=(TextView)findViewById(R.id.gprmc);
 
         //get imei
-        TelephonyManager mngr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        try {
-            imei.append(mngr.getDeviceId());
-        } catch (Exception e) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                imei.append(mngr.getDeviceId(0));
-            }
-        }
         imeis = MicroGisActivity.imeis;
-//        try {
-//            imeis = mngr.getDeviceId();
-//        } catch (Exception e) {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                imeis = mngr.getDeviceId(0);
-//            }
-//        }
+        if (imeis != null){
+            imei.append(imeis);
+        }
+
         //NMEA listener
         LM = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -272,7 +268,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         speed.setText("Speed: " + avl.getSpeed() + " Km/h");
         satellites.setText("Satellites: " + avl.getSatellites());
         HDOP.setText("HDOP: " + avl.getHdop());
-        direction.setText("Direction: " + (int) avl.getHeading() + "°");
+        direction.setText("Direction: " + (int) MicroGisActivity.getAngle(MicroGisActivity.mPreviousLocation.getLatitude(),
+                MicroGisActivity.mPreviousLocation.getLongitude(), MicroGisActivity.mLastLocation.getLatitude(), MicroGisActivity.mLastLocation.getLongitude()) + "°");
         altitude.setText("Altitude: " + avl.getAltitude());
         if (avl.getLongitude() == 0) {
             statusSignal.setText("No GPS signal!");
@@ -531,5 +528,4 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         HHMMSS.setTimeZone(TimeZone.getTimeZone("GMT"));
         DDMMYY.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
-
 }

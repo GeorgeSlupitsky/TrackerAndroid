@@ -45,6 +45,10 @@ public class ControlActivity extends AppCompatActivity implements View.OnLongCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_control);
 
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
 
         button1 = (Button) findViewById(R.id.button1);
         button2 = (Button) findViewById(R.id.button2);

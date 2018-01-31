@@ -10,10 +10,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TabHost;
 import android.widget.TextView;
 
 public class TagsSettingActivity extends TabActivity {
+
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -21,6 +23,13 @@ public class TagsSettingActivity extends TabActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tags_setting);
         TextView text =(TextView) findViewById(R.id.toolbar_title);
+        final Button back = (Button) findViewById(R.id.back_button);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         text.setTextColor(Color.WHITE);
         TabHost tabHost = getTabHost();
         TabHost.TabSpec tabSpec;

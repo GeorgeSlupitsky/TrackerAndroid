@@ -38,25 +38,11 @@ var osmAttr = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                     maxZoom: 20,
                     attribution: 'OSM contributors'});
 
-var trav = new L.tileLayer('http://onlinemaps.micro-gis.com:8080/geoserver/gwc/service/tms/1.0.0/global:world@EPSG%3A900913@png/{z}/{x}/{y}.png', {
+var trav = new L.tileLayer('http://maps.micro-gis.com:8080/geoserver/gwc/service/tms/1.0.0/global:world@EPSG%3A900913@png/{z}/{x}/{y}.png', {
                     maxZoom: 19,
                     tms: true,
                     attribution: '2016 MicroGIS'
                 });
-
-var genshtab = new L.tileLayer.wms("http://onlinemaps.micro-gis.com:8080/geoserver/gwc/service/wms", {
-					layers: 'global:genshtab',
-					format: 'image/png',
-					attribution: '2016 MicroGIS',
-					request: 'GetMap',
-					service: 'WMS',
-					tiled: true,
-					srs: 'EPSG:4326',
-					version: '1.1.1',
-					transparent: true,
-					maxZoom: '13',
-					styles: ''
-				});
 
 // init map element
 var map = new L.map('map', {fullscreenControl: true, center: new L.LatLng(48.9, 31.4), zoom: 5, twoFingerZoom: true, zoomAnimation: true, layers: [osmAttr]});
@@ -68,7 +54,7 @@ var polyline;
 var sensMarker0;var sensMarker1;var sensMarker2;var sensMarker3;var sensMarker4;var sensMarker5;var sensMarker6;
 // Add base layer
 var baseMaps = {
-					  'MicroGIS':trav, 'Ukraine genshtab':genshtab,'OSM':osmAttr};
+					  'MicroGIS':trav, 'OSM':osmAttr};
 
 	var layerControl = new L.Control.Layers(baseMaps).addTo(map);
 <!--var baseLayer = L.tileLayer({-->
@@ -81,20 +67,29 @@ new L.Control.GeoSearch({
 L.control.scale().addTo(map);
 
 
+var NullIcon = L.Icon.Default.extend({
+            options: {
+            	    iconSize:     [0, 0],
+            	     shadowSize:   [0, 0]
+
+            }
+         });
+var nullIcon = new NullIcon();
+
 //to yours location
 function toYourLoc(latIntent, lonIntent){
     map.setView([parseFloat(latIntent), parseFloat(lonIntent)], 14);
 
-if(typeof(marker)==='undefined')
+if(typeof(navig)==='undefined')
  {
-  marker = new L.marker([parseFloat(latIntent), parseFloat(lonIntent)]);
-  marker.addTo(map);
+  navig = new L.marker([parseFloat(latIntent), parseFloat(lonIntent)]);
+  navig.addTo(map);
  }
  else
  {
-  marker.setLatLng([parseFloat(latIntent), parseFloat(lonIntent)]).addTo(map);
+  navig.setLatLng([parseFloat(latIntent), parseFloat(lonIntent)]).addTo(map);
  }
-     marker.bindPopup("<b>You are here!</b>").openPopup();
+     navig.bindPopup("<b>You are here!</b>").openPopup();
 }
 //1111111
 function toYourLoc1(latIntent, lonIntent){
@@ -102,14 +97,14 @@ function toYourLoc1(latIntent, lonIntent){
 
 if(typeof(marker)==='undefined')
  {
-  marker = new L.marker([parseFloat(latIntent), parseFloat(lonIntent)]);
+  marker = new L.marker([parseFloat(latIntent), parseFloat(lonIntent)], {icon: nullIcon});
   marker.addTo(map);
  }
  else
  {
   marker.setLatLng([parseFloat(latIntent), parseFloat(lonIntent)]).addTo(map);
  }
-     marker.bindPopup("<b>Ви тут!</b>").openPopup();
+     navig.bindPopup("<b>Ви тут!</b>").openPopup();
 }
 ///222222
 function toYourLoc2(latIntent, lonIntent){
@@ -117,14 +112,14 @@ function toYourLoc2(latIntent, lonIntent){
 
 if(typeof(marker)==='undefined')
  {
-  marker = new L.marker([parseFloat(latIntent), parseFloat(lonIntent)]);
+  marker = new L.marker([parseFloat(latIntent), parseFloat(lonIntent)], {icon: nullIcon});
   marker.addTo(map);
  }
  else
  {
   marker.setLatLng([parseFloat(latIntent), parseFloat(lonIntent)]).addTo(map);
  }
-     marker.bindPopup("<b>Вы здесь!</b>").openPopup();
+     navig.bindPopup("<b>Вы здесь!</b>").openPopup();
 }
 
 
@@ -183,8 +178,6 @@ if(typeof(startMarker)==='undefined')
   startMarker.addTo(map);
   startMarker.bindPopup("  start").openPopup();
  }
- if(typeof(startMarker)==='undefined'){
- navig}
 
 }
 
@@ -294,7 +287,7 @@ if(typeof(mitka)==='undefined')
 
    <!--mitka.bindPopup(e.latlng.toString().split("(")[1].split(",")[0]).openPopup();-->
 
-   mitka.bindPopup($('<a href="#" class="speciallink" ><font size="4">'+"["+e.latlng.toString().split("(")[1].split(",")[0]+", "+e.latlng.toString().split("(")[1].split(",")[1].split(")")[0]+"]"+' </font></a>').click(function() {
+   mitka.bindPopup($('<a href="#" class="speciallink" ><font size="3">'+"["+e.latlng.toString().split("(")[1].split(",")[0]+", "+e.latlng.toString().split("(")[1].split(",")[1].split(")")[0]+"]"+' </font></a>').click(function() {
    Android.getMarker("["+e.latlng.toString().split("(")[1].split(",")[0]+", "+e.latlng.toString().split("(")[1].split(",")[1].split(")")[0]+"]");})[0]).openPopup();
 
  }

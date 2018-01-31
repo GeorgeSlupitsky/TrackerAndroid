@@ -11,118 +11,116 @@
     <WebView
         android:id="@+id/webview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        android:layout_height="match_parent" />
 
     <Button
-        android:layout_width="50dp"
-        android:layout_height="50dp"
         android:id="@+id/menuBtn"
-        android:background="@drawable/menu_2x"
-        android:paddingLeft="20dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginBottom="35dp"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="35dp"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/menu_2x"
+        android:paddingLeft="20dp" />
 
     <Button
         android:id="@+id/fab"
         android:layout_width="52dp"
         android:layout_height="52dp"
-        android:layout_gravity="bottom|end"
-        android:layout_alignWithParentIfMissing="false"
-        android:baselineAlignBottom="false"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignWithParentIfMissing="false"
+        android:layout_gravity="bottom|end"
         android:layout_marginBottom="35dp"
         android:layout_marginRight="10dp"
         android:background="@drawable/gps_2x"
-        android:layout_alignParentStart="false" />
+        android:baselineAlignBottom="false" />
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentTop="false"
         android:background="#130f0f"
-        android:weightSum="1"
-        android:layout_alignParentTop="false">
+        android:orientation="horizontal"
+        android:weightSum="1">
 
         <TextView
+            android:id="@+id/gpsSignal"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="  Waiting GPS"
-            android:id="@+id/gpsSignal"
             android:layout_weight="0.25"
+            android:text="  Waiting GPS"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#fc0505" />
 
         <Chronometer
+            android:id="@+id/chronometer"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/chronometer"
-            android:textColor="#d6d9d6"
-            android:textColorHighlight="#090404"
-            android:textIsSelectable="false"
-            android:textColorHint="#030101"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_weight="0.25" />
+            android:layout_weight="0.25"
+            android:textColor="#d6d9d6"
+            android:textColorHighlight="#090404"
+            android:textColorHint="#030101"
+            android:textIsSelectable="false" />
 
         <TextView
+            android:id="@+id/lenghtTrack"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text=" 0 m"
-            android:id="@+id/lenghtTrack"
             android:layout_weight="0.25"
+            android:text=" 0 m"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#d6d9d6" />
 
         <TextView
+            android:id="@+id/speedOnTrack"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text=" 0 km/h"
-            android:id="@+id/speedOnTrack"
             android:layout_weight="0.25"
+            android:text=" 0 km/h"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#d6d9d6" />
     </LinearLayout>
 
     <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
         android:id="@+id/cleanlayers"
-        android:background="@drawable/clean"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
         android:layout_above="@+id/fab"
         android:layout_alignLeft="@+id/menuBtn"
         android:layout_alignStart="@+id/menuBtn"
         android:layout_marginBottom="8dp"
+        android:background="@drawable/clean"
         android:singleLine="false" />
 
     <Button
+        android:id="@+id/request_server"
         android:layout_width="52dp"
         android:layout_height="52dp"
-        android:id="@+id/request_server"
-        android:background="@drawable/disconnect"
-        android:layout_marginTop="72dp"
-        android:layout_alignParentTop="true"
         android:layout_alignLeft="@+id/start"
-        android:layout_alignStart="@+id/start" />
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/start"
+        android:layout_marginTop="72dp"
+        android:background="@drawable/disconnect" />
 
     <Button
-        android:layout_width="50dp"
-        android:layout_height="50dp"
         android:id="@+id/start"
-        android:background="@drawable/resive"
-        android:layout_alignTop="@+id/cleanlayers"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
         android:layout_alignLeft="@+id/fab"
         android:layout_alignStart="@+id/fab"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="134dp"
+        android:background="@drawable/resive" />
 
 
 </RelativeLayout>

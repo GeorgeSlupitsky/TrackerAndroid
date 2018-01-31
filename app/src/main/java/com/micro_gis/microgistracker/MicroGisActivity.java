@@ -106,6 +106,7 @@ public class MicroGisActivity extends AppCompatActivity
     static ArrayList<PressedSensor> sensors;
     static Vibrator vibrator;
     static Double currectLat, currectLon;
+    static Location mPreviousLocation;
     static WebView myWebView;
     boolean isStart, isSend, isEnabl =false;
     boolean isAdd;
@@ -319,11 +320,20 @@ public class MicroGisActivity extends AppCompatActivity
             } catch (JSONException e) {
                 Toast toast = Toast.makeText(getApplicationContext(),
                         getString(R.string.server_monitoring_message_corect), Toast.LENGTH_LONG);
-
+                toast.show();
                 e.printStackTrace();
             }
         }
     }
+
+//    Runnable nav = new Runnable() {
+//        @Override
+//        public void run() {
+//            navigation(getLastKnownLocation(), (int)getLastKnownLocation().getBearing());
+//            handler.postDelayed(this, 1000L);
+//        }
+//    };
+
     Runnable runnable = new Runnable() {
         public void run() {
             try {
@@ -335,9 +345,6 @@ public class MicroGisActivity extends AppCompatActivity
                     }
                 }
                 httpPost = new HttpSendPost(server, port, dbHelper);
-
-
-
 
                 if (avlData.getLongitude() != 0.0) {
                     if (points.size() == 0) {
@@ -418,15 +425,15 @@ public class MicroGisActivity extends AppCompatActivity
 //                "key": "6FD653E1C66232E2C78C983BFA624"
 //            }
 
-    try {
+            try {
+                httpAsyncTask = new HttpAsyncTask();
+                httpAsyncTask.execute(url);
+            }catch (Exception e){
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        getString(R.string.server_monitoring_message_corect), Toast.LENGTH_LONG);
+                toast.show();
+            }
 
-         httpAsyncTask = new HttpAsyncTask();
-          httpAsyncTask.execute(url);
-    }catch (Exception e){
-        Toast toast = Toast.makeText(getApplicationContext(),
-                getString(R.string.server_monitoring_message_corect), Toast.LENGTH_LONG);
-toast.show();
-    }
             handler.postDelayed(this, 1000*Long.parseLong(sharedpreferences.getString("intervalreq", "10")));
 
         }
@@ -472,6 +479,10 @@ toast.show();
 
     Runnable r = new Runnable() {
         public void run() {
+
+//            AVLData avlData2 = parse(gprmc, gpgga);
+//            navigation(getLastKnownLocation(), avlData2.getAngle());
+
             if (addddd < 2) {
                 try {
                     SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -516,7 +527,7 @@ toast.show();
                     }
                 }
 
-                if (avlData.getLongitude() == 0 || avlData.getHdop() == 500) {
+                if (avlData.getLongitude() == 0) {
                     signalGps.setText("  Waiting GPS");
                     signalGps.setTextColor(Color.RED);
 
@@ -557,6 +568,7 @@ toast.show();
                     float bearing = loc1.bearingTo(loc2);
                     int distanceInMeters = (int) loc1.distanceTo(loc2);
 
+//                    navigation(getLastKnownLocation(), (int)bearing);
                     if (distance != 0 & avlData.getLatitude() != points.get(0) & Math.abs(distanceInMeters - distance) >= distance) {
                         points.set(0, avlData.getLatitude());
                         points.set(1, avlData.getLongitude());
@@ -587,6 +599,7 @@ toast.show();
                     }
                     speedOnTrack.setText(avlData.getSpeed() + " km/h");
                     trackInMap(lisAvldata, bearing);
+//                    navigation(getLastKnownLocation(), (int)getLastKnownLocation().getBearing());
                 } else {
                     isStart = false;
                     timerCount = 0;
@@ -621,7 +634,7 @@ toast.show();
         speedOnTrack = (TextView) findViewById(R.id.speedOnTrack);
         lenghtTrack = (TextView) findViewById(R.id.lenghtTrack);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION,
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.READ_PHONE_STATE
                     },
                     1);
 
@@ -635,22 +648,17 @@ toast.show();
         time = Integer.parseInt(sharedpreferences.getString("periodKey", "0"));
         angle = Integer.parseInt(sharedpreferences.getString("angleKey", "0"));
         distance = Integer.parseInt(sharedpreferences.getString("distanceKey", "0"));
-        		try{
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-				ContextCompat.checkSelfPermission( this, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-			requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE}, 1);
-            TelephonyManager mngr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-            try {
+
+        TelephonyManager mngr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        if(checkIMEIPermission()){
+            try{
                 imeis = mngr.getDeviceId();
-            } catch (Exception e) {
+            } catch (Exception e){
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     imeis = mngr.getDeviceId(0);
                 }
             }
-		}
-		}catch (Exception e){
-
-		}
+        }
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
@@ -701,7 +709,7 @@ toast.show();
                         "map.removeLayer(layer)\n" +
                         "}\n" +
                         "});");
-                getmarkers();
+                navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
             }
         });
 
@@ -920,6 +928,7 @@ toast.show();
                 db.close();
                 addddd++;
             }
+//            navigation(getLastKnownLocation(), (int)getLastKnownLocation().getBearing());
         } catch (Throwable e) {
             Log.e("r exeption", e.getMessage());
         }
@@ -1242,8 +1251,11 @@ toast.show();
     public void onLocationChanged(Location location) {
         lat = location.getLatitude();
         lon = location.getLongitude();
+        mPreviousLocation = mLastLocation;
         mLastLocation = location;
         setLtLn();
+
+        navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
 
     }
 
@@ -1374,12 +1386,29 @@ toast.show();
         }
     }
 
+    public void navigation(Location paramLocation, Integer paramInteger)
+    {
+        int i = 15 * (paramInteger / 15);
+        if ((i > 345) || (i < 15))
+            i = 0;
+        myWebView.loadUrl("javascript: var navig;var myIconNav = new L.icon({\niconUrl: 'file:///android_asset/nav/" + i + ".png'," +
+                "\niconSize: [36,36],\nshadowUrl: null,\nshadowSize: null,\npopupAnchor: [0, 0]\n});\nif(typeof(navig)==='undefined')\n " +
+                "{\n navig = new L.marker([" + paramLocation.getLatitude() + ", " + paramLocation.getLongitude() + "], " +
+                "{icon: myIconNav}).addTo(map);\n}else{\nnavig.setIcon(myIconNav);navig.setLatLng([" + paramLocation.getLatitude() + ", " + paramLocation.getLongitude() + "]).addTo(map);\n}\n");
+    }
 
+    void setLtLn(){
+        lat = lat;
+        lon = lon;
+    }
 
-void setLtLn(){
-    lat = lat;
-    lon = lon;
-}
+    private boolean checkIMEIPermission()
+    {
+        String permission = Manifest.permission.READ_PHONE_STATE;
+        int res = getApplicationContext().checkCallingOrSelfPermission(permission);
+        return (res == PackageManager.PERMISSION_GRANTED);
+    }
+
     public static String getNMEAGGA(final Location loc) {
         StringBuilder sbGPGGA = new StringBuilder();
 
@@ -1423,6 +1452,38 @@ void setLtLn(){
         return sbGPGGA.toString();
     }
 
+    public static double getAngle(double lat1, double lon1, double lat2, double lon2)
+    {
+        //Formulas
+
+        //θ =   atan2(  sin(Δlong).cos(lat2),cos(lat1).sin(lat2) − sin(lat1).cos(lat2).cos(Δlong) )
+        // Δlong = long2 - long1
+        Log.i("angle", "Inside getAngle");
+        double latitude1 = Math.toRadians(lat1);
+        double longitude1 = Math.toRadians(lon1);
+        double latitude2 = Math.toRadians(lat2);
+        double longitude2 = Math.toRadians(lon2);
+
+
+        double dlong = Math.toRadians(longitude2-longitude1);
+
+        double y = Math.sin(dlong) * Math.cos(latitude2);
+        double x = Math.cos(latitude1)*Math.sin(latitude2) - Math.sin(latitude1)*Math.cos(latitude2)*Math.cos(dlong);
+        double angle= Math.atan2(y, x);
+
+
+        if (angle < 0)
+            angle = Math.abs(angle);
+        else
+            angle = 2*Math.PI - angle;
+
+        Log.i("angle", String.valueOf(angle)+" in radians");
+
+        angle=Math.toDegrees(angle);
+        Log.i("angle", String.valueOf(angle)+" in degrees");
+
+        return angle;
+    }
 
     public static String getCorrectPosition(double degree) {
         double val = degree - (int) degree;
