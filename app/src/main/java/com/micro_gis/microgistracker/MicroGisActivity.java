@@ -79,9 +79,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
+import java.util.TreeMap;
 
 public class MicroGisActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LocationListener {
@@ -116,9 +119,12 @@ public class MicroGisActivity extends AppCompatActivity
     ArrayList<Point> chartPoits = new ArrayList<>();
     ArrayList<Point> altitudeChart = new ArrayList<>();
     ArrayList<Double> points = new ArrayList<>();
-
+    Map<String, Integer> data;
     String accaunt, key, interval, url, group, timestamp;
     static HttpAsyncTask httpAsyncTask;
+    boolean isRun;
+    private int checkedItem;
+    private int groupId;
 
 
 
@@ -167,7 +173,7 @@ public class MicroGisActivity extends AppCompatActivity
                 result = "Did not work!";
 
         } catch (Exception e) {
-            Log.d("InputStream", e.getLocalizedMessage());
+            Log.d(" ", e.getLocalizedMessage());
         }
 
         // 11. return result
@@ -187,7 +193,7 @@ public class MicroGisActivity extends AppCompatActivity
     private class HttpAsyncTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {
-
+            isRun = true;
 
             try {
 
@@ -218,6 +224,8 @@ public class MicroGisActivity extends AppCompatActivity
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
+
+
             try {
             if(result==null){
                 Toast toast = Toast.makeText(getApplicationContext(),
@@ -234,6 +242,12 @@ public class MicroGisActivity extends AppCompatActivity
                 JSONArray arr = obj.getJSONArray("devices");
                 for (int i = 0; i < arr.length(); i++)
                 {
+                    String icon = null;
+                    try{
+                        icon = arr.getJSONObject(i).getString("icon");
+                    } catch (Exception e){
+                        icon = "car_sedan";
+                    }
                     String color = arr.getJSONObject(i).getString("color");
                     String lat = arr.getJSONObject(i).getString("lat");
                     String lng = arr.getJSONObject(i).getString("lng");
@@ -254,7 +268,7 @@ public class MicroGisActivity extends AppCompatActivity
                     String[] DIRS = {"north","north-east","east","south-east","south","south-west","west","north-west"};
 
                     int[] ANCOR_X = {31, 36, 32, 41, 30, 28, 31, 22};
-                    int[]ANCOR_Y = {30, 30, 32, 45, 38, 42, 32, 23};
+                    int[] ANCOR_Y = {30, 30, 32, 45, 38, 42, 32, 23};
 
                             int dirNdx = (int) (Math.floor(Integer.parseInt(heading) / 45) % 8);
                             String dirIconName = DIRS[dirNdx];
@@ -299,8 +313,8 @@ public class MicroGisActivity extends AppCompatActivity
                     }
 
                     myWebView.loadUrl("javascript: var bus"+i+ ";" +
-                    "var BusIcon = L.Icon.Default.extend({options: {iconUrl: 'file:///android_res/drawable/"+
-                            sharedpreferences.getString("iconkey", "bus_")+color+".png',iconSize:     [32, 32],\n" +
+                    "var BusIcon = L.Icon.Default.extend({options: {iconUrl: 'file:///android_asset/images/deviceIcons/"+
+                           icon+"_"+color+".png',iconSize:     [32, 32],\n" +
                             "    shadowSize:   [0, 0]} });" +
                             "var busIcon = new BusIcon();" +
                             "if(typeof(bus"+i+")==='undefined')\n" +
@@ -434,7 +448,7 @@ public class MicroGisActivity extends AppCompatActivity
                 toast.show();
             }
 
-            handler.postDelayed(this, 1000*Long.parseLong(sharedpreferences.getString("intervalreq", "10")));
+            handler.postDelayed(this, 1000*Long.parseLong(interval));
 
         }
     };
@@ -634,12 +648,13 @@ public class MicroGisActivity extends AppCompatActivity
         speedOnTrack = (TextView) findViewById(R.id.speedOnTrack);
         lenghtTrack = (TextView) findViewById(R.id.lenghtTrack);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.READ_PHONE_STATE
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.READ_PHONE_STATE
                     },
                     1);
 
         }
         addddd = 0;
+        checkedItem = -1;
 //        buildGoogleApiClient();
         sensors = new ArrayList<>();
         sharedpreferences = getSharedPreferences("mypref", Context.MODE_PRIVATE);
@@ -649,11 +664,13 @@ public class MicroGisActivity extends AppCompatActivity
         angle = Integer.parseInt(sharedpreferences.getString("angleKey", "0"));
         distance = Integer.parseInt(sharedpreferences.getString("distanceKey", "0"));
 
+        getAllGroups();
+
         TelephonyManager mngr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        if(checkIMEIPermission()){
-            try{
+        if (checkIMEIPermission()) {
+            try {
                 imeis = mngr.getDeviceId();
-            } catch (Exception e){
+            } catch (Exception e) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     imeis = mngr.getDeviceId(0);
                 }
@@ -680,7 +697,7 @@ public class MicroGisActivity extends AppCompatActivity
                 return true;
             }
         }
-        /*WebView */
+    /*WebView */
         myWebView = (WebView) findViewById(R.id.webview);
         runOnUiThread(new Runnable() {
             @Override
@@ -720,29 +737,137 @@ public class MicroGisActivity extends AppCompatActivity
         sendToserver.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(key.equals("")||group.equals("")||accaunt.equals("")||url.equals("")){
+//                if (key.equals("") || group.equals("") || accaunt.equals("") || url.equals("")) {
+//                    Toast toast = Toast.makeText(getApplicationContext(),
+//                            getString(R.string.please_add_server_monitoring_settings), Toast.LENGTH_SHORT);
+//                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+//                    toast.show();
+//                    return;
+//                }
+//                if (!isSend) {
+//                    isSend = true;
+//                    handler.post(requst);
+//                    sendToserver.setBackgroundResource(R.drawable.connect);
+//                } else {
+//                    isSend = false;
+//                    httpAsyncTask.cancel(true);
+//                    handler.removeCallbacks(requst);
+//                    myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
+//                            "if (layer instanceof L.Marker) {\n" +
+//                            "map.removeLayer(layer)\n" +
+//                            "}\n" +
+//                            "});");
+//                    sendToserver.setBackgroundResource(R.drawable.disconnect);
+//                    navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+//                    getmarkers();
+//                }
+
+                int count = data.size();
+
+                final String[] groupObjects = new String[count];
+
+                int i = 0;
+
+                for (String s: data.keySet()){
+                    groupObjects[i] = s;
+                    i++;
+                }
+
+                if (count > 0){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MicroGisActivity.this);
+                    builder.setTitle(R.string.choose_group)
+                            .setCancelable(false)
+                            .setNeutralButton(R.string.off, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,
+                                                    int id) {
+                                    groupId = 0;
+                                    myWebView.loadUrl("javascript:map.removeLayer(polyline);");
+                                    myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
+                                            "if (layer instanceof L.Marker) {\n" +
+                                            "map.removeLayer(layer)\n" +
+                                            "}\n" +
+                                            "});");
+                                    navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                                    if (isRun){
+                                        handler.removeCallbacks(requst);
+                                        isRun = false;
+                                        checkedItem = -1;
+                                        sendToserver.setBackgroundResource(R.drawable.disconnect);
+                                        dialog.cancel();
+                                    } else {
+                                        checkedItem = -1;
+                                        sendToserver.setBackgroundResource(R.drawable.disconnect);
+                                        dialog.cancel();
+                                    }
+                                }
+                            })
+
+                            .setPositiveButton(R.string.confirm,
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog,
+                                                            int id) {
+                                            myWebView.loadUrl("javascript:map.removeLayer(polyline);");
+                                            myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
+                                                    "if (layer instanceof L.Marker) {\n" +
+                                                    "map.removeLayer(layer)\n" +
+                                                    "}\n" +
+                                                    "});");
+                                            navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+
+                                            SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+                                            String selection = "id = ?";
+                                            String[] selectionArgs = new String[] {String.valueOf(groupId)};
+
+                                            Cursor c = db.query("requestgroup", null, selection, selectionArgs, null, null, null);
+
+                                            if (c.moveToFirst()) {
+                                                int accountColIndex = c.getColumnIndex("account");
+                                                int keyColIndex = c.getColumnIndex("keyString");
+                                                int urlColIndex = c.getColumnIndex("url");
+                                                int requestIntervalColIndex = c.getColumnIndex("requestInterval");
+                                                int groupsColIndex = c.getColumnIndex("groups");
+
+                                                accaunt = c.getString(accountColIndex);
+                                                key = c.getString(keyColIndex);
+                                                interval = c.getString(requestIntervalColIndex);
+                                                url = c.getString(urlColIndex);
+                                                group = c.getString(groupsColIndex);
+
+                                                handler.post(requst);
+                                            }
+
+                                            c.close();
+
+                                            if (checkedItem != -1){
+                                                sendToserver.setBackgroundResource(R.drawable.connect);
+                                                dialog.cancel();
+                                            } else {
+                                                sendToserver.setBackgroundResource(R.drawable.disconnect);
+                                                dialog.cancel();
+                                            }
+                                        }
+                                    })
+
+                            .setSingleChoiceItems(groupObjects, checkedItem,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog,
+                                                            int item) {
+                                            groupId = data.get(groupObjects[item]);
+
+                                            int id = groupId;
+
+                                            checkedItem = id - 1;
+
+                                        }
+                                    });
+                    builder.create().show();
+                } else {
                     Toast toast = Toast.makeText(getApplicationContext(),
-                            getString(R.string.please_add_server_monitoring_settings), Toast.LENGTH_SHORT);
+                    getString(R.string.please_add_server_monitoring_settings), Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
                     toast.show();
-                    return;
-                }
-                if (!isSend){
-                isSend=true;
-                    handler.post(requst);
-                    sendToserver.setBackgroundResource(R.drawable.connect);
-                }
-                else{
-                    isSend=false;
-                    httpAsyncTask.cancel(true);
-                    handler.removeCallbacks(requst);
-                    myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
-                            "if (layer instanceof L.Marker) {\n" +
-                            "map.removeLayer(layer)\n" +
-                            "}\n" +
-                            "});");
-                    sendToserver.setBackgroundResource(R.drawable.disconnect);
-                    getmarkers();
                 }
             }
         });
@@ -772,8 +897,9 @@ public class MicroGisActivity extends AppCompatActivity
                 try {
                     if (!isEnabl) {
 
-                        if(time!=0){
-                        handler.post(changingTime);}
+                        if (time != 0) {
+                            handler.post(changingTime);
+                        }
                         handler.post(runnable);
                         start.setBackgroundResource(R.drawable.stop);
                         isEnabl = true;
@@ -795,10 +921,6 @@ public class MicroGisActivity extends AppCompatActivity
         });
 
 
-
-
-
-
         clean.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -814,7 +936,6 @@ public class MicroGisActivity extends AppCompatActivity
         final Button fab = (Button) findViewById(R.id.fab);
         assert fab != null;
         fab.setOnClickListener(new View.OnClickListener() {
-
 
 
             @Override
@@ -896,7 +1017,6 @@ public class MicroGisActivity extends AppCompatActivity
 
             }
         });
-
     }
 
     void getmarkers(){
@@ -1139,26 +1259,27 @@ public class MicroGisActivity extends AppCompatActivity
         time = Integer.parseInt(sharedpreferences.getString("periodKey", "0"));
         angle = Integer.parseInt(sharedpreferences.getString("angleKey", "0"));
         distance = Integer.parseInt(sharedpreferences.getString("distanceKey", "0"));
-        accaunt=sharedpreferences.getString("accaunt", "");
-        key = sharedpreferences.getString("keyreq", "");
-        interval= sharedpreferences.getString("intervalreq", "10");
-        url= sharedpreferences.getString("urlreq", "");
-        group=sharedpreferences.getString("group", "");
+//        accaunt=sharedpreferences.getString("accaunt", "");
+//        key = sharedpreferences.getString("keyreq", "");
+//        interval= sharedpreferences.getString("intervalreq", "10");
+//        url= sharedpreferences.getString("urlreq", "");
+//        group=sharedpreferences.getString("group", "");
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        getAllGroups();
         server = sharedpreferences.getString("serverKey", "");
         port = sharedpreferences.getString("portKey", "");
         time = Integer.parseInt(sharedpreferences.getString("periodKey", "0"));
         angle = Integer.parseInt(sharedpreferences.getString("angleKey", "0"));
         distance = Integer.parseInt(sharedpreferences.getString("distanceKey", "0"));
-        accaunt=sharedpreferences.getString("accaunt", "");
-        key = sharedpreferences.getString("keyreq", "");
-        interval= sharedpreferences.getString("intervalreq", "10");
-        url= sharedpreferences.getString("urlreq", "");
-        group=sharedpreferences.getString("group", "");
+//        accaunt=sharedpreferences.getString("accaunt", "");
+//        key = sharedpreferences.getString("keyreq", "");
+//        interval= sharedpreferences.getString("intervalreq", "10");
+//        url= sharedpreferences.getString("urlreq", "");
+//        group=sharedpreferences.getString("group", "");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         boolean previouslyStarted = prefs.getBoolean("firststart", false);
         if (!previouslyStarted) {
@@ -1553,6 +1674,25 @@ public class MicroGisActivity extends AppCompatActivity
     static {
         HHMMSS.setTimeZone(TimeZone.getTimeZone("GMT"));
         DDMMYY.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
+
+    public void getAllGroups(){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        Cursor c = db.query("requestgroup", null, null, null, null, null, null);
+
+        data = new TreeMap<>();
+
+        if (c.moveToFirst()) {
+            do {
+                int idCol = c.getColumnIndex("id");
+                int nameColIndex = c.getColumnIndex("groupname");
+                data.put(c.getString(nameColIndex), c.getInt(idCol));
+            } while (c.moveToNext());
+        }
+
+        c.close();
+
     }
 
 }

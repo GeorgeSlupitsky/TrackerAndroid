@@ -60,9 +60,14 @@
     <string name="min_speed">Мінімальна швидкість(км/г):</string>
     <string name="max_speed">Максимальна швидкість(км/г):</string>
     <string name="save">Зберегти</string>
+    <string name="addGroup">Додати групу</string>
     <string name="spisok_pust">Список пустий</string>
     <string name="rlace_turn_oo_gps">Будь ласка, включіть GPS!</string>
     <string name="please_add_server_settings">Будь ласка, добавте налаштування сервера!</string>
     <string name="please_add_server_monitoring_settings">Будь ласка, добавте налаштування моніторингу сервера!</string>
+    <string name="edit">Редагувати</string>
+    <string name="choose_group">Оберіть группу об`єктів</string>
+    <string name="confirm">Прийняти</string>
+    <string name="off">Вимкнути</string>
 
 </resources>

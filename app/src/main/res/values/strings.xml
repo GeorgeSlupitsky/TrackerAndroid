@@ -66,10 +66,15 @@
     <string name="min_satelites">Min satellites:</string>
     <string name="min_speed">Min speed (km/h):</string>
     <string name="max_speed">Max speed (km/h):</string>
+    <string name="addGroup">Add Group</string>
     <string name="save">Save</string>
     <string name="spisok_pust">List is empty</string>
     <string name="please_add_server_settings">Please, add server settings!</string>
     <string name="please_add_server_monitoring_settings">Please, add server monitoring settings!</string>
+    <string name="edit">Edit</string>
 
     <string name="rlace_turn_oo_gps">Please, TURN ON GPS!</string>
+    <string name="choose_group">Choose group of objects</string>
+    <string name="confirm">Confirm</string>
+    <string name="off">Off</string>
 </resources>
