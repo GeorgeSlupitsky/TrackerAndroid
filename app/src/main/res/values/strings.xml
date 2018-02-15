@@ -77,4 +77,5 @@
     <string name="choose_group">Choose group of objects</string>
     <string name="confirm">Confirm</string>
     <string name="off">Off</string>
+    <string name="enable_gps">For correct work please enable GPS</string>
 </resources>

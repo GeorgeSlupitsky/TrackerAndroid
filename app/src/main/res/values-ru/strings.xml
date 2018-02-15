@@ -76,5 +76,6 @@
     <string name="choose_group">Выберите группу объектов</string>
     <string name="confirm">Применить</string>
     <string name="off">Выключить</string>
+    <string name="enable_gps">Для корректной работы, пожалуйста, включите GPS</string>
 
 </resources>

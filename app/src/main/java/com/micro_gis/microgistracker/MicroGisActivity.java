@@ -27,6 +27,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -97,7 +98,6 @@ public class MicroGisActivity extends AppCompatActivity
     LocationManager mLocationManager;
     static String gprmc, gpgga, imeis, lastValidGprms, lastValidGpgga, server, port;
     static int time, distance, angle, pointsOnTrack, timerCount;
-    LocationManager locationManager;
     String bestProvider, hronTime, timeStart, timeStop;
     ArrayList<AVLData> lisAvldata = new ArrayList<>();
     Handler handler = new Handler();
@@ -459,7 +459,7 @@ public class MicroGisActivity extends AppCompatActivity
 
             AVLData avlData = parse(gprmc, gpgga);
             if (gprmc==null & Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                mLastLocation =getLastKnownLocation();
+                mLastLocation = getLastKnownLocation();
                 if(mLastLocation!=null) {
                     avlData = parseAvl(mLastLocation);
                 }
@@ -638,6 +638,15 @@ public class MicroGisActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_micro_gis);
 
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        if (mLocationManager != null){
+            if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(myIntent);
+            }
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setVisibility(View.GONE);
@@ -726,7 +735,13 @@ public class MicroGisActivity extends AppCompatActivity
                         "map.removeLayer(layer)\n" +
                         "}\n" +
                         "});");
-                navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                    navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            getString(R.string.enable_gps), Toast.LENGTH_LONG);
+                    toast.show();
+                }
             }
         });
 
@@ -787,7 +802,13 @@ public class MicroGisActivity extends AppCompatActivity
                                             "map.removeLayer(layer)\n" +
                                             "}\n" +
                                             "});");
-                                    navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                                    if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                                        navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                                    } else {
+                                        Toast toast = Toast.makeText(getApplicationContext(),
+                                                getString(R.string.enable_gps), Toast.LENGTH_LONG);
+                                        toast.show();
+                                    }
                                     if (isRun){
                                         handler.removeCallbacks(requst);
                                         isRun = false;
@@ -812,7 +833,13 @@ public class MicroGisActivity extends AppCompatActivity
                                                     "map.removeLayer(layer)\n" +
                                                     "}\n" +
                                                     "});");
-                                            navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                                            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                                                navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                                            } else {
+                                                Toast toast = Toast.makeText(getApplicationContext(),
+                                                        getString(R.string.enable_gps), Toast.LENGTH_LONG);
+                                                toast.show();
+                                            }
 
                                             SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -879,10 +906,9 @@ public class MicroGisActivity extends AppCompatActivity
 
             @Override
             public void onClick(View v) {
-                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     Toast toast = Toast.makeText(getApplicationContext(),
-                            getString(R.string.rlace_turn_oo_gps), Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                            getString(R.string.enable_gps), Toast.LENGTH_LONG);
                     toast.show();
                     startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                     return;
@@ -940,16 +966,21 @@ public class MicroGisActivity extends AppCompatActivity
 
             @Override
             public void onClick(View view) {
-                Location myLocation = getLastKnownLocation();
-                mLastLocation = getLastKnownLocation();
+                if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                    Location myLocation = getLastKnownLocation();
+                    mLastLocation = getLastKnownLocation();
 
 
-                if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    return;
+                    if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+
+                    setLocationOnMap("" + mLastLocation.getLatitude(), "" + mLastLocation.getLongitude());
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            getString(R.string.enable_gps), Toast.LENGTH_LONG);
+                    toast.show();
                 }
-
-                setLocationOnMap("" + mLastLocation.getLatitude(), "" + mLastLocation.getLongitude());
-
             }
         });
         fab.setOnTouchListener(new View.OnTouchListener() {
@@ -979,7 +1010,6 @@ public class MicroGisActivity extends AppCompatActivity
                 }
             });
         }
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -1006,7 +1036,8 @@ public class MicroGisActivity extends AppCompatActivity
 
             return;
         }
-        locationManager.addNmeaListener(new GpsStatus.NmeaListener() {
+
+        mLocationManager.addNmeaListener(new GpsStatus.NmeaListener() {
             public void onNmeaReceived(long timestamp, String nmea) {
                 if (nmea.startsWith("$GPGGA")) {
                     sendGpgga(nmea);
@@ -1189,23 +1220,23 @@ public class MicroGisActivity extends AppCompatActivity
     }
 
 
-    public Location getLocation() {
-        Criteria criteria = new Criteria();
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        bestProvider = locationManager.getBestProvider(criteria, false);
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.i("No permission", "Location per");
-            return null;
-        }
-        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-//        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,
-//                0, mLocationListener);
-        Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-        return location;
-    }
+//    public Location getLocation() {
+//        Criteria criteria = new Criteria();
+//        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        bestProvider = locationManager.getBestProvider(criteria, false);
+//
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            Log.i("No permission", "Location per");
+//            return null;
+//        }
+//        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+//
+////        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,
+////                0, mLocationListener);
+//        Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//
+//        return location;
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -1298,7 +1329,7 @@ public class MicroGisActivity extends AppCompatActivity
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, this);
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, this);
 
     }
 
@@ -1372,11 +1403,21 @@ public class MicroGisActivity extends AppCompatActivity
     public void onLocationChanged(Location location) {
         lat = location.getLatitude();
         lon = location.getLongitude();
-        mPreviousLocation = mLastLocation;
+        if (mLastLocation == null){
+            mPreviousLocation = location;
+        } else {
+            mPreviousLocation = mLastLocation;
+        }
         mLastLocation = location;
         setLtLn();
 
-        navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+        } else {
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    getString(R.string.enable_gps), Toast.LENGTH_LONG);
+            toast.show();
+        }
 
     }
 
@@ -1410,7 +1451,6 @@ public class MicroGisActivity extends AppCompatActivity
     }
 
     private Location getLastKnownLocation() {
-        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         List<String> providers = mLocationManager.getProviders(true);
         Log.i(providers.toString(), "                 ");
         Location bestLocation = null;

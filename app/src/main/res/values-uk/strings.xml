@@ -69,5 +69,6 @@
     <string name="choose_group">Оберіть группу об`єктів</string>
     <string name="confirm">Прийняти</string>
     <string name="off">Вимкнути</string>
+    <string name="enable_gps">Для коректної роботи, будь ласка, увімкніть GPS</string>
 
 </resources>
