@@ -22,6 +22,8 @@
 
     <!--navbar menu-->
     <string name="info">INFO</string>
+    <string name="groups">GROUPS</string>
+    <string name="objects">OBJECTS</string>
     <string name="sensors">SENSORS</string>
     <string name="my_tracks">MY TRACKS</string>
     <string name="app_setting">SETTINGS</string>
@@ -60,7 +62,7 @@
     <string name="chose_marker_ic">Chose marker icon:</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
-    <string name="server_monitoring_message_corect">Please complete all fields in the "Monitoring Server " correctly.</string>
+    <string name="server_monitoring_message_corect">Please complete all fields in the "Monitoring Objects" correctly.</string>
     <string name="track_color">Track color:</string>
     <string name="track_width">Track width (px):</string>
     <string name="min_satelites">Min satellites:</string>
@@ -70,7 +72,7 @@
     <string name="save">Save</string>
     <string name="spisok_pust">List is empty</string>
     <string name="please_add_server_settings">Please, add server settings!</string>
-    <string name="please_add_server_monitoring_settings">Please, add server monitoring settings!</string>
+    <string name="please_add_server_monitoring_settings">Please, add objects monitoring settings!</string>
     <string name="edit">Edit</string>
 
     <string name="rlace_turn_oo_gps">Please, TURN ON GPS!</string>
@@ -78,4 +80,5 @@
     <string name="confirm">Confirm</string>
     <string name="off">Off</string>
     <string name="enable_gps">For correct work please enable GPS</string>
+    <string name="no_groups">There are no groups, please add it in "Objects monitoring"</string>
 </resources>

@@ -18,6 +18,8 @@
     <!--navbar menu-->
 
     <string name = "info">Информация</string>
+    <string name = "groups">Группы</string>
+    <string name = "objects">Объекты</string>
     <string name = "sensors">Сенсоры</string>
     <string name = "my_tracks">Треки</string>
     <string name = "app_setting">Настройки</string>
@@ -39,7 +41,7 @@
     <string name="filters">Фильтры</string>
     <string name="start">Старт</string>
     <string name="stop">Стоп</string>
-    <string name="server_monitoring">Мониторинг сервера</string>
+    <string name="server_monitoring">Мониторинг объектов</string>
     <string name="done">Да</string>
     <string name="ok">Да</string>
     <string name="yes">Да</string>
@@ -68,7 +70,7 @@
     <string name="addGroup">Добавить группу</string>
     <string name="rlace_turn_oo_gps">Пожалуйста, включите GPS!</string>
     <string name="please_add_server_settings">Пожалуйста, добавьте настройки сервера!</string>
-    <string name="please_add_server_monitoring_settings">Пожалуйста, добавьте настройки мониторинга сервера!</string>
+    <string name="please_add_server_monitoring_settings">Пожалуйста, добавьте настройки мониторинга объектов!</string>
     <string name="edit">Редактировать</string>
 
     <string name="spisok_pust">Список пуст</string>
@@ -77,5 +79,6 @@
     <string name="confirm">Применить</string>
     <string name="off">Выключить</string>
     <string name="enable_gps">Для корректной работы, пожалуйста, включите GPS</string>
+    <string name="no_groups">Не добавлено ни одной группы в "Мониторинге объектов"</string>
 
 </resources>

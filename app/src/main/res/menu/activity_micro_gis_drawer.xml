@@ -7,6 +7,14 @@
             android:title="@string/info"
             android:icon="@drawable/info"/>
         <item
+            android:id="@+id/groups"
+            android:title="@string/groups"
+            android:icon="@drawable/group"/>
+        <item
+            android:id="@+id/objects"
+            android:title="@string/objects"
+            android:icon="@drawable/object"/>
+        <item
             android:id="@+id/places"
             android:title="@string/my_place"
             android:icon="@drawable/marker"/>

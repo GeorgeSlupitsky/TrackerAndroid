@@ -119,11 +119,11 @@ public class MicroGisActivity extends AppCompatActivity
     ArrayList<Point> chartPoits = new ArrayList<>();
     ArrayList<Point> altitudeChart = new ArrayList<>();
     ArrayList<Double> points = new ArrayList<>();
-    Map<String, Integer> data;
     String accaunt, key, interval, url, group, timestamp;
+    Button sendToserver;
+    long firstStart = 0;
     static HttpAsyncTask httpAsyncTask;
     boolean isRun;
-    private int checkedItem;
     private int groupId;
 
 
@@ -259,8 +259,8 @@ public class MicroGisActivity extends AppCompatActivity
                     String heading = arr.getJSONObject(i).getString("heading");
                     java.util.Date time = new java.util.Date(Long.parseLong(event)*1000);
                     String timel =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
-                    String html = "Державний номер: " +description+
-                            " <br/>Марка автобуса: " +brand+
+                    String html = "Опис об'єкта: " +description+
+                            " <br/>Марка об'єкта: " +brand+
                             " <br/>Компанія: " +organization+
                             " <br/>Останні дані:" +timel+
                             "<br/> Швидкість:"+speed;
@@ -663,7 +663,6 @@ public class MicroGisActivity extends AppCompatActivity
 
         }
         addddd = 0;
-        checkedItem = -1;
 //        buildGoogleApiClient();
         sensors = new ArrayList<>();
         sharedpreferences = getSharedPreferences("mypref", Context.MODE_PRIVATE);
@@ -672,8 +671,6 @@ public class MicroGisActivity extends AppCompatActivity
         time = Integer.parseInt(sharedpreferences.getString("periodKey", "0"));
         angle = Integer.parseInt(sharedpreferences.getString("angleKey", "0"));
         distance = Integer.parseInt(sharedpreferences.getString("distanceKey", "0"));
-
-        getAllGroups();
 
         TelephonyManager mngr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         if (checkIMEIPermission()) {
@@ -696,6 +693,7 @@ public class MicroGisActivity extends AppCompatActivity
             }
         });
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(this);
 
         mChronometer = (Chronometer) findViewById(R.id.chronometer);
@@ -735,6 +733,7 @@ public class MicroGisActivity extends AppCompatActivity
                         "map.removeLayer(layer)\n" +
                         "}\n" +
                         "});");
+                getmarkers();
                 if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
                     navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
                 } else {
@@ -746,155 +745,107 @@ public class MicroGisActivity extends AppCompatActivity
         });
 
 
-        final Button sendToserver = (Button) findViewById(R.id.request_server);
+        sendToserver = (Button) findViewById(R.id.request_server);
 
         assert sendToserver != null;
         sendToserver.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if (key.equals("") || group.equals("") || accaunt.equals("") || url.equals("")) {
-//                    Toast toast = Toast.makeText(getApplicationContext(),
-//                            getString(R.string.please_add_server_monitoring_settings), Toast.LENGTH_SHORT);
-//                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-//                    toast.show();
-//                    return;
-//                }
-//                if (!isSend) {
-//                    isSend = true;
-//                    handler.post(requst);
-//                    sendToserver.setBackgroundResource(R.drawable.connect);
-//                } else {
-//                    isSend = false;
-//                    httpAsyncTask.cancel(true);
-//                    handler.removeCallbacks(requst);
-//                    myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
-//                            "if (layer instanceof L.Marker) {\n" +
-//                            "map.removeLayer(layer)\n" +
-//                            "}\n" +
-//                            "});");
-//                    sendToserver.setBackgroundResource(R.drawable.disconnect);
-//                    navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-//                    getmarkers();
-//                }
+                if (!isRun) {
+                    if (groupId != 999999999){
+                        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                            navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                        } else {
+                            Toast toast = Toast.makeText(getApplicationContext(),
+                                    getString(R.string.enable_gps), Toast.LENGTH_LONG);
+                            toast.show();
+                        }
 
-                int count = data.size();
+                        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-                final String[] groupObjects = new String[count];
+                        String selection = "id = ?";
+                        String[] selectionArgs = new String[] {String.valueOf(groupId)};
 
-                int i = 0;
+                        Cursor c = db.query("requestgroup", null, selection, selectionArgs, null, null, null);
 
-                for (String s: data.keySet()){
-                    groupObjects[i] = s;
-                    i++;
-                }
+                        if (c.moveToFirst()) {
+                            int accountColIndex = c.getColumnIndex("account");
+                            int keyColIndex = c.getColumnIndex("keyString");
+                            int urlColIndex = c.getColumnIndex("url");
+                            int requestIntervalColIndex = c.getColumnIndex("requestInterval");
+                            int groupsColIndex = c.getColumnIndex("groups");
 
-                if (count > 0){
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MicroGisActivity.this);
-                    builder.setTitle(R.string.choose_group)
-                            .setCancelable(false)
-                            .setNeutralButton(R.string.off, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,
-                                                    int id) {
-                                    groupId = 0;
-                                    myWebView.loadUrl("javascript:map.removeLayer(polyline);");
-                                    myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
-                                            "if (layer instanceof L.Marker) {\n" +
-                                            "map.removeLayer(layer)\n" +
-                                            "}\n" +
-                                            "});");
-                                    if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                                        navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-                                    } else {
-                                        Toast toast = Toast.makeText(getApplicationContext(),
-                                                getString(R.string.enable_gps), Toast.LENGTH_LONG);
-                                        toast.show();
-                                    }
-                                    if (isRun){
-                                        handler.removeCallbacks(requst);
-                                        isRun = false;
-                                        checkedItem = -1;
-                                        sendToserver.setBackgroundResource(R.drawable.disconnect);
-                                        dialog.cancel();
-                                    } else {
-                                        checkedItem = -1;
-                                        sendToserver.setBackgroundResource(R.drawable.disconnect);
-                                        dialog.cancel();
-                                    }
-                                }
-                            })
+                            accaunt = c.getString(accountColIndex);
+                            key = c.getString(keyColIndex);
+                            interval = c.getString(requestIntervalColIndex);
+                            url = c.getString(urlColIndex);
+                            group = c.getString(groupsColIndex);
 
-                            .setPositiveButton(R.string.confirm,
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog,
-                                                            int id) {
-                                            myWebView.loadUrl("javascript:map.removeLayer(polyline);");
-                                            myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
-                                                    "if (layer instanceof L.Marker) {\n" +
-                                                    "map.removeLayer(layer)\n" +
-                                                    "}\n" +
-                                                    "});");
-                                            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                                                navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-                                            } else {
-                                                Toast toast = Toast.makeText(getApplicationContext(),
-                                                        getString(R.string.enable_gps), Toast.LENGTH_LONG);
-                                                toast.show();
-                                            }
+                            handler.post(requst);
 
-                                            SQLiteDatabase db = dbHelper.getWritableDatabase();
+                            sendToserver.setBackgroundResource(R.drawable.connect);
+                        } else {
+                            Toast toast = Toast.makeText(getApplicationContext(),
+                                    getString(R.string.server_monitoring_message_corect), Toast.LENGTH_LONG);
+                            toast.show();
+                        }
 
-                                            String selection = "id = ?";
-                                            String[] selectionArgs = new String[] {String.valueOf(groupId)};
+                        c.close();
+                    } else {
+                        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                            navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                        } else {
+                            Toast toast = Toast.makeText(getApplicationContext(),
+                                    getString(R.string.enable_gps), Toast.LENGTH_LONG);
+                            toast.show();
+                        }
 
-                                            Cursor c = db.query("requestgroup", null, selection, selectionArgs, null, null, null);
+                        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-                                            if (c.moveToFirst()) {
-                                                int accountColIndex = c.getColumnIndex("account");
-                                                int keyColIndex = c.getColumnIndex("keyString");
-                                                int urlColIndex = c.getColumnIndex("url");
-                                                int requestIntervalColIndex = c.getColumnIndex("requestInterval");
-                                                int groupsColIndex = c.getColumnIndex("groups");
+                        Cursor c = db.query("requestgroup", null, null, null, null, null, null);
 
-                                                accaunt = c.getString(accountColIndex);
-                                                key = c.getString(keyColIndex);
-                                                interval = c.getString(requestIntervalColIndex);
-                                                url = c.getString(urlColIndex);
-                                                group = c.getString(groupsColIndex);
+                        if (c.moveToFirst()){
+                            int accountColIndex = c.getColumnIndex("account");
+                            int keyColIndex = c.getColumnIndex("keyString");
+                            int urlColIndex = c.getColumnIndex("url");
+                            int requestIntervalColIndex = c.getColumnIndex("requestInterval");
+                            int groupsColIndex = c.getColumnIndex("groups");
 
-                                                handler.post(requst);
-                                            }
+                            accaunt = c.getString(accountColIndex);
+                            key = c.getString(keyColIndex);
+                            interval = c.getString(requestIntervalColIndex);
+                            url = c.getString(urlColIndex);
+                            group = c.getString(groupsColIndex);
 
-                                            c.close();
+                            handler.post(requst);
 
-                                            if (checkedItem != -1){
-                                                sendToserver.setBackgroundResource(R.drawable.connect);
-                                                dialog.cancel();
-                                            } else {
-                                                sendToserver.setBackgroundResource(R.drawable.disconnect);
-                                                dialog.cancel();
-                                            }
-                                        }
-                                    })
-
-                            .setSingleChoiceItems(groupObjects, checkedItem,
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog,
-                                                            int item) {
-                                            groupId = data.get(groupObjects[item]);
-
-                                            int id = groupId;
-
-                                            checkedItem = id - 1;
-
-                                        }
-                                    });
-                    builder.create().show();
+                            sendToserver.setBackgroundResource(R.drawable.connect);
+                        } else {
+                            Toast toast = Toast.makeText(getApplicationContext(),
+                            getString(R.string.please_add_server_monitoring_settings), Toast.LENGTH_SHORT);
+                            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                            toast.show();
+                            sendToserver.setBackgroundResource(R.drawable.disconnect);
+                        }
+                    }
                 } else {
-                    Toast toast = Toast.makeText(getApplicationContext(),
-                    getString(R.string.please_add_server_monitoring_settings), Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                    toast.show();
+                    isRun = false;
+                    handler.removeCallbacks(requst);
+                    sendToserver.setBackgroundResource(R.drawable.disconnect);
+                    myWebView.loadUrl("javascript:map.removeLayer(polyline);");
+                    myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
+                            "if (layer instanceof L.Marker) {\n" +
+                            "map.removeLayer(layer)\n" +
+                            "}\n" +
+                            "});");
+                    getmarkers();
+                    if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                        navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                    } else {
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                getString(R.string.enable_gps), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
                 }
             }
         });
@@ -1162,6 +1113,12 @@ public class MicroGisActivity extends AppCompatActivity
         } else if (id == R.id.sensors) {
             Intent intent = new Intent(this, ControlActivity.class);
             startActivityForResult(intent, 1);
+        } else if (id == R.id.groups) {
+            Intent intent = new Intent(this, GroupsActivity.class);
+            startActivityForResult(intent, 1);
+        } else if (id == R.id.objects) {
+            Intent intent = new Intent(this, ObjectsActivity.class);
+            startActivityForResult(intent, 1);
         } else if (id == R.id.setting) {
             Intent intent = new Intent(this, TagsSettingActivity.class);
             startActivityForResult(intent, 1);
@@ -1290,6 +1247,68 @@ public class MicroGisActivity extends AppCompatActivity
         time = Integer.parseInt(sharedpreferences.getString("periodKey", "0"));
         angle = Integer.parseInt(sharedpreferences.getString("angleKey", "0"));
         distance = Integer.parseInt(sharedpreferences.getString("distanceKey", "0"));
+        int id = sharedpreferences.getInt("groupId", 999999999);
+
+//        myWebView.loadUrl("javascript:map.removeLayer(polyline);");
+//        myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
+//                "if (layer instanceof L.Marker) {\n" +
+//                "map.removeLayer(layer)\n" +
+//                "}\n" +
+//                "});");
+
+        if (isRun) {
+            if (groupId != id) {
+                myWebView.loadUrl("javascript:map.removeLayer(polyline);");
+                myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
+                "if (layer instanceof L.Marker) {\n" +
+                "map.removeLayer(layer)\n" +
+                "}\n" +
+                "});");
+                getmarkers();
+
+                if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                    navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            getString(R.string.enable_gps), Toast.LENGTH_LONG);
+                    toast.show();
+                }
+
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+                String selection = "id = ?";
+                String[] selectionArgs = new String[]{String.valueOf(id)};
+
+                Cursor c = db.query("requestgroup", null, selection, selectionArgs, null, null, null);
+
+                if (c.moveToFirst()) {
+                    int accountColIndex = c.getColumnIndex("account");
+                    int keyColIndex = c.getColumnIndex("keyString");
+                    int urlColIndex = c.getColumnIndex("url");
+                    int requestIntervalColIndex = c.getColumnIndex("requestInterval");
+                    int groupsColIndex = c.getColumnIndex("groups");
+
+                    accaunt = c.getString(accountColIndex);
+                    key = c.getString(keyColIndex);
+                    interval = c.getString(requestIntervalColIndex);
+                    url = c.getString(urlColIndex);
+                    group = c.getString(groupsColIndex);
+
+                    handler.post(requst);
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            getString(R.string.please_add_server_monitoring_settings), Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                    toast.show();
+                    sendToserver.setBackgroundResource(R.drawable.disconnect);
+                }
+            } else {
+                handler.post(requst);
+            }
+        } else {
+            groupId = sharedpreferences.getInt("groupId", 999999999);
+        }
+
 //        accaunt=sharedpreferences.getString("accaunt", "");
 //        key = sharedpreferences.getString("keyreq", "");
 //        interval= sharedpreferences.getString("intervalreq", "10");
@@ -1300,12 +1319,16 @@ public class MicroGisActivity extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
-        getAllGroups();
         server = sharedpreferences.getString("serverKey", "");
         port = sharedpreferences.getString("portKey", "");
         time = Integer.parseInt(sharedpreferences.getString("periodKey", "0"));
         angle = Integer.parseInt(sharedpreferences.getString("angleKey", "0"));
         distance = Integer.parseInt(sharedpreferences.getString("distanceKey", "0"));
+
+        if (firstStart < 5){
+            getmarkers();
+        }
+
 //        accaunt=sharedpreferences.getString("accaunt", "");
 //        key = sharedpreferences.getString("keyreq", "");
 //        interval= sharedpreferences.getString("intervalreq", "10");
@@ -1331,6 +1354,9 @@ public class MicroGisActivity extends AppCompatActivity
         }
         mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, this);
 
+        if (firstStart < 10){
+            firstStart++;
+        }
     }
 
 
@@ -1714,25 +1740,6 @@ public class MicroGisActivity extends AppCompatActivity
     static {
         HHMMSS.setTimeZone(TimeZone.getTimeZone("GMT"));
         DDMMYY.setTimeZone(TimeZone.getTimeZone("GMT"));
-    }
-
-    public void getAllGroups(){
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        Cursor c = db.query("requestgroup", null, null, null, null, null, null);
-
-        data = new TreeMap<>();
-
-        if (c.moveToFirst()) {
-            do {
-                int idCol = c.getColumnIndex("id");
-                int nameColIndex = c.getColumnIndex("groupname");
-                data.put(c.getString(nameColIndex), c.getInt(idCol));
-            } while (c.moveToNext());
-        }
-
-        c.close();
-
     }
 
 }

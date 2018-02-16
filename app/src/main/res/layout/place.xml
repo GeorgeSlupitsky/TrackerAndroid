@@ -5,77 +5,211 @@
     android:padding="5dp"
     tools:context=".PlaceListActivity">
 
-    <TextView
-        android:id="@+id/placeName"
-        android:layout_width="wrap_content"
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:text="Place name"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/placeDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/placeName"
-        android:layout_marginTop="5dp"
-        android:text="description"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="16sp"
-        />
-
-
-
-    <Button
-        android:id="@+id/deletePlace"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="3dp"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:layout_alignParentTop="false"
-        android:layout_alignParentBottom="false"
-        android:layout_alignParentLeft="false"
-        android:layout_alignWithParentIfMissing="false"
-        android:background="@drawable/delete_btn"
-        android:layout_margin="3dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
-        android:id="@+id/marker_des"
-        android:layout_below="@+id/placeDescription"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:visibility="gone" />
+        android:weightSum="1">
 
-    <Button
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:id="@+id/edit_place"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:background="@drawable/ic_edit"
-        android:layout_toLeftOf="@+id/deletePlace"
-        android:layout_toStartOf="@+id/deletePlace"
-        android:layout_marginTop="3dp"
-        android:layout_marginRight="20dp" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.85">
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/editdes"
-        android:text="deskription"
-        android:visibility="gone"
-        android:layout_below="@+id/edit_place"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+            <TextView
+                android:id="@+id/placeName"
+                android:layout_width="267dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="Place name"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
 
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/placeNameLL">
+
+                <TextView
+                    android:id="@+id/placeDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@+id/placeName"
+                    android:layout_marginTop="5dp"
+                    android:text="description"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_alignRight="@+id/placeName"
+                    android:layout_alignEnd="@+id/placeName"
+                    android:layout_marginRight="5dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/placeNameLL">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Medium Text"
+                    android:id="@+id/marker_des"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/descriptionLayout"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="points:"
+                        android:id="@+id/textView8"
+                        android:layout_marginLeft="10dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="10"
+                        android:id="@+id/pontsOntrack"
+                        android:textColor="#0d0404"
+                        android:layout_marginLeft="2dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="sensors: "
+                        android:id="@+id/textView9"
+                        android:layout_marginLeft="20dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="5"
+                        android:id="@+id/sensorOnTrack"
+                        android:textColor="#0d0404" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="max speed:"
+                        android:id="@+id/textView6"
+                        android:gravity="top"
+                        android:textSize="14dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="50 km/h"
+                        android:id="@+id/maxSpeed"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="20dp"
+                        android:textSize="18dp"
+                        android:textColor="#0d0404" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="avarage speed:"
+                        android:id="@+id/textView10"
+                        android:textSize="14dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="14 km/h"
+                        android:id="@+id/averageSpeed"
+                        android:textColor="#0d0404"
+                        android:textSize="18dp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <Button
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/edit_place"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:background="@drawable/ic_edit"
+            android:layout_alignParentBottom="false"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_margin="3dp" />
+
+        <Button
+            android:id="@+id/deletePlace"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:layout_alignParentTop="false"
+            android:layout_alignParentBottom="false"
+            android:layout_alignParentLeft="false"
+            android:layout_alignWithParentIfMissing="false"
+            android:background="@drawable/delete_btn"
+            android:layout_margin="3dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/editdes"
+            android:text="deskription"
+            android:visibility="gone"
+            android:layout_below="@+id/edit_place"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+    </LinearLayout>
 
 </RelativeLayout>
 

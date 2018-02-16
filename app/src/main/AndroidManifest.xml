@@ -48,6 +48,14 @@
             android:parentActivityName=".MicroGisActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".GroupsActivity"
+            android:parentActivityName=".MicroGisActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ObjectsActivity"
+            android:parentActivityName=".MicroGisActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".SettingSensorsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />

@@ -66,7 +66,7 @@ public class RequestActivity extends AppCompatActivity {
 
             String[] from = { ATTRIBUTE_NAME_TEXT, ATTRIBUTE_NAME_IMAGE };
 
-            int[] to = { R.id.tvText, R.id.ivImg };
+            int[] to = { R.id.tvText};
 
             sAdapter = new SimpleAdapter(this, data, R.layout.group, from, to);
 
@@ -115,7 +115,7 @@ public class RequestActivity extends AppCompatActivity {
 
             String[] from = { ATTRIBUTE_NAME_TEXT, ATTRIBUTE_NAME_IMAGE };
 
-            int[] to = { R.id.tvText, R.id.ivImg };
+            int[] to = { R.id.tvText};
 
             sAdapter = new SimpleAdapter(this, data, R.layout.group, from, to);
 

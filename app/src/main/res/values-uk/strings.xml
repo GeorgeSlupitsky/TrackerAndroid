@@ -17,12 +17,14 @@
 
         <!--navbar menu-->
     <string name="info">Інформація</string>
+    <string name="groups">Групи</string>
+    <string name="objects">Об`єкти</string>
     <string name="sensors">Сенсори</string>
     <string name="my_tracks">Треки</string>
     <string name="app_setting">Налаштування</string>
     <string name="my_place">Маркери</string>
     <string name="exit">Вихід</string>
-    <string name="server_monitoring_message_corect">Будь ласка, заповніть всі поля в "Моніторинг сервера" коректно.</string>
+    <string name="server_monitoring_message_corect">Будь ласка, заповніть всі поля в "Моніторинг об`єктів" коректно.</string>
     <!--setting screen-->
     <string name="server_setting_title">Атрибути</string>
     <string name="sending_to_server">Надсилання на сервер:</string>
@@ -35,7 +37,7 @@
     <string name="filters">Фільтри</string>
     <string name="start">Старт</string>
     <string name="stop">Стоп</string>
-    <string name="server_monitoring">Моніторинг сервера</string>
+    <string name="server_monitoring">Моніторинг об`єктів</string>
     <string name="done">Так</string>
     <string name="ok">Так</string>
     <string name="yes">Так</string>
@@ -64,11 +66,12 @@
     <string name="spisok_pust">Список пустий</string>
     <string name="rlace_turn_oo_gps">Будь ласка, включіть GPS!</string>
     <string name="please_add_server_settings">Будь ласка, добавте налаштування сервера!</string>
-    <string name="please_add_server_monitoring_settings">Будь ласка, добавте налаштування моніторингу сервера!</string>
+    <string name="please_add_server_monitoring_settings">Будь ласка, добавте налаштування моніторингу об`єктів!</string>
     <string name="edit">Редагувати</string>
     <string name="choose_group">Оберіть группу об`єктів</string>
     <string name="confirm">Прийняти</string>
     <string name="off">Вимкнути</string>
     <string name="enable_gps">Для коректної роботи, будь ласка, увімкніть GPS</string>
+    <string name="no_groups">Не додано жодної групи в "Моніторінгу об`єктів"</string>
 
 </resources>

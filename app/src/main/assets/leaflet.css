@@ -249,8 +249,8 @@
 	}
 
 .leaflet-touch .leaflet-bar a {
-	width: 40px;
-	height: 40px;
+	width: 50px;
+	height: 50px;
 	line-height: 30px;
 	}
 
@@ -266,9 +266,9 @@
 	}*/
 .leaflet-control-zoom-out {
 		background-image: url(images/zoom_2x.png);
-    /*	width: 42px;
-    	height: 42px;*/
-    	background-size: 56px 56px;
+    	width: 50px;
+    	height: 50px;
+    	background-size: 50px 50px;
 
 	}
 /*.leaflet-touch .leaflet-control-zoom-out {
@@ -280,9 +280,9 @@
 
 .leaflet-touch .leaflet-control-zoom-in {
 		background-image: url(images/zoom_in_2x.png);
-        	/*width: 42px;
-        	height: 42px;*/
-        	background-size: 56px 56px;
+        	width: 50px;
+        	height: 50px;
+        	background-size: 50px 50px;
 	}
 
 

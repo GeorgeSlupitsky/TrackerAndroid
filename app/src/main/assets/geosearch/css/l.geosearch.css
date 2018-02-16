@@ -15,8 +15,8 @@
 .leaflet-control-geosearch a.glass {
 	background-image: url(../img/geosearch.png);
 	background-size: 100% 100%;
-	height:40px;
-	width:40px;
+	height:50px;
+	width:50px;
 }
 
 .leaflet-control-geosearch a.spinner {
@@ -36,7 +36,7 @@
 .leaflet-control-geosearch form {
 	position: absolute;
 	top: 0;
-	left: 34px;
+	left: 55px;
 	box-shadow: 0 1px 7px rgba(0, 0, 0, 0.65);
 	-webkit-border-radius: 4px;
 			border-radius: 0px 4px 4px 0px;
