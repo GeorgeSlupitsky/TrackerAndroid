@@ -35,8 +35,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:parentActivityName=".MicroGisActivity"
             android:launchMode="singleTask"
+            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait" />
         <activity
             android:name=".SettingActivity"
@@ -54,6 +54,10 @@
         <activity
             android:name=".ObjectsActivity"
             android:parentActivityName=".MicroGisActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ObjectDetailInfoActivity"
+            android:parentActivityName=".ObjectsActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".SettingSensorsActivity"

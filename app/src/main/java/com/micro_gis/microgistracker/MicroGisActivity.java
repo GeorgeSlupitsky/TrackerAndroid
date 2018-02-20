@@ -233,6 +233,7 @@ public class MicroGisActivity extends AppCompatActivity
                 toast.show();
             }
             JSONObject obj  = new JSONObject(result);
+            sharedpreferences.edit().putString("groupObjects", result).apply();
                 String status = obj.getString("status");
                 if(status.equalsIgnoreCase("WARNING")){
                     Toast toast = Toast.makeText(getApplicationContext(),
@@ -259,11 +260,16 @@ public class MicroGisActivity extends AppCompatActivity
                     String heading = arr.getJSONObject(i).getString("heading");
                     java.util.Date time = new java.util.Date(Long.parseLong(event)*1000);
                     String timel =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
-                    String html = "Опис об'єкта: " +description+
-                            " <br/>Марка об'єкта: " +brand+
-                            " <br/>Компанія: " +organization+
-                            " <br/>Останні дані:" +timel+
-                            "<br/> Швидкість:"+speed;
+                    String descriptionStr = getString(R.string.descriptionObj);
+                    String brandStr = getString(R.string.brand);
+                    String companyStr = getString(R.string.company);
+                    String lastDataStr = getString(R.string.lastData);
+                    String speedStr = getString(R.string.speed);
+                    String html = descriptionStr + ": " +description+
+                            " <br/>" + brandStr + ": " +brand+
+                            " <br/>" + companyStr + ": " +organization+
+                            " <br/>" + lastDataStr + ": " +timel+
+                            " <br/>" + speedStr + ": "+speed;
 
                     String[] DIRS = {"north","north-east","east","south-east","south","south-west","west","north-west"};
 
@@ -494,43 +500,6 @@ public class MicroGisActivity extends AppCompatActivity
     Runnable r = new Runnable() {
         public void run() {
 
-//            AVLData avlData2 = parse(gprmc, gpgga);
-//            navigation(getLastKnownLocation(), avlData2.getAngle());
-
-            if (addddd < 2) {
-                try {
-                    SQLiteDatabase db = dbHelper.getWritableDatabase();
-                    Cursor cursor = db.query("markers", null, null, null, null, null, null);
-                    if (cursor.moveToFirst()) {
-                        do {
-                            byte[] blob = cursor.getBlob(cursor.getColumnIndex("data"));
-//                WebView webView = (WebView) findViewById(R.id.webview);
-                            String json = new String(blob);
-                            Gson gson = new Gson();
-                            Marker marker = gson.fromJson(json, new TypeToken<Marker>() {
-                            }.getType());
-                            myWebView.loadUrl("javascript:\n" +
-                                    "var RedIcon = L.Icon.Default.extend({\n" +
-                                    "            options: {\n" +
-                                    "            \t    iconUrl: '" + marker.getUrl() + "',\n" +
-                                    "            \t      shadowUrl:'" + marker.getShadowUrl() + "'" +
-                                    "}" +
-                                    "         });\n" +
-                                    "         var redIcon = new RedIcon();\n" +
-                                    "\n" +
-                                    "  var popup = L.popup()\n" +
-                                    "    .setContent('" + marker.getName() + "'); var place = L.marker(" + marker.getLatlng() + ", {icon: redIcon}).bindPopup(popup).addTo(map);");
-
-
-                        } while (cursor.moveToNext());
-                        db.close();
-                        addddd++;
-                    }
-                } catch (Throwable e) {
-                    Log.e("r exeption", e.getMessage());
-                }
-            }
-
             try {
                 timerCount++;
                 AVLData avlData = parse(gprmc, gpgga);
@@ -552,7 +521,8 @@ public class MicroGisActivity extends AppCompatActivity
                 int sat = Integer.parseInt(sharedpreferences.getString("minSatelites", "3"));
                 int minspeed = Integer.parseInt(sharedpreferences.getString("minSpeed", "3"));
                 int maxspeed = Integer.parseInt(sharedpreferences.getString("maxSpeed", "160"));
-                if (avlData.getLongitude() != 0.0 & /*avlData.getSatellites() >= sat &*/ avlData.getSpeed() >= minspeed & avlData.getSpeed() <= maxspeed) {
+
+                if (avlData.getLongitude() != 0.0 & avlData.getSpeed() >= minspeed & avlData.getSpeed() <= maxspeed) {
                     if (points.size() == 0) {
                         points.add(avlData.getLatitude());
                         points.add(avlData.getLongitude());
@@ -560,7 +530,7 @@ public class MicroGisActivity extends AppCompatActivity
 
                     }
                     isStart = true;
-                    if (time != 0 & timerCount % time == 0 || time != 0 & timerCount - time >= 0) {
+                    if (time != 0 && timerCount % time == 0 || time != 0 && timerCount - time >= 0) {
                         timerCount = 0;
                         pointsList.add(new Points("" + avlData.getLatitude(), "" + avlData.getLongitude()));
                         pointsOnTrack++;
@@ -582,7 +552,6 @@ public class MicroGisActivity extends AppCompatActivity
                     float bearing = loc1.bearingTo(loc2);
                     int distanceInMeters = (int) loc1.distanceTo(loc2);
 
-//                    navigation(getLastKnownLocation(), (int)bearing);
                     if (distance != 0 & avlData.getLatitude() != points.get(0) & Math.abs(distanceInMeters - distance) >= distance) {
                         points.set(0, avlData.getLatitude());
                         points.set(1, avlData.getLongitude());
@@ -613,7 +582,6 @@ public class MicroGisActivity extends AppCompatActivity
                     }
                     speedOnTrack.setText(avlData.getSpeed() + " km/h");
                     trackInMap(lisAvldata, bearing);
-//                    navigation(getLastKnownLocation(), (int)getLastKnownLocation().getBearing());
                 } else {
                     isStart = false;
                     timerCount = 0;
@@ -668,7 +636,7 @@ public class MicroGisActivity extends AppCompatActivity
         sharedpreferences = getSharedPreferences("mypref", Context.MODE_PRIVATE);
         server = sharedpreferences.getString("serverKey", "");
         port = sharedpreferences.getString("portKey", "");
-        time = Integer.parseInt(sharedpreferences.getString("periodKey", "0"));
+        time = Integer.parseInt(sharedpreferences.getString("periodKey", "1"));
         angle = Integer.parseInt(sharedpreferences.getString("angleKey", "0"));
         distance = Integer.parseInt(sharedpreferences.getString("distanceKey", "0"));
 
@@ -727,13 +695,8 @@ public class MicroGisActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
 
-                myWebView.loadUrl("javascript:map.removeLayer(polyline);");
-                myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
-                        "if (layer instanceof L.Marker) {\n" +
-                        "map.removeLayer(layer)\n" +
-                        "}\n" +
-                        "});");
-                getmarkers();
+                clearMap();
+                getMarkers();
                 if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
                     navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
                 } else {
@@ -744,6 +707,7 @@ public class MicroGisActivity extends AppCompatActivity
             }
         });
 
+        sharedpreferences.edit().putString("groupObjects", "Not connected").apply();
 
         sendToserver = (Button) findViewById(R.id.request_server);
 
@@ -831,14 +795,10 @@ public class MicroGisActivity extends AppCompatActivity
                 } else {
                     isRun = false;
                     handler.removeCallbacks(requst);
+                    sharedpreferences.edit().putString("groupObjects", "Not connected").apply();
                     sendToserver.setBackgroundResource(R.drawable.disconnect);
-                    myWebView.loadUrl("javascript:map.removeLayer(polyline);");
-                    myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
-                            "if (layer instanceof L.Marker) {\n" +
-                            "map.removeLayer(layer)\n" +
-                            "}\n" +
-                            "});");
-                    getmarkers();
+                    clearMap();
+                    getMarkers();
                     if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
                         navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
                     } else {
@@ -853,6 +813,7 @@ public class MicroGisActivity extends AppCompatActivity
 
         final Button start = (Button) findViewById(R.id.start);
         assert start != null;
+        start.setBackgroundResource(R.drawable.stop);
         start.setOnClickListener(new Button.OnClickListener() {
 
             @Override
@@ -878,14 +839,14 @@ public class MicroGisActivity extends AppCompatActivity
                             handler.post(changingTime);
                         }
                         handler.post(runnable);
-                        start.setBackgroundResource(R.drawable.stop);
+                        start.setBackgroundResource(R.drawable.resive);
                         isEnabl = true;
 
 
                     } else {
                         handler.removeCallbacks(changingTime);
                         handler.removeCallbacks(runnable);
-                        start.setBackgroundResource(R.drawable.resive);
+                        start.setBackgroundResource(R.drawable.stop);
                         isEnabl = false;
 
                     }
@@ -987,7 +948,6 @@ public class MicroGisActivity extends AppCompatActivity
 
             return;
         }
-
         mLocationManager.addNmeaListener(new GpsStatus.NmeaListener() {
             public void onNmeaReceived(long timestamp, String nmea) {
                 if (nmea.startsWith("$GPGGA")) {
@@ -1001,7 +961,7 @@ public class MicroGisActivity extends AppCompatActivity
         });
     }
 
-    void getmarkers(){
+    void getMarkers(){
         try {
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             Cursor cursor = db.query("markers", null, null, null, null, null, null);
@@ -1244,76 +1204,56 @@ public class MicroGisActivity extends AppCompatActivity
         super.onStart();
         server = sharedpreferences.getString("serverKey", "");
         port = sharedpreferences.getString("portKey", "");
-        time = Integer.parseInt(sharedpreferences.getString("periodKey", "0"));
+        time = Integer.parseInt(sharedpreferences.getString("periodKey", "1"));
         angle = Integer.parseInt(sharedpreferences.getString("angleKey", "0"));
         distance = Integer.parseInt(sharedpreferences.getString("distanceKey", "0"));
         int id = sharedpreferences.getInt("groupId", 999999999);
 
-//        myWebView.loadUrl("javascript:map.removeLayer(polyline);");
-//        myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
-//                "if (layer instanceof L.Marker) {\n" +
-//                "map.removeLayer(layer)\n" +
-//                "}\n" +
-//                "});");
-
         if (isRun) {
-            if (groupId != id) {
-                myWebView.loadUrl("javascript:map.removeLayer(polyline);");
-                myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
-                "if (layer instanceof L.Marker) {\n" +
-                "map.removeLayer(layer)\n" +
-                "}\n" +
-                "});");
-                getmarkers();
+            clearMap();
+            getMarkers();
 
-                if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                    navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-                } else {
-                    Toast toast = Toast.makeText(getApplicationContext(),
-                            getString(R.string.enable_gps), Toast.LENGTH_LONG);
-                    toast.show();
-                }
-
-                SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-                String selection = "id = ?";
-                String[] selectionArgs = new String[]{String.valueOf(id)};
-
-                Cursor c = db.query("requestgroup", null, selection, selectionArgs, null, null, null);
-
-                if (c.moveToFirst()) {
-                    int accountColIndex = c.getColumnIndex("account");
-                    int keyColIndex = c.getColumnIndex("keyString");
-                    int urlColIndex = c.getColumnIndex("url");
-                    int requestIntervalColIndex = c.getColumnIndex("requestInterval");
-                    int groupsColIndex = c.getColumnIndex("groups");
-
-                    accaunt = c.getString(accountColIndex);
-                    key = c.getString(keyColIndex);
-                    interval = c.getString(requestIntervalColIndex);
-                    url = c.getString(urlColIndex);
-                    group = c.getString(groupsColIndex);
-
-                    handler.post(requst);
-                } else {
-                    Toast toast = Toast.makeText(getApplicationContext(),
-                            getString(R.string.please_add_server_monitoring_settings), Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                    toast.show();
-                    sendToserver.setBackgroundResource(R.drawable.disconnect);
-                }
+            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
             } else {
-                handler.post(requst);
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        getString(R.string.enable_gps), Toast.LENGTH_LONG);
+                toast.show();
             }
-        } else {
-            groupId = sharedpreferences.getInt("groupId", 999999999);
+
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+            String selection = "id = ?";
+            String[] selectionArgs = new String[]{String.valueOf(id)};
+
+            Cursor c = db.query("requestgroup", null, selection, selectionArgs, null, null, null);
+
+            if (c.moveToFirst()) {
+                int accountColIndex = c.getColumnIndex("account");
+                int keyColIndex = c.getColumnIndex("keyString");
+                int urlColIndex = c.getColumnIndex("url");
+                int requestIntervalColIndex = c.getColumnIndex("requestInterval");
+                int groupsColIndex = c.getColumnIndex("groups");
+
+                accaunt = c.getString(accountColIndex);
+                key = c.getString(keyColIndex);
+                interval = c.getString(requestIntervalColIndex);
+                url = c.getString(urlColIndex);
+                group = c.getString(groupsColIndex);
+            } else {
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        getString(R.string.please_add_server_monitoring_settings), Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                toast.show();
+                sendToserver.setBackgroundResource(R.drawable.disconnect);
+            }
         }
 
-//        accaunt=sharedpreferences.getString("accaunt", "");
-//        key = sharedpreferences.getString("keyreq", "");
-//        interval= sharedpreferences.getString("intervalreq", "10");
-//        url= sharedpreferences.getString("urlreq", "");
-//        group=sharedpreferences.getString("group", "");
+        groupId = sharedpreferences.getInt("groupId", 999999999);
+
+        if (isRun){
+            handler.post(requst);
+        }
     }
 
     @Override
@@ -1321,19 +1261,13 @@ public class MicroGisActivity extends AppCompatActivity
         super.onResume();
         server = sharedpreferences.getString("serverKey", "");
         port = sharedpreferences.getString("portKey", "");
-        time = Integer.parseInt(sharedpreferences.getString("periodKey", "0"));
+        time = Integer.parseInt(sharedpreferences.getString("periodKey", "1"));
         angle = Integer.parseInt(sharedpreferences.getString("angleKey", "0"));
         distance = Integer.parseInt(sharedpreferences.getString("distanceKey", "0"));
 
         if (firstStart < 5){
-            getmarkers();
+            getMarkers();
         }
-
-//        accaunt=sharedpreferences.getString("accaunt", "");
-//        key = sharedpreferences.getString("keyreq", "");
-//        interval= sharedpreferences.getString("intervalreq", "10");
-//        url= sharedpreferences.getString("urlreq", "");
-//        group=sharedpreferences.getString("group", "");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         boolean previouslyStarted = prefs.getBoolean("firststart", false);
         if (!previouslyStarted) {
@@ -1594,6 +1528,16 @@ public class MicroGisActivity extends AppCompatActivity
         String permission = Manifest.permission.READ_PHONE_STATE;
         int res = getApplicationContext().checkCallingOrSelfPermission(permission);
         return (res == PackageManager.PERMISSION_GRANTED);
+    }
+
+    private void clearMap(){
+        myWebView.loadUrl("javascript:map.removeLayer(polyline);");
+        myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
+                "if (layer instanceof L.Marker) {\n" +
+                "map.removeLayer(layer)\n" +
+                "}\n" +
+                "map.closePopup()\n"+
+                "});");
     }
 
     public static String getNMEAGGA(final Location loc) {

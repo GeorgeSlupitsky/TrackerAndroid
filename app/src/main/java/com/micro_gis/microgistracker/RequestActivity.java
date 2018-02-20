@@ -19,17 +19,13 @@ import java.util.Map;
 
 public class RequestActivity extends AppCompatActivity {
 
-    private static final int CM_EDIT_ID = 1;
-    private static final int CM_DELETE_ID = 2;
-
     final String ATTRIBUTE_NAME_ID = "id";
     final String ATTRIBUTE_NAME_TEXT = "text";
-    final String ATTRIBUTE_NAME_IMAGE = "image";
 
     final String LOG_TAG = "myLogs";
 
     ListView lvSimple;
-    SimpleAdapter sAdapter;
+    RequestCustomAdapter requestCustomAdapter;
     ArrayList<Map<String, Object>> data;
     Button addGroup;
 
@@ -42,42 +38,38 @@ public class RequestActivity extends AppCompatActivity {
 
         dbHelper = new DBHelper(this);
 
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
         addGroup = (Button) findViewById(R.id.addGroup);
 
-        Cursor c = db.query("requestgroup", null, null, null, null, null, null);
-
-        data = new ArrayList<Map<String, Object>>();
-
-        if (c.moveToFirst()) {
-            do {
-                int idColIndex = c.getColumnIndex("id");
-                int nameColIndex = c.getColumnIndex("groupname");
-
-                Map<String, Object> m = new HashMap<>();
-
-                m.put(ATTRIBUTE_NAME_ID, c.getInt(idColIndex));
-                m.put(ATTRIBUTE_NAME_TEXT, c.getString(nameColIndex));
-
-                data.add(m);
-
-            } while (c.moveToNext());
-
-            String[] from = { ATTRIBUTE_NAME_TEXT, ATTRIBUTE_NAME_IMAGE };
-
-            int[] to = { R.id.tvText};
-
-            sAdapter = new SimpleAdapter(this, data, R.layout.group, from, to);
-
-            lvSimple = (ListView) findViewById(R.id.lvSimple);
-            lvSimple.setAdapter(sAdapter);
-
-            registerForContextMenu(lvSimple);
-
-        } else
-            Log.d(LOG_TAG, "0 rows");
-            c.close();
+//        SQLiteDatabase db = dbHelper.getWritableDatabase();
+//
+//        Cursor c = db.query("requestgroup", null, null, null, null, null, null);
+//
+//        data = new ArrayList<Map<String, Object>>();
+//
+//        if (c.moveToFirst()) {
+//            do {
+//                int idColIndex = c.getColumnIndex("id");
+//                int nameColIndex = c.getColumnIndex("groupname");
+//
+//                Map<String, Object> m = new HashMap<>();
+//
+//                m.put(ATTRIBUTE_NAME_ID, c.getInt(idColIndex));
+//                m.put(ATTRIBUTE_NAME_TEXT, c.getString(nameColIndex));
+//
+//                data.add(m);
+//
+//            } while (c.moveToNext());
+//
+//            String[] from = { ATTRIBUTE_NAME_ID, ATTRIBUTE_NAME_TEXT };
+//
+//            requestCustomAdapter = new RequestCustomAdapter(this, R.layout.group, from, data);
+//
+//            lvSimple = (ListView) findViewById(R.id.lvSimple);
+//            lvSimple.setAdapter(requestCustomAdapter);
+//
+//        } else
+//            Log.d(LOG_TAG, "0 rows");
+//            c.close();
 
         addGroup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,7 +94,6 @@ public class RequestActivity extends AppCompatActivity {
             do {
                 int idColIndex = c.getColumnIndex("id");
                 int nameColIndex = c.getColumnIndex("groupname");
-                int iconIndex = c.getColumnIndex("icon");
 
                 Map<String, Object> m = new HashMap<>();
 
@@ -113,58 +104,15 @@ public class RequestActivity extends AppCompatActivity {
             } while (c.moveToNext());
 
 
-            String[] from = { ATTRIBUTE_NAME_TEXT, ATTRIBUTE_NAME_IMAGE };
+            String[] from = { ATTRIBUTE_NAME_ID, ATTRIBUTE_NAME_TEXT };
 
-            int[] to = { R.id.tvText};
-
-            sAdapter = new SimpleAdapter(this, data, R.layout.group, from, to);
+            requestCustomAdapter = new RequestCustomAdapter(this, R.layout.group, from, data);
 
             lvSimple = (ListView) findViewById(R.id.lvSimple);
-            lvSimple.setAdapter(sAdapter);
-
-            registerForContextMenu(lvSimple);
-
+            lvSimple.setAdapter(requestCustomAdapter);
         } else
             Log.d(LOG_TAG, "0 rows");
         c.close();
     }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,
-                                    ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add(0, CM_EDIT_ID, 0, R.string.edit);
-        menu.add(1, CM_DELETE_ID, 1, R.string.delete);
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        if (item.getItemId() == CM_EDIT_ID){
-            AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
-            Integer id = (Integer)data.get(acmi.position).get("id");
-
-            Intent intent = new Intent(this, RequestAddActivity.class);
-
-            intent.putExtra("id", id+"");
-
-            startActivity(intent);
-        }
-        if (item.getItemId() == CM_DELETE_ID) {
-            AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-            Integer id = (Integer)data.get(acmi.position).get("id");
-
-            db.delete("requestgroup", "id=?", new String[]{Integer.toString(id)});
-
-            data.remove(acmi.position);
-            sAdapter.notifyDataSetChanged();
-            return true;
-        }
-        return super.onContextItemSelected(item);
-    }
-
 
 }

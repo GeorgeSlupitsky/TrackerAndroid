@@ -34,6 +34,13 @@ public class AddPlaceActivity extends AppCompatActivity implements View.OnClickL
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_place);
+        final Button back = (Button) findViewById(R.id.back_buttonAP);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         Button button =(Button)findViewById(R.id.add_marker);
         dbHelper = new DBHelper(this);
         final SQLiteDatabase db = dbHelper.getWritableDatabase();

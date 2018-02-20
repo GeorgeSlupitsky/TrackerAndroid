@@ -23,6 +23,13 @@ public class EditPlaceActivity extends AppCompatActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_place);
+        final Button back = (Button) findViewById(R.id.back_buttonEP);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         Button save =(Button)findViewById(R.id.add_marker_edit);
         final EditText des = (EditText)findViewById(R.id.marker_description_edit);
         final EditText name =(EditText)findViewById(R.id.get_name_place_edit);

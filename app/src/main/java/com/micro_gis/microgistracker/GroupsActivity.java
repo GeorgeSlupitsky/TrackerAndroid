@@ -25,7 +25,6 @@ public class GroupsActivity extends AppCompatActivity{
 
     final String ATTRIBUTE_NAME_ID = "id";
     final String ATTRIBUTE_NAME_TEXT = "text";
-    final String ATTRIBUTE_NAME_IMAGE = "image";
 
     final String LOG_TAG = "myLogs";
 

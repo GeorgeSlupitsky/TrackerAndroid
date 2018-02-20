@@ -24,9 +24,9 @@
     <string name="app_setting">Налаштування</string>
     <string name="my_place">Маркери</string>
     <string name="exit">Вихід</string>
-    <string name="server_monitoring_message_corect">Будь ласка, заповніть всі поля в "Моніторинг об`єктів" коректно.</string>
+    <string name="server_monitoring_message_corect">Будь ласка, заповніть всі поля в "Налаштування/Групи" коректно.</string>
     <!--setting screen-->
-    <string name="server_setting_title">Атрибути</string>
+    <string name="server_setting_title">Трекер</string>
     <string name="sending_to_server">Надсилання на сервер:</string>
     <string name="sensor_name_settings">Імена сенсорів</string>
     <string name="server_field">Сервер:</string>
@@ -50,11 +50,11 @@
     <string name="you_are_here">Ви тут</string>
     <string name="deletig_marker">Видалити маркер?</string>
     <string name="marker">маркер</string>
-    <string name="enter_name_of_place">Введіть імя маркера:</string>
+    <string name="enter_name_of_place">Ім`я маркера:</string>
     <string name="save_marker">Збереження маркера</string>
     <string name="edit_marker">Редагування маркера</string>
-    <string name="description">Опис:</string>
-    <string name="chose_marker_ic">Виберіть іконку для маркера:</string>
+    <string name="description">Опис маркера:</string>
+    <string name="chose_marker_ic">Іконка маркера:</string>
 
     <string name="track_color">Колір треку:</string>
     <string name="track_width">Ширина треку(px):</string>
@@ -66,12 +66,23 @@
     <string name="spisok_pust">Список пустий</string>
     <string name="rlace_turn_oo_gps">Будь ласка, включіть GPS!</string>
     <string name="please_add_server_settings">Будь ласка, добавте налаштування сервера!</string>
-    <string name="please_add_server_monitoring_settings">Будь ласка, добавте налаштування моніторингу об`єктів!</string>
+    <string name="please_add_server_monitoring_settings">Будь ласка, добавте налаштування груп!</string>
     <string name="edit">Редагувати</string>
     <string name="choose_group">Оберіть группу об`єктів</string>
     <string name="confirm">Прийняти</string>
     <string name="off">Вимкнути</string>
     <string name="enable_gps">Для коректної роботи, будь ласка, увімкніть GPS</string>
     <string name="no_groups">Не додано жодної групи в "Моніторінгу об`єктів"</string>
+    <string name="delete_group">Видалити групу?</string>
+    <string name="group">групу</string>
+    <string name="descriptionObj">Опис объекта</string>
+    <string name="brand">Марка объекта</string>
+    <string name="company">Компанія</string>
+    <string name="lastData">Останні дані</string>
+    <string name="speed">Швидкість</string>
+    <string name="not_connected">Для того щоб переглянути лист об`єктів, будь ласка, підключіться до сервера</string>
+    <string name="empty_object_list">Лист об`єктів пустий</string>
+    <string name="information">Інформація</string>
+    <string name="objectGroups">Групи об`єктів</string>
 
 </resources>

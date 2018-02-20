@@ -28,9 +28,9 @@
     <!--app strings -->
 
     <!--setting screen-->
-    <string name="server_monitoring_message_corect">Пожалуйста, заполните все поля в " Мониторинг сервера" корректно.</string>
+    <string name="server_monitoring_message_corect">Пожалуйста, заполните все поля в "Настройки/Группы" корректно.</string>
 
-    <string name="server_setting_title">Атрибуты</string>
+    <string name="server_setting_title">Трекер</string>
     <string name="sending_to_server">Отправка на сервер:</string>
     <string name="sensor_name_settings">Имена сенсоров</string>
     <string name="server_field">Сервер:</string>
@@ -41,7 +41,7 @@
     <string name="filters">Фильтры</string>
     <string name="start">Старт</string>
     <string name="stop">Стоп</string>
-    <string name="server_monitoring">Мониторинг объектов</string>
+    <string name="server_monitoring">Группы</string>
     <string name="done">Да</string>
     <string name="ok">Да</string>
     <string name="yes">Да</string>
@@ -50,16 +50,16 @@
     <string name="deleting_track">Удаления трека</string>
     <string name="delete">Удалить</string>
     <string name="track">трек</string>
-    <string name="closing_app_msg">Вы хотите закрыть приложения?</string>
+    <string name="closing_app_msg">Вы хотите закрыть приложение?</string>
     <string name="you_are_here">Вы здесь</string>
     <string name="deletig_marker">Удалить маркер?</string>
     <string name="marker">маркер</string>
-    <string name="enter_name_of_place">Введите имя маркера:</string>
-    <string name="save_marker">Сохранения маркера</string>
+    <string name="enter_name_of_place">Имя маркера:</string>
+    <string name="save_marker">Сохранение маркера</string>
     <string name="edit_marker">Редактирование маркера</string>
 
-    <string name="description">Описания:</string>
-    <string name="chose_marker_ic">Оберите иконку для маркера:</string>
+    <string name="description">Описание маркера:</string>
+    <string name="chose_marker_ic">Иконка маркера:</string>
 
     <string name="track_color">Цвет трека:</string>
     <string name="track_width">Ширина треку(px):</string>
@@ -70,7 +70,7 @@
     <string name="addGroup">Добавить группу</string>
     <string name="rlace_turn_oo_gps">Пожалуйста, включите GPS!</string>
     <string name="please_add_server_settings">Пожалуйста, добавьте настройки сервера!</string>
-    <string name="please_add_server_monitoring_settings">Пожалуйста, добавьте настройки мониторинга объектов!</string>
+    <string name="please_add_server_monitoring_settings">Пожалуйста, добавьте настройки групп!</string>
     <string name="edit">Редактировать</string>
 
     <string name="spisok_pust">Список пуст</string>
@@ -80,5 +80,16 @@
     <string name="off">Выключить</string>
     <string name="enable_gps">Для корректной работы, пожалуйста, включите GPS</string>
     <string name="no_groups">Не добавлено ни одной группы в "Мониторинге объектов"</string>
+    <string name="delete_group">Удалить группу?</string>
+    <string name="group">группу</string>
+    <string name="descriptionObj">Описание объекта</string>
+    <string name="brand">Марка объекта</string>
+    <string name="company">Компания</string>
+    <string name="lastData">Последние данные</string>
+    <string name="speed">Скорость</string>
+    <string name="not_connected">Чтобы просмотреть лист объектов, пожалуйста, подключитесь к серверу</string>
+    <string name="empty_object_list">Лист объектов пустой</string>
+    <string name="information">Информация</string>
+    <string name="objectGroups">Группы объектов</string>
 
 </resources>

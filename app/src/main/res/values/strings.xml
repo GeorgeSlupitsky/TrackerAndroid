@@ -31,11 +31,11 @@
     <string name="exit">EXIT</string>
 
     <!--setting screen-->
-    <string name="server_setting_title">Attributes</string>
+    <string name="server_setting_title">Tracker</string>
     <string name="filters">Filters</string>
     <string name="sending_to_server">Sending to server:</string>
     <string name="sensor_name_settings">Sensors name</string>
-    <string name="server_monitoring">Server monitoring</string>
+    <string name="server_monitoring">Groups</string>
     <string name="server_field">Server:</string>
     <string name="port_field">Port:</string>
     <string name="time_period_field">Time period(sec):</string>
@@ -55,14 +55,14 @@
     <string name="marker">marker</string>
     <string name="closing_app_msg">Do you want close app?</string>
     <string name="you_are_here">You are here</string>
-    <string name="enter_name_of_place">Enter name of marker:</string>
+    <string name="enter_name_of_place">Marker name:</string>
     <string name="save_marker">Save marker</string>
     <string name="edit_marker">Edit marker</string>
-    <string name="description">Description:</string>
-    <string name="chose_marker_ic">Chose marker icon:</string>
+    <string name="description">Marker description:</string>
+    <string name="chose_marker_ic">Marker icon:</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
-    <string name="server_monitoring_message_corect">Please complete all fields in the "Monitoring Objects" correctly.</string>
+    <string name="server_monitoring_message_corect">Please complete all fields in the "Settings/Groups" correctly.</string>
     <string name="track_color">Track color:</string>
     <string name="track_width">Track width (px):</string>
     <string name="min_satelites">Min satellites:</string>
@@ -72,7 +72,7 @@
     <string name="save">Save</string>
     <string name="spisok_pust">List is empty</string>
     <string name="please_add_server_settings">Please, add server settings!</string>
-    <string name="please_add_server_monitoring_settings">Please, add objects monitoring settings!</string>
+    <string name="please_add_server_monitoring_settings">Please, add settings of the group!</string>
     <string name="edit">Edit</string>
 
     <string name="rlace_turn_oo_gps">Please, TURN ON GPS!</string>
@@ -81,4 +81,15 @@
     <string name="off">Off</string>
     <string name="enable_gps">For correct work please enable GPS</string>
     <string name="no_groups">There are no groups, please add it in "Objects monitoring"</string>
+    <string name="delete_group">Deleting group?</string>
+    <string name="group">group</string>
+    <string name="descriptionObj">Description of object</string>
+    <string name="brand">Brand of object</string>
+    <string name="company">Organization</string>
+    <string name="lastData">Last data</string>
+    <string name="speed">Speed</string>
+    <string name="not_connected">To see objects list please connect to server</string>
+    <string name="empty_object_list">List of objects is empty</string>
+    <string name="information">Information</string>
+    <string name="objectGroups">Object Groups</string>
 </resources>
