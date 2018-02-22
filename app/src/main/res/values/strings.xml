@@ -28,6 +28,7 @@
     <string name="my_tracks">MY TRACKS</string>
     <string name="app_setting">SETTINGS</string>
     <string name="my_place">MY POINT</string>
+    <string name="about">ABOUT</string>
     <string name="exit">EXIT</string>
 
     <!--setting screen-->
@@ -92,4 +93,9 @@
     <string name="empty_object_list">List of objects is empty</string>
     <string name="information">Information</string>
     <string name="objectGroups">Object Groups</string>
+    <string name="objectsGroup">Objects</string>
+    <string name="object">Object</string>
+    <string name="markers">Markers</string>
+    <string name="sensorsToolbar">Sensors</string>
+    <string name="tracksToolbar">Tracks</string>
 </resources>

@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,6 +15,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +31,7 @@ public class RequestActivity extends AppCompatActivity {
     RequestCustomAdapter requestCustomAdapter;
     ArrayList<Map<String, Object>> data;
     Button addGroup;
+    View footerView;
 
     DBHelper dbHelper;
 
@@ -38,38 +42,11 @@ public class RequestActivity extends AppCompatActivity {
 
         dbHelper = new DBHelper(this);
 
-        addGroup = (Button) findViewById(R.id.addGroup);
+        LayoutInflater layoutInflater = getLayoutInflater();
 
-//        SQLiteDatabase db = dbHelper.getWritableDatabase();
-//
-//        Cursor c = db.query("requestgroup", null, null, null, null, null, null);
-//
-//        data = new ArrayList<Map<String, Object>>();
-//
-//        if (c.moveToFirst()) {
-//            do {
-//                int idColIndex = c.getColumnIndex("id");
-//                int nameColIndex = c.getColumnIndex("groupname");
-//
-//                Map<String, Object> m = new HashMap<>();
-//
-//                m.put(ATTRIBUTE_NAME_ID, c.getInt(idColIndex));
-//                m.put(ATTRIBUTE_NAME_TEXT, c.getString(nameColIndex));
-//
-//                data.add(m);
-//
-//            } while (c.moveToNext());
-//
-//            String[] from = { ATTRIBUTE_NAME_ID, ATTRIBUTE_NAME_TEXT };
-//
-//            requestCustomAdapter = new RequestCustomAdapter(this, R.layout.group, from, data);
-//
-//            lvSimple = (ListView) findViewById(R.id.lvSimple);
-//            lvSimple.setAdapter(requestCustomAdapter);
-//
-//        } else
-//            Log.d(LOG_TAG, "0 rows");
-//            c.close();
+        footerView = layoutInflater.inflate(R.layout.footer_activity_request, null);
+
+        addGroup = (Button) footerView.findViewById(R.id.footerAddGroup);
 
         addGroup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,12 +55,15 @@ public class RequestActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        lvSimple = (ListView) findViewById(R.id.lvSimple);
+
+        lvSimple.addFooterView(footerView);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
+    protected void onStart() {
+        super.onStart();
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         Cursor c = db.query("requestgroup", null, null, null, null, null, null);
@@ -103,16 +83,38 @@ public class RequestActivity extends AppCompatActivity {
                 data.add(m);
             } while (c.moveToNext());
 
+            Comparator<Map<String, Object>> mapComparator = new Comparator<Map<String, Object>>() {
+                public int compare(Map<String, Object> m1, Map<String, Object> m2) {
+
+                    String m1Name = (String) m1.get(ATTRIBUTE_NAME_TEXT);
+                    String m2Name = (String) m2.get(ATTRIBUTE_NAME_TEXT);
+
+                    String name1 = m1Name.replaceAll("\\d", "");
+                    String name2 = m2Name.replaceAll("\\d", "");
+
+                    if (name1.equalsIgnoreCase(name2)){
+                        return extractInt(m1Name) - (extractInt(m2Name));
+                    }
+
+                    return m1Name.compareTo(m2Name);
+                }
+
+                int extractInt(String s) {
+                    String num = s.replaceAll("\\D", "");
+                    return num.isEmpty() ? 0 : Integer.parseInt(num);
+                }
+            };
+
+            Collections.sort(data, mapComparator);
 
             String[] from = { ATTRIBUTE_NAME_ID, ATTRIBUTE_NAME_TEXT };
 
             requestCustomAdapter = new RequestCustomAdapter(this, R.layout.group, from, data);
 
-            lvSimple = (ListView) findViewById(R.id.lvSimple);
             lvSimple.setAdapter(requestCustomAdapter);
+
         } else
             Log.d(LOG_TAG, "0 rows");
         c.close();
     }
-
 }

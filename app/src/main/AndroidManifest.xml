@@ -46,19 +46,23 @@
         <activity
             android:name=".ControlActivity"
             android:parentActivityName=".MicroGisActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".GroupsActivity"
             android:parentActivityName=".MicroGisActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".ObjectsActivity"
             android:parentActivityName=".MicroGisActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".ObjectDetailInfoActivity"
             android:parentActivityName=".ObjectsActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".SettingSensorsActivity"
             android:screenOrientation="portrait"
@@ -82,13 +86,15 @@
         <activity
             android:name=".TrackListActivity"
             android:parentActivityName=".MicroGisActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".TrackStatisticActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".PlaceListActivity"
             android:parentActivityName=".MicroGisActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait" />
         <activity
             android:name=".TagsSettingActivity"

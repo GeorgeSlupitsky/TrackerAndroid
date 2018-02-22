@@ -24,6 +24,7 @@
     <string name = "my_tracks">Треки</string>
     <string name = "app_setting">Настройки</string>
     <string name = "my_place">Маркеры</string>
+    <string name = "about">О программе</string>
     <string name = "exit">Выход</string>
     <!--app strings -->
 
@@ -91,5 +92,10 @@
     <string name="empty_object_list">Лист объектов пустой</string>
     <string name="information">Информация</string>
     <string name="objectGroups">Группы объектов</string>
+    <string name="objectsGroup">Объекты</string>
+    <string name="object">Объект</string>
+    <string name="markers">Маркеры</string>
+    <string name="sensorsToolbar">Сенсоры</string>
+    <string name="tracksToolbar">Треки</string>
 
 </resources>

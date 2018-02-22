@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final Button back = (Button) findViewById(R.id.back_buttonInfo);
+        final Button back = (Button) findViewById(R.id.back_buttonINFO);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

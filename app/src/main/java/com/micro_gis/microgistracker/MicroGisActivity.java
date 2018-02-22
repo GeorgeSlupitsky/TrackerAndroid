@@ -38,6 +38,7 @@ import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -111,7 +112,7 @@ public class MicroGisActivity extends AppCompatActivity
     static Double currectLat, currectLon;
     static Location mPreviousLocation;
     static WebView myWebView;
-    boolean isStart, isSend, isEnabl =false;
+    boolean isStart, isSend, isEnabl = false;
     boolean isAdd;
     TextView signalGps, speedOnTrack, lenghtTrack;
     int lenght, fullLenght;
@@ -125,7 +126,8 @@ public class MicroGisActivity extends AppCompatActivity
     static HttpAsyncTask httpAsyncTask;
     boolean isRun;
     private int groupId;
-
+    private int objectsCount, groupsCount, markersCount, tracksCount;
+    NavigationView navigationView;
 
 
     public static String POST(JSONObject jsonObject,String url){
@@ -448,13 +450,12 @@ public class MicroGisActivity extends AppCompatActivity
             try {
                 httpAsyncTask = new HttpAsyncTask();
                 httpAsyncTask.execute(url);
+                handler.postDelayed(this, 1000*Long.parseLong(interval));
             }catch (Exception e){
                 Toast toast = Toast.makeText(getApplicationContext(),
                         getString(R.string.server_monitoring_message_corect), Toast.LENGTH_LONG);
                 toast.show();
             }
-
-            handler.postDelayed(this, 1000*Long.parseLong(interval));
 
         }
     };
@@ -660,7 +661,7 @@ public class MicroGisActivity extends AppCompatActivity
                 drawer.openDrawer(GravityCompat.START);
             }
         });
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -1209,6 +1210,33 @@ public class MicroGisActivity extends AppCompatActivity
         distance = Integer.parseInt(sharedpreferences.getString("distanceKey", "0"));
         int id = sharedpreferences.getInt("groupId", 999999999);
 
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        String groupsCountQuery = "SELECT * FROM requestgroup";
+        Cursor cursor = database.rawQuery(groupsCountQuery, null);
+        groupsCount = cursor.getCount();
+        sharedpreferences.edit().putInt("groupsCount", groupsCount).apply();
+
+        String markersCountQuery = "SELECT * FROM markers";
+        cursor = database.rawQuery(markersCountQuery, null);
+        markersCount = cursor.getCount();
+        sharedpreferences.edit().putInt("markersCount", markersCount).apply();
+
+        String tracksCountQuery = "SELECT * FROM trackdata";
+        cursor = database.rawQuery(tracksCountQuery, null);
+        tracksCount = cursor.getCount();
+        sharedpreferences.edit().putInt("tracksCount", tracksCount).apply();
+
+        cursor.close();
+
+        MenuItem menuGroups = navigationView.getMenu().findItem(R.id.groups);
+        menuGroups.setTitle(getString(R.string.groups) + " (" + groupsCount + ")");
+
+        MenuItem menuMarkers = navigationView.getMenu().findItem(R.id.places);
+        menuMarkers.setTitle(getString(R.string.my_place) + " (" + markersCount + ")");
+
+        MenuItem menuTracks = navigationView.getMenu().findItem(R.id.tracks);
+        menuTracks.setTitle(getString(R.string.my_tracks) + " (" + tracksCount + ")");
+
         if (isRun) {
             clearMap();
             getMarkers();
@@ -1264,6 +1292,25 @@ public class MicroGisActivity extends AppCompatActivity
         time = Integer.parseInt(sharedpreferences.getString("periodKey", "1"));
         angle = Integer.parseInt(sharedpreferences.getString("angleKey", "0"));
         distance = Integer.parseInt(sharedpreferences.getString("distanceKey", "0"));
+
+        String objects = sharedpreferences.getString("groupObjects", "empty");
+
+        if (objects.equals("empty") || objects.equals("Not connected")){
+            objectsCount = 0;
+        } else {
+            try {
+                JSONObject obj  = new JSONObject(objects);
+                JSONArray arr = obj.getJSONArray("devices");
+                objectsCount = arr.length();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        MenuItem menuObjects = navigationView.getMenu().findItem(R.id.objects);
+        menuObjects.setTitle(getString(R.string.objects) + " (" + objectsCount + ")");
+
+        sharedpreferences.edit().putInt("objectsCount", objectsCount).apply();
 
         if (firstStart < 5){
             getMarkers();

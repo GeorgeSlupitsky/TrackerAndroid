@@ -29,6 +29,7 @@ public class MarkerCustomAdapter extends ArrayAdapter<Marker> {
     Marker marker;
     SQLiteDatabase db;
     int p;
+
     public MarkerCustomAdapter(Context context, int layoutResourceId,
                               ArrayList<Marker> data) {
         super(context, layoutResourceId, data);

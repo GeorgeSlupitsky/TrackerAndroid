@@ -23,9 +23,11 @@
     <string name="my_tracks">Треки</string>
     <string name="app_setting">Налаштування</string>
     <string name="my_place">Маркери</string>
+    <string name="about">Про програму</string>
     <string name="exit">Вихід</string>
-    <string name="server_monitoring_message_corect">Будь ласка, заповніть всі поля в "Налаштування/Групи" коректно.</string>
+
     <!--setting screen-->
+    <string name="server_monitoring_message_corect">Будь ласка, заповніть всі поля в "Налаштування/Групи" коректно.</string>
     <string name="server_setting_title">Трекер</string>
     <string name="sending_to_server">Надсилання на сервер:</string>
     <string name="sensor_name_settings">Імена сенсорів</string>
@@ -37,7 +39,7 @@
     <string name="filters">Фільтри</string>
     <string name="start">Старт</string>
     <string name="stop">Стоп</string>
-    <string name="server_monitoring">Моніторинг об`єктів</string>
+    <string name="server_monitoring">Групи</string>
     <string name="done">Так</string>
     <string name="ok">Так</string>
     <string name="yes">Так</string>
@@ -84,5 +86,10 @@
     <string name="empty_object_list">Лист об`єктів пустий</string>
     <string name="information">Інформація</string>
     <string name="objectGroups">Групи об`єктів</string>
+    <string name="objectsGroup">Об`єкти</string>
+    <string name="object">Об`єкт</string>
+    <string name="markers">Маркери</string>
+    <string name="sensorsToolbar">Сенсори</string>
+    <string name="tracksToolbar">Треки</string>
 
 </resources>

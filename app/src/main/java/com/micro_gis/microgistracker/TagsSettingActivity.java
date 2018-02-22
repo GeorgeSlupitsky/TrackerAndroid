@@ -22,7 +22,6 @@ public class TagsSettingActivity extends TabActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tags_setting);
-        TextView text =(TextView) findViewById(R.id.toolbar_title);
         final Button back = (Button) findViewById(R.id.back_button);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -30,7 +29,6 @@ public class TagsSettingActivity extends TabActivity {
                 finish();
             }
         });
-        text.setTextColor(Color.WHITE);
         TabHost tabHost = getTabHost();
         TabHost.TabSpec tabSpec;
 

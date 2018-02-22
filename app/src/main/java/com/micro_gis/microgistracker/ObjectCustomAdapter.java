@@ -47,12 +47,14 @@ public class ObjectCustomAdapter extends ArrayAdapter<Map<String, Object>> {
         holder.objectDescription = (TextView) row.findViewById(R.id.objectDescription);
         holder.imageViewObject = (ImageView) row.findViewById(R.id.imageViewObject);
         holder.imageViewStatus = (ImageView) row.findViewById(R.id.imageViewStatus);
+        holder.objectDate = (TextView) row.findViewById(R.id.objectDate);
 
         Integer id = (Integer) data.get(position).get(mFrom[0]);
         String text = (String) data.get(position).get(mFrom[1]);
         String status = (String) data.get(position).get(mFrom[2]);
         String image = (String) data.get(position).get(mFrom[3]);
         String color = (String) data.get(position).get(mFrom[4]);
+        String date = (String) data.get(position).get(mFrom[5]);
 
         String icon = image + "_" + color;
 
@@ -62,8 +64,32 @@ public class ObjectCustomAdapter extends ArrayAdapter<Map<String, Object>> {
         final int resourceId = resources.getIdentifier(icon, "drawable",
                 context.getPackageName());
 
+        String statusIcon = null;
+
+        switch (status){
+            case "61714":
+                statusIcon = "device_moving";
+                break;
+            case "61715":
+                statusIcon = "device_stop";
+                break;
+            case "63601":
+                statusIcon = "device_towing";
+                break;
+            case "62144":
+                statusIcon = "device_parking";
+                break;
+        }
+
+        if (statusIcon != null){
+            final int statusResourceId = resources.getIdentifier(statusIcon, "drawable",
+                    context.getPackageName());
+            holder.imageViewStatus.setImageResource(statusResourceId);
+        }
+
         holder.objectDescription.setText(text);
         holder.imageViewObject.setImageResource(resourceId);
+        holder.objectDate.setText(date);
 
         row.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,5 +108,10 @@ public class ObjectCustomAdapter extends ArrayAdapter<Map<String, Object>> {
         TextView objectDescription;
         ImageView imageViewObject;
         ImageView imageViewStatus;
+        ImageView imageView1;
+        ImageView imageView2;
+        ImageView imageView3;
+        ImageView imageView4;
+        TextView objectDate;
     }
 }
