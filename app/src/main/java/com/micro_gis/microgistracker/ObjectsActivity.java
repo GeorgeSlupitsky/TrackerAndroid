@@ -2,10 +2,12 @@ package com.micro_gis.microgistracker;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -19,6 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -43,6 +46,7 @@ public class ObjectsActivity extends AppCompatActivity {
     TextView noObjects;
     ListView listView;
     int objectsCount;
+    EditText search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +61,7 @@ public class ObjectsActivity extends AppCompatActivity {
             }
         });
 
+        search = (EditText) findViewById(R.id.inputSearch);
         noObjects = (TextView) findViewById(R.id.tvNoObjects);
 
         sharedPreferences = getSharedPreferences("mypref", MODE_PRIVATE);
@@ -140,6 +145,26 @@ public class ObjectsActivity extends AppCompatActivity {
             listView = (ListView) findViewById(R.id.lvObjects);
 
             listView.setAdapter(objectCustomAdapter);
+
+            search.addTextChangedListener(new TextWatcher() {
+
+                @Override
+                public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+
+                }
+
+                @Override
+                public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+                                              int arg3) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable arg0) {
+                    String text = search.getText().toString().toLowerCase(Locale.getDefault());
+                    objectCustomAdapter.filter(text);
+                }
+            });
+
         }
 
     }

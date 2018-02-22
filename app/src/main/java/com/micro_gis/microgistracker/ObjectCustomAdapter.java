@@ -12,7 +12,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.security.Key;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -23,6 +25,7 @@ public class ObjectCustomAdapter extends ArrayAdapter<Map<String, Object>> {
 
     Context context;
     ArrayList<Map<String, Object>> data;
+    ArrayList<Map<String, Object>> filterData = null;
     int layoutResourceId;
     private String[] mFrom;
 
@@ -30,6 +33,8 @@ public class ObjectCustomAdapter extends ArrayAdapter<Map<String, Object>> {
         super(context, resource, data);
         this.context = context;
         this.data = data;
+        this.filterData = new ArrayList<Map<String, Object>>();
+        this.filterData.addAll(data);
         this.layoutResourceId = resource;
         this.mFrom = mFrom;
     }
@@ -102,6 +107,24 @@ public class ObjectCustomAdapter extends ArrayAdapter<Map<String, Object>> {
         });
 
         return row;
+    }
+
+    public void filter(String charText) {
+        charText = charText.toLowerCase(Locale.getDefault());
+        data.clear();
+        if (charText.length() == 0) {
+            data.addAll(filterData);
+        }
+        else
+        {
+            for (Map<String, Object> map : filterData) {
+                String name = (String) map.get(mFrom[1]);
+                if (name.toLowerCase(Locale.getDefault()).contains(charText)) {
+                    data.add(map);
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
 
     static class ObjectHolder{

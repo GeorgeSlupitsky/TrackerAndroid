@@ -7,11 +7,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import java.util.ArrayList;
@@ -32,6 +35,8 @@ public class RequestActivity extends AppCompatActivity {
     ArrayList<Map<String, Object>> data;
     Button addGroup;
     View footerView;
+    boolean addFooter;
+    boolean addListView;
 
     DBHelper dbHelper;
 
@@ -39,6 +44,9 @@ public class RequestActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request);
+
+        addFooter = false;
+        addListView = true;
 
         dbHelper = new DBHelper(this);
 
@@ -109,12 +117,30 @@ public class RequestActivity extends AppCompatActivity {
 
             String[] from = { ATTRIBUTE_NAME_ID, ATTRIBUTE_NAME_TEXT };
 
+            if (addFooter){
+                ViewGroup viewGroup = (ViewGroup) footerView.getParent();
+                int index = viewGroup.indexOfChild(footerView);
+                viewGroup.removeView(footerView);
+                viewGroup.addView(lvSimple, index);
+            }
+            addListView = true;
+            addFooter = false;
+
             requestCustomAdapter = new RequestCustomAdapter(this, R.layout.group, from, data);
 
             lvSimple.setAdapter(requestCustomAdapter);
 
-        } else
-            Log.d(LOG_TAG, "0 rows");
+        } else {
+            if (addListView){
+                ViewGroup viewGroup = (ViewGroup) lvSimple.getParent();
+                int index = viewGroup.indexOfChild(lvSimple);
+                viewGroup.removeView(lvSimple);
+                viewGroup.addView(footerView, index);
+            }
+            addFooter = true;
+            addListView = false;
+        }
+
         c.close();
     }
 }
