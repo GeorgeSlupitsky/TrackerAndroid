@@ -117,28 +117,14 @@ public class RequestActivity extends AppCompatActivity {
 
             String[] from = { ATTRIBUTE_NAME_ID, ATTRIBUTE_NAME_TEXT };
 
-            if (addFooter){
-                ViewGroup viewGroup = (ViewGroup) footerView.getParent();
-                int index = viewGroup.indexOfChild(footerView);
-                viewGroup.removeView(footerView);
-                viewGroup.addView(lvSimple, index);
-            }
-            addListView = true;
-            addFooter = false;
-
             requestCustomAdapter = new RequestCustomAdapter(this, R.layout.group, from, data);
 
             lvSimple.setAdapter(requestCustomAdapter);
 
         } else {
-            if (addListView){
-                ViewGroup viewGroup = (ViewGroup) lvSimple.getParent();
-                int index = viewGroup.indexOfChild(lvSimple);
-                viewGroup.removeView(lvSimple);
-                viewGroup.addView(footerView, index);
-            }
-            addFooter = true;
-            addListView = false;
+            String[] from = { ATTRIBUTE_NAME_ID, ATTRIBUTE_NAME_TEXT };
+            requestCustomAdapter = new RequestCustomAdapter(this, R.layout.group, from, data);
+            lvSimple.setAdapter(requestCustomAdapter);
         }
 
         c.close();

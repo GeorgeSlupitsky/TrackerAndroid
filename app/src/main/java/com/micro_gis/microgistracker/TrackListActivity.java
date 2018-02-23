@@ -66,30 +66,6 @@ public class TrackListActivity extends AppCompatActivity {
                trackArray.add(track);
             }while (cursor.moveToNext());
 
-            Comparator<Track> comparator = new Comparator<Track>() {
-                public int compare(Track m1, Track m2) {
-
-                    String m1Name = m1.getName();
-                    String m2Name = m2.getName();
-
-                    String name1 = m1Name.replaceAll("\\d", "");
-                    String name2 = m2Name.replaceAll("\\d", "");
-
-                    if (name1.equalsIgnoreCase(name2)){
-                        return extractInt(m1Name) - (extractInt(m2Name));
-                    }
-
-                    return m1Name.compareTo(m2Name);
-                }
-
-                int extractInt(String s) {
-                    String num = s.replaceAll("\\D", "");
-                    return num.isEmpty() ? 0 : Integer.parseInt(num);
-                }
-            };
-
-            Collections.sort(trackArray, comparator);
-
         }
 
         Collections.reverse(trackArray);

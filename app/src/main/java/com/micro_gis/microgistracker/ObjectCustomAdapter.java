@@ -50,9 +50,16 @@ public class ObjectCustomAdapter extends ArrayAdapter<Map<String, Object>> {
         }
 
         holder.objectDescription = (TextView) row.findViewById(R.id.objectDescription);
+        holder.driverName = (TextView) row.findViewById(R.id.driverName);
+        holder.trailerName = (TextView) row.findViewById(R.id.trailerName);
         holder.imageViewObject = (ImageView) row.findViewById(R.id.imageViewObject);
         holder.imageViewStatus = (ImageView) row.findViewById(R.id.imageViewStatus);
         holder.objectDate = (TextView) row.findViewById(R.id.objectDate);
+        holder.imageViewDriver = (ImageView) row.findViewById(R.id.imageViewDriver);
+        holder.imageViewTrailer = (ImageView) row.findViewById(R.id.imageViewTrailer);
+        holder.imageViewWiFi = (ImageView) row.findViewById(R.id.imageViewWiFi);
+        holder.imageViewLowFlor = (ImageView) row.findViewById(R.id.imageViewLowFlor);
+        holder.geozone = (TextView) row.findViewById(R.id.geozone);
 
         Integer id = (Integer) data.get(position).get(mFrom[0]);
         String text = (String) data.get(position).get(mFrom[1]);
@@ -60,14 +67,17 @@ public class ObjectCustomAdapter extends ArrayAdapter<Map<String, Object>> {
         String image = (String) data.get(position).get(mFrom[3]);
         String color = (String) data.get(position).get(mFrom[4]);
         String date = (String) data.get(position).get(mFrom[5]);
-
-        String icon = image + "_" + color;
+        String driver = (String) data.get(position).get(mFrom[6]);
+        String trailer = (String) data.get(position).get(mFrom[7]);
+        String wifi = (String) data.get(position).get(mFrom[8]);
+        String lowFlor = (String) data.get(position).get(mFrom[9]);
+        String address = (String) data.get(position).get(mFrom[10]);
 
         final Integer index = id;
 
-        Resources resources = context.getResources();
-        final int resourceId = resources.getIdentifier(icon, "drawable",
-                context.getPackageName());
+        holder.objectDescription.setText(text);
+
+        String icon = image + "_" + color;
 
         String statusIcon = null;
 
@@ -86,15 +96,77 @@ public class ObjectCustomAdapter extends ArrayAdapter<Map<String, Object>> {
                 break;
         }
 
+        Resources resources = context.getResources();
+
         if (statusIcon != null){
             final int statusResourceId = resources.getIdentifier(statusIcon, "drawable",
                     context.getPackageName());
             holder.imageViewStatus.setImageResource(statusResourceId);
         }
 
-        holder.objectDescription.setText(text);
+        final int resourceId = resources.getIdentifier(icon, "drawable",
+                context.getPackageName());
+
         holder.imageViewObject.setImageResource(resourceId);
         holder.objectDate.setText(date);
+
+        String driverIcon;
+
+        if (driver.equals("empty")){
+            driverIcon = "driver_grey";
+            holder.driverName.setText("");
+        } else {
+            driverIcon = "driver_green";
+            holder.driverName.setText(driver);
+        }
+
+        final int driverResourceId = resources.getIdentifier(driverIcon, "drawable",
+                context.getPackageName());
+        holder.imageViewDriver.setImageResource(driverResourceId);
+
+        String trailerIcon;
+
+        if (trailer.equals("empty")){
+            trailerIcon = "trailer_grey";
+            holder.trailerName.setText("");
+        } else {
+            trailerIcon = "trailer_green";
+            holder.trailerName.setText(trailer);
+        }
+
+        final int trailerResourceId = resources.getIdentifier(trailerIcon, "drawable",
+                context.getPackageName());
+        holder.imageViewTrailer.setImageResource(trailerResourceId);
+
+        String wifiIcon;
+
+        if (wifi.equals("false")){
+            wifiIcon = "wifi_grey";
+        } else {
+            wifiIcon = "wifi_green";
+        }
+
+        final int wifiResourceId = resources.getIdentifier(wifiIcon, "drawable",
+                context.getPackageName());
+        holder.imageViewWiFi.setImageResource(wifiResourceId);
+
+        String lowFlorIcon;
+
+        if (lowFlor.equals("false")){
+            lowFlorIcon = "lowflor_grey";
+        } else {
+            lowFlorIcon = "lowflor_green";
+        }
+
+        final int lowFlorResourceId = resources.getIdentifier(lowFlorIcon, "drawable",
+                context.getPackageName());
+        holder.imageViewLowFlor.setImageResource(lowFlorResourceId);
+
+        if (address.equals("---")){
+            holder.geozone.setText("");
+        } else {
+            holder.geozone.setText(address);
+        }
 
         row.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,12 +201,15 @@ public class ObjectCustomAdapter extends ArrayAdapter<Map<String, Object>> {
 
     static class ObjectHolder{
         TextView objectDescription;
+        TextView driverName;
+        TextView trailerName;
         ImageView imageViewObject;
         ImageView imageViewStatus;
-        ImageView imageView1;
-        ImageView imageView2;
-        ImageView imageView3;
-        ImageView imageView4;
+        ImageView imageViewDriver;
+        ImageView imageViewTrailer;
+        ImageView imageViewWiFi;
+        ImageView imageViewLowFlor;
         TextView objectDate;
+        TextView geozone;
     }
 }

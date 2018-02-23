@@ -34,6 +34,7 @@
     <string name="server_setting_title">Трекер</string>
     <string name="sending_to_server">Отправка на сервер:</string>
     <string name="sensor_name_settings">Имена сенсоров</string>
+    <string name="additional_settings">Опции</string>
     <string name="server_field">Сервер:</string>
     <string name="port_field">Порт:</string>
     <string name="time_period_field">Период(cек):</string>
@@ -88,6 +89,10 @@
     <string name="company">Компания</string>
     <string name="lastData">Последние данные</string>
     <string name="speed">Скорость</string>
+    <string name="altitude">Высота</string>
+    <string name="satCount">Количество спутников</string>
+    <string name="fuelLevel">Уровень топлива</string>
+    <string name="fuelExpense">Использование топлива</string>
     <string name="not_connected">Чтобы просмотреть лист объектов, пожалуйста, подключитесь к серверу</string>
     <string name="empty_object_list">Лист объектов пустой</string>
     <string name="information">Информация</string>
@@ -97,5 +102,10 @@
     <string name="markers">Маркеры</string>
     <string name="sensorsToolbar">Сенсоры</string>
     <string name="tracksToolbar">Треки</string>
+    <string name="search">Поиск объектов</string>
+    <string name="labelParams">Использование лейблов</string>
+    <string name="clusterParams">Использование кластеров</string>
+    <string name="geocoderParams">Использование геокодирования</string>
+    <string name="address">Адресс: </string>
 
 </resources>

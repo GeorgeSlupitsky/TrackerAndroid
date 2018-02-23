@@ -52,6 +52,11 @@ public class TagsSettingActivity extends TabActivity {
         tabSpec.setContent(new Intent(this, SettingSensorsActivity.class));
         tabHost.addTab(tabSpec);
 
+        tabSpec = tabHost.newTabSpec("tag5");
+        tabSpec.setIndicator(getString(R.string.additional_settings));
+        tabSpec.setContent(new Intent(this, AdditionalSettingsActivity.class));
+        tabHost.addTab(tabSpec);
+
 
     }
 

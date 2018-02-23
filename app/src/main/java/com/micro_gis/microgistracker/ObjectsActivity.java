@@ -38,6 +38,11 @@ public class ObjectsActivity extends AppCompatActivity {
     final String ATTRIBUTE_NAME_STATUS = "status";
     final String ATTRIBUTE_NAME_COLOR = "color";
     final String ATTRIBUTE_NAME_DATE = "date";
+    final String ATTRIBUTE_NAME_DRIVER = "driver";
+    final String ATTRIBUTE_NAME_TRAILER = "trailer";
+    final String ATTRIBUTE_NAME_WIFI = "wifi";
+    final String ATTRIBUTE_NAME_LOW_FLOR = "lowFlor";
+    final String ATTRIBUTE_NAME_ADDRESS = "address";
 
     ObjectCustomAdapter objectCustomAdapter;
     SharedPreferences sharedPreferences;
@@ -45,6 +50,7 @@ public class ObjectsActivity extends AppCompatActivity {
     String objects;
     TextView noObjects;
     ListView listView;
+    Button clearSearch;
     int objectsCount;
     EditText search;
 
@@ -63,6 +69,7 @@ public class ObjectsActivity extends AppCompatActivity {
 
         search = (EditText) findViewById(R.id.inputSearch);
         noObjects = (TextView) findViewById(R.id.tvNoObjects);
+        clearSearch = (Button) findViewById(R.id.clearSearch);
 
         sharedPreferences = getSharedPreferences("mypref", MODE_PRIVATE);
         objects = sharedPreferences.getString("groupObjects", "empty");
@@ -70,6 +77,13 @@ public class ObjectsActivity extends AppCompatActivity {
 
         TextView title = findViewById(R.id.toolbar_title);
         title.setText(getString(R.string.objectsGroup) + " (" + objectsCount + ")");
+
+        clearSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                search.setText("");
+            }
+        });
 
         if (objects.equals(NOT_CONNECTED)){
             noObjects.setText(getString(R.string.not_connected));
@@ -99,6 +113,33 @@ public class ObjectsActivity extends AppCompatActivity {
                     Date time = new java.util.Date(Long.parseLong(event)*1000);
                     String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
                     Integer id = Integer.parseInt(arr.getJSONObject(i).getString("id"));
+                    String driver;
+
+                    try{
+                        driver = arr.getJSONObject(i).getString("driverName");
+                    } catch (Exception e){
+                        driver = "empty";
+                    }
+
+                    String trailer;
+
+                    try {
+                        trailer = arr.getJSONObject(i).getString("trailer");
+                    } catch (Exception e){
+                        trailer = "empty";
+                    }
+
+                    String wifi = arr.getJSONObject(i).getString("wifi");
+                    String lowFlor = arr.getJSONObject(i).getString("lowFlor");
+
+                    String address;
+
+                    try {
+                        address = arr.getJSONObject(i).getString("address");
+                    } catch (Exception e){
+                        address = "---";
+                    }
+
 
                     m.put(ATTRIBUTE_NAME_ID, id);
                     m.put(ATTRIBUTE_NAME_TEXT, description);
@@ -106,6 +147,11 @@ public class ObjectsActivity extends AppCompatActivity {
                     m.put(ATTRIBUTE_NAME_IMAGE, icon);
                     m.put(ATTRIBUTE_NAME_COLOR, color);
                     m.put(ATTRIBUTE_NAME_DATE, date);
+                    m.put(ATTRIBUTE_NAME_DRIVER, driver);
+                    m.put(ATTRIBUTE_NAME_TRAILER, trailer);
+                    m.put(ATTRIBUTE_NAME_WIFI, wifi);
+                    m.put(ATTRIBUTE_NAME_LOW_FLOR, lowFlor);
+                    m.put(ATTRIBUTE_NAME_ADDRESS, address);
 
                     data.add(m);
                 }
@@ -138,7 +184,8 @@ public class ObjectsActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            String[] from = { ATTRIBUTE_NAME_ID, ATTRIBUTE_NAME_TEXT, ATTRIBUTE_NAME_STATUS, ATTRIBUTE_NAME_IMAGE, ATTRIBUTE_NAME_COLOR, ATTRIBUTE_NAME_DATE};
+            String[] from = { ATTRIBUTE_NAME_ID, ATTRIBUTE_NAME_TEXT, ATTRIBUTE_NAME_STATUS, ATTRIBUTE_NAME_IMAGE, ATTRIBUTE_NAME_COLOR, ATTRIBUTE_NAME_DATE,
+                    ATTRIBUTE_NAME_DRIVER, ATTRIBUTE_NAME_TRAILER, ATTRIBUTE_NAME_WIFI, ATTRIBUTE_NAME_LOW_FLOR, ATTRIBUTE_NAME_ADDRESS};
 
             objectCustomAdapter = new ObjectCustomAdapter(this, R.layout.object, data, from);
 

@@ -44,11 +44,41 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
-            <EditText android:id="@+id/inputSearch"
+            <FrameLayout
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:hint="Search devices"
-                android:inputType="textVisiblePassword"/>
+                android:layout_height="wrap_content" >
+
+                <EditText
+                    android:id="@+id/inputSearch"
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:drawablePadding="8dp"
+                    android:hint="@string/search"
+                    android:inputType="textVisiblePassword"
+                    android:maxLines="1"
+                    android:paddingLeft="30dp"
+                    android:paddingRight="10dp">
+
+                    <requestFocus />
+                </EditText>
+
+                <Button
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="left|center_vertical"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/icon_magnify" />
+
+                <Button
+                    android:id="@+id/clearSearch"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/icon_remove" />
+            </FrameLayout>
 
             <ListView
                 android:id="@+id/lvObjects"

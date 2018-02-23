@@ -128,6 +128,7 @@ public class MicroGisActivity extends AppCompatActivity
     private int groupId;
     private int objectsCount, groupsCount, markersCount, tracksCount;
     NavigationView navigationView;
+    boolean isLabelEnabled, isClusterEnabled, isGeocoderEnabled;
 
 
     public static String POST(JSONObject jsonObject,String url){
@@ -208,6 +209,7 @@ public class MicroGisActivity extends AppCompatActivity
                 grups.put(group);
 
                 acc.put("account", accaunt);
+                acc.put("useGeocoder", isGeocoderEnabled);
                 acc.put("groups",grups);
                 accounts.put(acc);
                 form.put("key", key);
@@ -262,16 +264,34 @@ public class MicroGisActivity extends AppCompatActivity
                     String heading = arr.getJSONObject(i).getString("heading");
                     java.util.Date time = new java.util.Date(Long.parseLong(event)*1000);
                     String timel =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
+
+                    String altitude = arr.getJSONObject(i).getString("altitude");
+                    String satCount = arr.getJSONObject(i).getString("satCount");
+                    String hdop = arr.getJSONObject(i).getString("hdop");
+                    String fuelLevel = arr.getJSONObject(i).getString("fuelLevel");
+                    String fuelExpense = arr.getJSONObject(i).getString("fuelExpense");
+
                     String descriptionStr = getString(R.string.descriptionObj);
                     String brandStr = getString(R.string.brand);
                     String companyStr = getString(R.string.company);
                     String lastDataStr = getString(R.string.lastData);
                     String speedStr = getString(R.string.speed);
+                    String altitudeStr = getString(R.string.altitude);
+                    String satCountStr = getString(R.string.satCount);
+                    String hdopStr = "HDOP";
+                    String fuelLevelStr = getString(R.string.fuelLevel);
+                    String fuelExpenseStr = getString(R.string.fuelExpense);
+
                     String html = descriptionStr + ": " +description+
                             " <br/>" + brandStr + ": " +brand+
                             " <br/>" + companyStr + ": " +organization+
                             " <br/>" + lastDataStr + ": " +timel+
-                            " <br/>" + speedStr + ": "+speed;
+                            " <br/>" + speedStr + ": " +speed+
+                            " <br/>" + altitudeStr + ": " +altitude+
+                            " <br/>" + satCountStr + ": " +satCount+
+                            " <br/>" + hdopStr + ": " +hdop+
+                            " <br/>" + fuelLevelStr + ": " +fuelLevel+
+                            " <br/>" + fuelExpenseStr + ": " +fuelExpense;
 
                     String[] DIRS = {"north","north-east","east","south-east","south","south-west","west","north-west"};
 
@@ -1208,6 +1228,10 @@ public class MicroGisActivity extends AppCompatActivity
         time = Integer.parseInt(sharedpreferences.getString("periodKey", "1"));
         angle = Integer.parseInt(sharedpreferences.getString("angleKey", "0"));
         distance = Integer.parseInt(sharedpreferences.getString("distanceKey", "0"));
+        isLabelEnabled = sharedpreferences.getBoolean("label", true);
+        isClusterEnabled = sharedpreferences.getBoolean("cluster", true);
+        isGeocoderEnabled = sharedpreferences.getBoolean("geocoder", false);
+
         int id = sharedpreferences.getInt("groupId", 999999999);
 
         SQLiteDatabase database = dbHelper.getReadableDatabase();

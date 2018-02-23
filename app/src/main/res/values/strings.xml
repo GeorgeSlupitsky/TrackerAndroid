@@ -37,6 +37,7 @@
     <string name="sending_to_server">Sending to server:</string>
     <string name="sensor_name_settings">Sensors name</string>
     <string name="server_monitoring">Groups</string>
+    <string name="additional_settings">Options</string>
     <string name="server_field">Server:</string>
     <string name="port_field">Port:</string>
     <string name="time_period_field">Time period(sec):</string>
@@ -89,6 +90,10 @@
     <string name="company">Organization</string>
     <string name="lastData">Last data</string>
     <string name="speed">Speed</string>
+    <string name="altitude">Altitude</string>
+    <string name="satCount">Satellite count</string>
+    <string name="fuelLevel">Fuel level</string>
+    <string name="fuelExpense">Fuel expense</string>
     <string name="not_connected">To see objects list please connect to server</string>
     <string name="empty_object_list">List of objects is empty</string>
     <string name="information">Information</string>
@@ -98,4 +103,9 @@
     <string name="markers">Markers</string>
     <string name="sensorsToolbar">Sensors</string>
     <string name="tracksToolbar">Tracks</string>
+    <string name="search">Search devices</string>
+    <string name="labelParams">Enable labels</string>
+    <string name="clusterParams">Enable clusters</string>
+    <string name="geocoderParams">Enable geocoder</string>
+    <string name="address">Address: </string>
 </resources>

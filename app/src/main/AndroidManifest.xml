@@ -54,6 +54,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
+            android:name=".AdditionalSettingsActivity"
+            android:parentActivityName=".MicroGisActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
             android:name=".ObjectsActivity"
             android:parentActivityName=".MicroGisActivity"
             android:screenOrientation="portrait"
