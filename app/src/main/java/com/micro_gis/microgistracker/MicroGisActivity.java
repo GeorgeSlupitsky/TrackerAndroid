@@ -57,6 +57,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.micro_gis.microgistracker.models.Account;
+import com.micro_gis.microgistracker.models.Device;
+import com.micro_gis.microgistracker.models.RequestGroupsMoving;
+import com.micro_gis.microgistracker.models.ResponseGroupsMoving;
+import com.micro_gis.microgistracker.models.ResponseGroupsMovingStatuses;
+import com.micro_gis.microgistracker.retrofit.API;
+import com.micro_gis.microgistracker.retrofit.APIController;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -88,285 +95,287 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MicroGisActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LocationListener {
     HttpSendPost httpPost;
     public static Location mLastLocation;
-    //    private GoogleApiClient mGoogleApiClient;
-//    private LocationRequest mLocationRequest;
+    private static API api;
+
     Double lat, lon;
     String responseJson;
     LocationManager mLocationManager;
-    static String gprmc, gpgga, imeis, lastValidGprms, lastValidGpgga, server, port;
+    static String gprmc, gpgga, imeis, server, port;
     static int time, distance, angle, pointsOnTrack, timerCount;
-    String bestProvider, hronTime, timeStart, timeStop;
+    String hronTime, timeStart, timeStop;
     ArrayList<AVLData> lisAvldata = new ArrayList<>();
     Handler handler = new Handler();
     DBHelper dbHelper;
     Chronometer mChronometer;
     SharedPreferences sharedpreferences;
     static int addddd;
-    static Track track;
     static ArrayList<PressedSensor> sensors;
     static Vibrator vibrator;
     static Double currectLat, currectLon;
     static Location mPreviousLocation;
     static WebView myWebView;
-    boolean isStart, isSend, isEnabl = false;
-    boolean isAdd;
+    boolean isStart, isEnabl = false;
     TextView signalGps, speedOnTrack, lenghtTrack;
     int lenght, fullLenght;
     ArrayList<Points> pointsList = new ArrayList<>();
     ArrayList<Point> chartPoits = new ArrayList<>();
     ArrayList<Point> altitudeChart = new ArrayList<>();
     ArrayList<Double> points = new ArrayList<>();
-    String accaunt, key, interval, url, group, timestamp;
+    String accaunt, key, interval, url, group;
     Button sendToserver;
     long firstStart = 0;
-    static HttpAsyncTask httpAsyncTask;
-    boolean isRun;
+//    static HttpAsyncTask httpAsyncTask;
+    volatile boolean isRun;
     private int groupId;
     private int objectsCount, groupsCount, markersCount, tracksCount;
     NavigationView navigationView;
     boolean isLabelEnabled, isClusterEnabled, isGeocoderEnabled;
 
 
-    public static String POST(JSONObject jsonObject,String url){
-        InputStream inputStream = null;
-        String result = "";
-        try {
-
-            // 1. create HttpClient
-            HttpClient httpclient = new DefaultHttpClient();
-            if (!url.startsWith("http://")){
-                url="http://"+url;
-            }
-            // 2. make POST request to the given URL
-            HttpPost httpPost = new HttpPost(url);
-
-            String json = "";
-
-            // 4. convert JSONObject to JSON to String
-            json = jsonObject.toString();
-
-            // ** Alternative way to convert Person object to JSON string usin Jackson Lib
-            // ObjectMapper mapper = new ObjectMapper();
-            // json = mapper.writeValueAsString(person);
-
-            // 5. set json to StringEntity
-            StringEntity se = new StringEntity(json);
-
-            // 6. set httpPost Entity
-            httpPost.setEntity(se);
-
-            // 7. Set some headers to inform server about the type of the content
-            httpPost.setHeader("Accept", "application/json");
-            httpPost.setHeader("Content-type", "application/json");
-
-            // 8. Execute POST request to the given URL
-            HttpResponse httpResponse = httpclient.execute(httpPost);
-
-            // 9. receive response as inputStream
-            inputStream = httpResponse.getEntity().getContent();
-
-            // 10. convert inputstream to string
-            if(inputStream != null)
-                result = convertInputStreamToString(inputStream);
-            else
-                result = "Did not work!";
-
-        } catch (Exception e) {
-            Log.d(" ", e.getLocalizedMessage());
-        }
-
-        // 11. return result
-        return result;
-    }
-    private static String convertInputStreamToString(InputStream inputStream) throws IOException{
-        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
-        String line = "";
-        String result = "";
-        while((line = bufferedReader.readLine()) != null)
-            result += line;
-
-        inputStream.close();
-        return result;
-
-    }
-    private class HttpAsyncTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... urls) {
-            isRun = true;
-
-            try {
-
-
-                JSONObject form = new JSONObject();
-                JSONArray accounts = new JSONArray();
-
-                JSONObject acc = new JSONObject();
-                JSONArray grups = new JSONArray();
-                grups.put(group);
-
-                acc.put("account", accaunt);
-                acc.put("useGeocoder", isGeocoderEnabled);
-                acc.put("groups",grups);
-                accounts.put(acc);
-                form.put("key", key);
-                form.put("accounts",accounts);
-
-                Log.i("$$$$$$$$$$$$", form.toString());
-
-                return POST(form,urls[0]);
-
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(String result) {
-
-
-            try {
-            if(result==null){
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        getString(R.string.server_monitoring_message_corect), Toast.LENGTH_LONG);
-                toast.show();
-            }
-            JSONObject obj  = new JSONObject(result);
-            sharedpreferences.edit().putString("groupObjects", result).apply();
-                String status = obj.getString("status");
-                if(status.equalsIgnoreCase("WARNING")){
-                    Toast toast = Toast.makeText(getApplicationContext(),
-                            getString(R.string.server_monitoring_message_corect), Toast.LENGTH_LONG);
-                    toast.show();
-                }
-                JSONArray arr = obj.getJSONArray("devices");
-                for (int i = 0; i < arr.length(); i++)
-                {
-                    String icon = null;
-                    try{
-                        icon = arr.getJSONObject(i).getString("icon");
-                    } catch (Exception e){
-                        icon = "car_sedan";
-                    }
-                    String color = arr.getJSONObject(i).getString("color");
-                    String lat = arr.getJSONObject(i).getString("lat");
-                    String lng = arr.getJSONObject(i).getString("lng");
-                    String description = arr.getJSONObject(i).getString("description");
-                    String organization = arr.getJSONObject(i).getString("organization");
-                    String speed = arr.getJSONObject(i).getString("speed");
-                    String brand = arr.getJSONObject(i).getString("brand");
-                    String event = arr.getJSONObject(i).getString("event");
-                    String heading = arr.getJSONObject(i).getString("heading");
-                    java.util.Date time = new java.util.Date(Long.parseLong(event)*1000);
-                    String timel =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
-
-                    String altitude = arr.getJSONObject(i).getString("altitude");
-                    String satCount = arr.getJSONObject(i).getString("satCount");
-                    String hdop = arr.getJSONObject(i).getString("hdop");
-                    String fuelLevel = arr.getJSONObject(i).getString("fuelLevel");
-                    String fuelExpense = arr.getJSONObject(i).getString("fuelExpense");
-
-                    String descriptionStr = getString(R.string.descriptionObj);
-                    String brandStr = getString(R.string.brand);
-                    String companyStr = getString(R.string.company);
-                    String lastDataStr = getString(R.string.lastData);
-                    String speedStr = getString(R.string.speed);
-                    String altitudeStr = getString(R.string.altitude);
-                    String satCountStr = getString(R.string.satCount);
-                    String hdopStr = "HDOP";
-                    String fuelLevelStr = getString(R.string.fuelLevel);
-                    String fuelExpenseStr = getString(R.string.fuelExpense);
-
-                    String html = descriptionStr + ": " +description+
-                            " <br/>" + brandStr + ": " +brand+
-                            " <br/>" + companyStr + ": " +organization+
-                            " <br/>" + lastDataStr + ": " +timel+
-                            " <br/>" + speedStr + ": " +speed+
-                            " <br/>" + altitudeStr + ": " +altitude+
-                            " <br/>" + satCountStr + ": " +satCount+
-                            " <br/>" + hdopStr + ": " +hdop+
-                            " <br/>" + fuelLevelStr + ": " +fuelLevel+
-                            " <br/>" + fuelExpenseStr + ": " +fuelExpense;
-
-                    String[] DIRS = {"north","north-east","east","south-east","south","south-west","west","north-west"};
-
-                    int[] ANCOR_X = {31, 36, 32, 41, 30, 28, 31, 22};
-                    int[] ANCOR_Y = {30, 30, 32, 45, 38, 42, 32, 23};
-
-                            int dirNdx = (int) (Math.floor(Integer.parseInt(heading) / 45) % 8);
-                            String dirIconName = DIRS[dirNdx];
-                            int ancX = ANCOR_X[dirNdx];
-                            int ancY = ANCOR_Y[dirNdx];
-                    if(Double.parseDouble(speed)>0){
-                        myWebView.loadUrl("javascript: "+
-                                "var arrow"+i+";"+
-                                "var myIcon = new L.icon({\n" +
-                                "iconUrl: 'file:///android_asset/images/"+dirIconName+".png',\n" +
-                                "iconSize: [44,44],\n" +
-                                "shadowUrl: null,\n" +
-                                "shadowSize: null,\n" +
-                                "iconAnchor: ["+ancX+", "+ancY+"],\n" +
-                                "popupAnchor: [0, 0]\n" +
-                                "});\n" +
-                                "if(typeof(arrow"+i+")==='undefined')\n" +
-                                " {\n" +
-                                " arrow"+i+" = new L.marker(["+lat+","+lng+"], {icon: myIcon}).addTo(map);\n" +
-                                "}else{\n" +
-                                "arrow"+i+".setIcon(myIcon);"+
-                                "arrow"+i+".setLatLng(["+lat+", "+lng+"]).addTo(map);\n" +
-                                "}\n");
-                    }else{
-                        myWebView.loadUrl("javascript: "+
-                                "var arrow"+i+";"+
-                                "var myIcon = new L.icon({\n" +
-                                "iconUrl: 'file:///android_asset/images/empty.png',\n" +
-                                "iconSize: [44,44],\n" +
-                                "shadowUrl: null,\n" +
-                                "shadowSize: null,\n" +
-                                "iconAnchor: ["+ancX+", "+ancY+"],\n" +
-                                "popupAnchor: [0, 0]\n" +
-                                "});\n"+
-                                "if(typeof(arrow"+i+")==='undefined')\n" +
-                                " {\n" +
-                                " arrow"+i+" = new L.marker(["+lat+","+lng+"], {icon: myIcon}).addTo(map);\n" +
-                                "}else{\n" +
-                                "arrow"+i+".setIcon(myIcon);"+
-                                "arrow"+i+".setLatLng(["+lat+", "+lng+"]).addTo(map);\n" +
-                                "}\n");
-                    }
-
-                    myWebView.loadUrl("javascript: var bus"+i+ ";" +
-                    "var BusIcon = L.Icon.Default.extend({options: {iconUrl: 'file:///android_asset/images/deviceIcons/"+
-                           icon+"_"+color+".png',iconSize:     [32, 32],\n" +
-                            "    shadowSize:   [0, 0]} });" +
-                            "var busIcon = new BusIcon();" +
-                            "if(typeof(bus"+i+")==='undefined')\n" +
-                            " {\n" +
-                            "bus"+i+" = new L.marker([" + lat+","+lng + "], {icon: busIcon}).addTo(map);\n" +
-                            " }\n" +
-                            " else\n" +
-                            " {\n" +
-                            "bus"+i+".setIcon(busIcon);" +
-                            "  bus"+i+".setLatLng([" + lat+","+lng + "]).addTo(map);\n" +
-                            " }\n" +
-                            "  bus"+i+".bindPopup(\""+html+"\");\n"
-                           );
-
-                }
-
-            } catch (JSONException e) {
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        getString(R.string.server_monitoring_message_corect), Toast.LENGTH_LONG);
-                toast.show();
-                e.printStackTrace();
-            }
-        }
-    }
+//    public static String POST(JSONObject jsonObject,String url){
+//        InputStream inputStream = null;
+//        String result = "";
+//        try {
+//
+//            // 1. create HttpClient
+//            HttpClient httpclient = new DefaultHttpClient();
+//            if (!url.startsWith("http://")){
+//                url="http://"+url;
+//            }
+//            // 2. make POST request to the given URL
+//            HttpPost httpPost = new HttpPost(url);
+//
+//            String json = "";
+//
+//            // 4. convert JSONObject to JSON to String
+//            json = jsonObject.toString();
+//
+//            // ** Alternative way to convert Person object to JSON string usin Jackson Lib
+//            // ObjectMapper mapper = new ObjectMapper();
+//            // json = mapper.writeValueAsString(person);
+//
+//            // 5. set json to StringEntity
+//            StringEntity se = new StringEntity(json);
+//
+//            // 6. set httpPost Entity
+//            httpPost.setEntity(se);
+//
+//            // 7. Set some headers to inform server about the type of the content
+//            httpPost.setHeader("Accept", "application/json");
+//            httpPost.setHeader("Content-type", "application/json");
+//
+//            // 8. Execute POST request to the given URL
+//            HttpResponse httpResponse = httpclient.execute(httpPost);
+//
+//            // 9. receive response as inputStream
+//            inputStream = httpResponse.getEntity().getContent();
+//
+//            // 10. convert inputstream to string
+//            if(inputStream != null)
+//                result = convertInputStreamToString(inputStream);
+//            else
+//                result = "Did not work!";
+//
+//        } catch (Exception e) {
+//            Log.d(" ", e.getLocalizedMessage());
+//        }
+//
+//        // 11. return result
+//        return result;
+//    }
+//    private static String convertInputStreamToString(InputStream inputStream) throws IOException{
+//        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
+//        String line = "";
+//        String result = "";
+//        while((line = bufferedReader.readLine()) != null)
+//            result += line;
+//
+//        inputStream.close();
+//        return result;
+//
+//    }
+//    private class HttpAsyncTask extends AsyncTask<String, Void, String> {
+//        @Override
+//        protected String doInBackground(String... urls) {
+//            isRun = true;
+//
+//            try {
+//
+//
+//                JSONObject form = new JSONObject();
+//                JSONArray accounts = new JSONArray();
+//
+//                JSONObject acc = new JSONObject();
+//                JSONArray grups = new JSONArray();
+//                grups.put(group);
+//
+//                acc.put("account", accaunt);
+//                acc.put("useGeocoder", isGeocoderEnabled);
+//                acc.put("groups",grups);
+//                accounts.put(acc);
+//                form.put("key", key);
+//                form.put("accounts",accounts);
+//
+//                Log.i("$$$$$$$$$$$$", form.toString());
+//
+//                return POST(form,urls[0]);
+//
+//
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//            return null;
+//        }
+//        // onPostExecute displays the results of the AsyncTask.
+//        @Override
+//        protected void onPostExecute(String result) {
+//
+//
+//            try {
+//            if(result==null){
+//                Toast toast = Toast.makeText(getApplicationContext(),
+//                        getString(R.string.server_monitoring_message_corect), Toast.LENGTH_LONG);
+//                toast.show();
+//            }
+//            JSONObject obj  = new JSONObject(result);
+//            sharedpreferences.edit().putString("groupObjects", result).apply();
+//                String status = obj.getString("status");
+//                if(status.equalsIgnoreCase("WARNING")){
+//                    Toast toast = Toast.makeText(getApplicationContext(),
+//                            getString(R.string.server_monitoring_message_corect), Toast.LENGTH_LONG);
+//                    toast.show();
+//                }
+//                JSONArray arr = obj.getJSONArray("devices");
+//                for (int i = 0; i < arr.length(); i++)
+//                {
+//                    String icon = null;
+//                    try{
+//                        icon = arr.getJSONObject(i).getString("icon");
+//                    } catch (Exception e){
+//                        icon = "car_sedan";
+//                    }
+//                    String color = arr.getJSONObject(i).getString("color");
+//                    String lat = arr.getJSONObject(i).getString("lat");
+//                    String lng = arr.getJSONObject(i).getString("lng");
+//                    String description = arr.getJSONObject(i).getString("description");
+//                    String organization = arr.getJSONObject(i).getString("organization");
+//                    String speed = arr.getJSONObject(i).getString("speed");
+//                    String brand = arr.getJSONObject(i).getString("brand");
+//                    String event = arr.getJSONObject(i).getString("event");
+//                    String heading = arr.getJSONObject(i).getString("heading");
+//                    java.util.Date time = new java.util.Date(Long.parseLong(event)*1000);
+//                    String timel =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
+//
+//                    String altitude = arr.getJSONObject(i).getString("altitude");
+//                    String satCount = arr.getJSONObject(i).getString("satCount");
+//                    String hdop = arr.getJSONObject(i).getString("hdop");
+//                    String fuelLevel = arr.getJSONObject(i).getString("fuelLevel");
+//                    String fuelExpense = arr.getJSONObject(i).getString("fuelExpense");
+//
+//                    String descriptionStr = getString(R.string.descriptionObj);
+//                    String brandStr = getString(R.string.brand);
+//                    String companyStr = getString(R.string.company);
+//                    String lastDataStr = getString(R.string.lastData);
+//                    String speedStr = getString(R.string.speed);
+//                    String altitudeStr = getString(R.string.altitude);
+//                    String satCountStr = getString(R.string.satCount);
+//                    String hdopStr = "HDOP";
+//                    String fuelLevelStr = getString(R.string.fuelLevel);
+//                    String fuelExpenseStr = getString(R.string.fuelExpense);
+//
+//                    String html = descriptionStr + ": " +description+
+//                            " <br/>" + brandStr + ": " +brand+
+//                            " <br/>" + companyStr + ": " +organization+
+//                            " <br/>" + lastDataStr + ": " +timel+
+//                            " <br/>" + speedStr + ": " +speed+
+//                            " <br/>" + altitudeStr + ": " +altitude+
+//                            " <br/>" + satCountStr + ": " +satCount+
+//                            " <br/>" + hdopStr + ": " +hdop+
+//                            " <br/>" + fuelLevelStr + ": " +fuelLevel+
+//                            " <br/>" + fuelExpenseStr + ": " +fuelExpense;
+//
+//                    String[] DIRS = {"north","north-east","east","south-east","south","south-west","west","north-west"};
+//
+//                    int[] ANCOR_X = {31, 36, 32, 41, 30, 28, 31, 22};
+//                    int[] ANCOR_Y = {30, 30, 32, 45, 38, 42, 32, 23};
+//
+//                            int dirNdx = (int) (Math.floor(Integer.parseInt(heading) / 45) % 8);
+//                            String dirIconName = DIRS[dirNdx];
+//                            int ancX = ANCOR_X[dirNdx];
+//                            int ancY = ANCOR_Y[dirNdx];
+//                    if(Double.parseDouble(speed)>0){
+//                        myWebView.loadUrl("javascript: "+
+//                                "var arrow"+i+";"+
+//                                "var myIcon = new L.icon({\n" +
+//                                "iconUrl: 'file:///android_asset/images/"+dirIconName+".png',\n" +
+//                                "iconSize: [44,44],\n" +
+//                                "shadowUrl: null,\n" +
+//                                "shadowSize: null,\n" +
+//                                "iconAnchor: ["+ancX+", "+ancY+"],\n" +
+//                                "popupAnchor: [0, 0]\n" +
+//                                "});\n" +
+//                                "if(typeof(arrow"+i+")==='undefined')\n" +
+//                                " {\n" +
+//                                " arrow"+i+" = new L.marker(["+lat+","+lng+"], {icon: myIcon}).addTo(map);\n" +
+//                                "}else{\n" +
+//                                "arrow"+i+".setIcon(myIcon);"+
+//                                "arrow"+i+".setLatLng(["+lat+", "+lng+"]).addTo(map);\n" +
+//                                "}\n");
+//                    }else{
+//                        myWebView.loadUrl("javascript: "+
+//                                "var arrow"+i+";"+
+//                                "var myIcon = new L.icon({\n" +
+//                                "iconUrl: 'file:///android_asset/images/empty.png',\n" +
+//                                "iconSize: [44,44],\n" +
+//                                "shadowUrl: null,\n" +
+//                                "shadowSize: null,\n" +
+//                                "iconAnchor: ["+ancX+", "+ancY+"],\n" +
+//                                "popupAnchor: [0, 0]\n" +
+//                                "});\n"+
+//                                "if(typeof(arrow"+i+")==='undefined')\n" +
+//                                " {\n" +
+//                                " arrow"+i+" = new L.marker(["+lat+","+lng+"], {icon: myIcon}).addTo(map);\n" +
+//                                "}else{\n" +
+//                                "arrow"+i+".setIcon(myIcon);"+
+//                                "arrow"+i+".setLatLng(["+lat+", "+lng+"]).addTo(map);\n" +
+//                                "}\n");
+//                    }
+//
+//                    myWebView.loadUrl("javascript: var bus"+i+ ";" +
+//                    "var BusIcon = L.Icon.Default.extend({options: {iconUrl: 'file:///android_asset/images/deviceIcons/"+
+//                           icon+"_"+color+".png',iconSize:     [32, 32],\n" +
+//                            "    shadowSize:   [0, 0]} });" +
+//                            "var busIcon = new BusIcon();" +
+//                            "if(typeof(bus"+i+")==='undefined')\n" +
+//                            " {\n" +
+//                            "bus"+i+" = new L.marker([" + lat+","+lng + "], {icon: busIcon}).addTo(map);\n" +
+//                            " }\n" +
+//                            " else\n" +
+//                            " {\n" +
+//                            "bus"+i+".setIcon(busIcon);" +
+//                            "  bus"+i+".setLatLng([" + lat+","+lng + "]).addTo(map);\n" +
+//                            " }\n" +
+//                            "  bus"+i+".bindPopup(\""+html+"\");\n"
+//                           );
+//
+//                }
+//
+//            } catch (JSONException e) {
+//                Toast toast = Toast.makeText(getApplicationContext(),
+//                        getString(R.string.server_monitoring_message_corect), Toast.LENGTH_LONG);
+//                toast.show();
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
 //    Runnable nav = new Runnable() {
 //        @Override
@@ -467,15 +476,173 @@ public class MicroGisActivity extends AppCompatActivity
 //                "key": "6FD653E1C66232E2C78C983BFA624"
 //            }
 
-            try {
-                httpAsyncTask = new HttpAsyncTask();
-                httpAsyncTask.execute(url);
-                handler.postDelayed(this, 1000*Long.parseLong(interval));
-            }catch (Exception e){
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        getString(R.string.server_monitoring_message_corect), Toast.LENGTH_LONG);
-                toast.show();
-            }
+//                httpAsyncTask = new HttpAsyncTask();
+//                httpAsyncTask.execute(url);
+            api = APIController.getApi(url);
+
+            final RequestGroupsMoving requestGroupsMoving = new RequestGroupsMoving();
+            requestGroupsMoving.setKey(key);
+            Account account = new Account();
+            account.setAccount(accaunt);
+            account.setUseGeocoder(isGeocoderEnabled);
+            List <String> grups = new ArrayList<>();
+            grups.add(group);
+            account.setGroups(grups);
+            List<Account> accounts = new ArrayList<>();
+            accounts.add(account);
+            requestGroupsMoving.setAccounts(accounts);
+
+            isRun = true;
+
+            api.responseGroupsMoving(requestGroupsMoving).enqueue(new Callback<ResponseGroupsMoving>() {
+                @Override
+                public void onResponse(Call<ResponseGroupsMoving> call, Response<ResponseGroupsMoving> response) {
+                    ResponseGroupsMoving responseGroupsMoving = response.body();
+
+                    Gson gson = new Gson();
+                    String json = gson.toJson(responseGroupsMoving);
+                    sharedpreferences.edit().putString("groupObjects", json).apply();
+
+                    assert responseGroupsMoving != null;
+                    if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.WARNING.toString())){
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                getString(R.string.server_monitoring_message_corect), Toast.LENGTH_LONG);
+                        toast.show();
+                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.SUCCESS.toString())){
+                        List <Device> devices = responseGroupsMoving.getDevices();
+
+                        objectsCount = devices.size();
+
+                        int i = 0;
+
+                        for (Device device: devices){
+                            String icon = device.getIcon();
+                            if (icon == null){
+                                icon = "car_sedan";
+                            }
+                            String color = device.getColor();
+                            double lat = device.getLat();
+                            double lng = device.getLng();
+                            String description = device.getDescription();
+                            String organization = device.getOrganization();
+                            double speed = device.getSpeed();
+                            String brand = device.getBrand();
+                            long event = device.getEvent();
+                            int heading = device.getHeading();
+                            java.util.Date time = new java.util.Date(event*1000);
+                            String timel =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
+
+                            int altitude = device.getAltitude();
+                            int satCount = device.getSatCount();
+                            double hdop = device.getHdop();
+                            double fuelLevel = device.getFuelLevel();
+                            double fuelExpense = device.getFuelExpense();
+
+                            String descriptionStr = getString(R.string.descriptionObj);
+                            String brandStr = getString(R.string.brand);
+                            String companyStr = getString(R.string.company);
+                            String lastDataStr = getString(R.string.lastData);
+                            String speedStr = getString(R.string.speed);
+                            String altitudeStr = getString(R.string.altitude);
+                            String satCountStr = getString(R.string.satCount);
+                            String hdopStr = "HDOP";
+                            String fuelLevelStr = getString(R.string.fuelLevel);
+                            String fuelExpenseStr = getString(R.string.fuelExpense);
+
+                            String html = descriptionStr + ": " +description+
+                                    " <br/>" + brandStr + ": " +brand+
+                                    " <br/>" + companyStr + ": " +organization+
+                                    " <br/>" + lastDataStr + ": " +timel+
+                                    " <br/>" + speedStr + ": " +speed+
+                                    " <br/>" + altitudeStr + ": " +altitude+
+                                    " <br/>" + satCountStr + ": " +satCount+
+                                    " <br/>" + hdopStr + ": " +hdop+
+                                    " <br/>" + fuelLevelStr + ": " +fuelLevel+
+                                    " <br/>" + fuelExpenseStr + ": " +fuelExpense;
+
+                            String[] DIRS = {"north","north-east","east","south-east","south","south-west","west","north-west"};
+
+                            int[] ANCOR_X = {31, 36, 32, 41, 30, 28, 31, 22};
+                            int[] ANCOR_Y = {30, 30, 32, 45, 38, 42, 32, 23};
+
+                            int dirNdx = (int) (Math.floor(heading / 45) % 8);
+                            String dirIconName = DIRS[dirNdx];
+                            int ancX = ANCOR_X[dirNdx];
+                            int ancY = ANCOR_Y[dirNdx];
+                            if(speed > 0){
+                                myWebView.loadUrl("javascript: "+
+                                        "var arrow"+i+";"+
+                                        "var myIcon = new L.icon({\n" +
+                                        "iconUrl: 'file:///android_asset/images/"+dirIconName+".png',\n" +
+                                        "iconSize: [44,44],\n" +
+                                        "shadowUrl: null,\n" +
+                                        "shadowSize: null,\n" +
+                                        "iconAnchor: ["+ancX+", "+ancY+"],\n" +
+                                        "popupAnchor: [0, 0]\n" +
+                                        "});\n" +
+                                        "if(typeof(arrow"+i+")==='undefined')\n" +
+                                        " {\n" +
+                                        " arrow"+i+" = new L.marker(["+lat+","+lng+"], {icon: myIcon}).addTo(map);\n" +
+                                        "}else{\n" +
+                                        "arrow"+i+".setIcon(myIcon);"+
+                                        "arrow"+i+".setLatLng(["+lat+", "+lng+"]).addTo(map);\n" +
+                                        "}\n");
+                            }else{
+                                myWebView.loadUrl("javascript: "+
+                                        "var arrow"+i+";"+
+                                        "var myIcon = new L.icon({\n" +
+                                        "iconUrl: 'file:///android_asset/images/empty.png',\n" +
+                                        "iconSize: [44,44],\n" +
+                                        "shadowUrl: null,\n" +
+                                        "shadowSize: null,\n" +
+                                        "iconAnchor: ["+ancX+", "+ancY+"],\n" +
+                                        "popupAnchor: [0, 0]\n" +
+                                        "});\n"+
+                                        "if(typeof(arrow"+i+")==='undefined')\n" +
+                                        " {\n" +
+                                        " arrow"+i+" = new L.marker(["+lat+","+lng+"], {icon: myIcon}).addTo(map);\n" +
+                                        "}else{\n" +
+                                        "arrow"+i+".setIcon(myIcon);"+
+                                        "arrow"+i+".setLatLng(["+lat+", "+lng+"]).addTo(map);\n" +
+                                        "}\n");
+                            }
+
+                            myWebView.loadUrl("javascript: var bus"+i+ ";" +
+                                    "var BusIcon = L.Icon.Default.extend({options: {iconUrl: 'file:///android_asset/images/deviceIcons/"+
+                                    icon+"_"+color+".png',iconSize:     [32, 32],\n" +
+                                    "    shadowSize:   [0, 0]} });" +
+                                    "var busIcon = new BusIcon();" +
+                                    "if(typeof(bus"+i+")==='undefined')\n" +
+                                    " {\n" +
+                                    "bus"+i+" = new L.marker([" + lat+","+lng + "], {icon: busIcon}).addTo(map);\n" +
+                                    " }\n" +
+                                    " else\n" +
+                                    " {\n" +
+                                    "bus"+i+".setIcon(busIcon);" +
+                                    "  bus"+i+".setLatLng([" + lat+","+lng + "]).addTo(map);\n" +
+                                    " }\n" +
+                                    "  bus"+i+".bindPopup(\""+html+"\");\n"
+                            );
+
+                            i++;
+
+                        }
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<ResponseGroupsMoving> call, Throwable t) {
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            getString(R.string.server_monitoring_message_corect), Toast.LENGTH_LONG);
+                    toast.show();
+                    isRun = false;
+                    handler.removeCallbacks(requst);
+                    sendToserver.setBackgroundResource(R.drawable.disconnect);
+                }
+            });
+
+            handler.postDelayed(this, 1000*Long.parseLong(interval));
 
         }
     };
@@ -496,19 +663,13 @@ public class MicroGisActivity extends AppCompatActivity
                 httpPost = new HttpSendPost(server, port, dbHelper);
 
                 try {
-//                    if(isStart) {
-
-                        if (gpgga != null) {
-                            httpPost.send(imeis, gprmc, gpgga + "$Sensor=0:0,1:0,2:0,3:0,4:0,5:0,6:0");
-                        } else {
-                            httpPost.send(imeis, getNMEARMC(mLastLocation), getNMEAGGA(mLastLocation) + "$Sensor=0:0,1:0,2:0,3:0,4:0,5:0,6:0");
-
-//                        }
+                    if (gpgga != null) {
+                        httpPost.send(imeis, gprmc, gpgga + "$Sensor=0:0,1:0,2:0,3:0,4:0,5:0,6:0");
+                    } else {
+                        httpPost.send(imeis, getNMEARMC(mLastLocation), getNMEAGGA(mLastLocation) + "$Sensor=0:0,1:0,2:0,3:0,4:0,5:0,6:0");
                     }
                 }catch (Exception e){
-//                    if(isStart) {
-                        httpPost.send(imeis, getNMEARMC(mLastLocation), getNMEAGGA(mLastLocation) + "$Sensor=0:0,1:0,2:0,3:0,4:0,5:0,6:0");
-//                    }
+                    httpPost.send(imeis, getNMEARMC(mLastLocation), getNMEAGGA(mLastLocation) + "$Sensor=0:0,1:0,2:0,3:0,4:0,5:0,6:0");
                 }
             }
             handler.postDelayed(this, time * 1000);
@@ -652,7 +813,6 @@ public class MicroGisActivity extends AppCompatActivity
 
         }
         addddd = 0;
-//        buildGoogleApiClient();
         sensors = new ArrayList<>();
         sharedpreferences = getSharedPreferences("mypref", Context.MODE_PRIVATE);
         server = sharedpreferences.getString("serverKey", "");
@@ -728,7 +888,7 @@ public class MicroGisActivity extends AppCompatActivity
             }
         });
 
-        sharedpreferences.edit().putString("groupObjects", "Not connected").apply();
+        sharedpreferences.edit().putString("groupObjects", "empty").apply();
 
         sendToserver = (Button) findViewById(R.id.request_server);
 
@@ -816,7 +976,7 @@ public class MicroGisActivity extends AppCompatActivity
                 } else {
                     isRun = false;
                     handler.removeCallbacks(requst);
-                    sharedpreferences.edit().putString("groupObjects", "Not connected").apply();
+                    sharedpreferences.edit().putString("groupObjects", "empty").apply();
                     sendToserver.setBackgroundResource(R.drawable.disconnect);
                     clearMap();
                     getMarkers();
@@ -1319,7 +1479,7 @@ public class MicroGisActivity extends AppCompatActivity
 
         String objects = sharedpreferences.getString("groupObjects", "empty");
 
-        if (objects.equals("empty") || objects.equals("Not connected")){
+        if (objects.equals("empty")){
             objectsCount = 0;
         } else {
             try {

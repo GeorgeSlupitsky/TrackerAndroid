@@ -11,6 +11,10 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.micro_gis.microgistracker.models.Device;
+import com.micro_gis.microgistracker.models.ResponseGroupsMoving;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,6 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -29,8 +34,6 @@ import java.util.Map;
  */
 
 public class ObjectsActivity extends AppCompatActivity {
-
-    private static final String NOT_CONNECTED = "Not connected";
 
     final String ATTRIBUTE_NAME_ID = "id";
     final String ATTRIBUTE_NAME_TEXT = "text";
@@ -67,6 +70,8 @@ public class ObjectsActivity extends AppCompatActivity {
             }
         });
 
+        Gson gson = new Gson();
+
         search = (EditText) findViewById(R.id.inputSearch);
         noObjects = (TextView) findViewById(R.id.tvNoObjects);
         clearSearch = (Button) findViewById(R.id.clearSearch);
@@ -85,104 +90,90 @@ public class ObjectsActivity extends AppCompatActivity {
             }
         });
 
-        if (objects.equals(NOT_CONNECTED)){
-            noObjects.setText(getString(R.string.not_connected));
-        } else if(objects.equals("empty")){
+        if(objects.equals("empty")){
             noObjects.setText(getString(R.string.empty_object_list));
         } else {
-            try {
-                data = new ArrayList<>();
+            data = new ArrayList<>();
 
-                JSONObject obj  = new JSONObject(objects);
-                JSONArray arr = obj.getJSONArray("devices");
+            ResponseGroupsMoving responseGroupsMoving = gson.fromJson(objects, ResponseGroupsMoving.class);
 
-                for (int i = 0; i < arr.length(); i++) {
-                    String icon = null;
+            assert responseGroupsMoving != null;
+            List<Device> devices = responseGroupsMoving.getDevices();
 
-                    Map<String, Object> m = new HashMap<>();
+            for (Device device: devices) {
+                Map<String, Object> m = new HashMap<>();
 
-                    try {
-                        icon = arr.getJSONObject(i).getString("icon");
-                    } catch (Exception e) {
-                        icon = "car_sedan";
-                    }
-                    String description = arr.getJSONObject(i).getString("description");
-                    String color = arr.getJSONObject(i).getString("color");
-                    String status = arr.getJSONObject(i).getString("statusCode");
-                    String event = arr.getJSONObject(i).getString("event");
-                    Date time = new java.util.Date(Long.parseLong(event)*1000);
-                    String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
-                    Integer id = Integer.parseInt(arr.getJSONObject(i).getString("id"));
-                    String driver;
-
-                    try{
-                        driver = arr.getJSONObject(i).getString("driverName");
-                    } catch (Exception e){
-                        driver = "empty";
-                    }
-
-                    String trailer;
-
-                    try {
-                        trailer = arr.getJSONObject(i).getString("trailer");
-                    } catch (Exception e){
-                        trailer = "empty";
-                    }
-
-                    String wifi = arr.getJSONObject(i).getString("wifi");
-                    String lowFlor = arr.getJSONObject(i).getString("lowFlor");
-
-                    String address;
-
-                    try {
-                        address = arr.getJSONObject(i).getString("address");
-                    } catch (Exception e){
-                        address = "---";
-                    }
-
-
-                    m.put(ATTRIBUTE_NAME_ID, id);
-                    m.put(ATTRIBUTE_NAME_TEXT, description);
-                    m.put(ATTRIBUTE_NAME_STATUS, status);
-                    m.put(ATTRIBUTE_NAME_IMAGE, icon);
-                    m.put(ATTRIBUTE_NAME_COLOR, color);
-                    m.put(ATTRIBUTE_NAME_DATE, date);
-                    m.put(ATTRIBUTE_NAME_DRIVER, driver);
-                    m.put(ATTRIBUTE_NAME_TRAILER, trailer);
-                    m.put(ATTRIBUTE_NAME_WIFI, wifi);
-                    m.put(ATTRIBUTE_NAME_LOW_FLOR, lowFlor);
-                    m.put(ATTRIBUTE_NAME_ADDRESS, address);
-
-                    data.add(m);
+                String icon = device.getIcon();
+                if (icon == null){
+                    icon = "car_sedan";
                 }
 
-                Comparator<Map<String, Object>> mapComparator = new Comparator<Map<String, Object>>() {
-                    public int compare(Map<String, Object> m1, Map<String, Object> m2) {
+                String description = device.getDescription();
+                String color = device.getColor();
+                int status = device.getStatusCode();
+                long event = device.getEvent();
+                Date time = new java.util.Date(event*1000);
+                String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
+                int id = device.getId();
 
-                        String m1Name = (String) m1.get(ATTRIBUTE_NAME_TEXT);
-                        String m2Name = (String) m2.get(ATTRIBUTE_NAME_TEXT);
+                String driver = device.getDriverName();
+                if (driver == null){
+                    driver = "empty";
+                }
 
-                        String name1 = m1Name.replaceAll("\\d", "");
-                        String name2 = m2Name.replaceAll("\\d", "");
+                String trailer = device.getTrailer();
+                if (trailer == null){
+                    trailer = "empty";
+                }
 
-                        if (name1.equalsIgnoreCase(name2)){
-                            return extractInt(m1Name) - (extractInt(m2Name));
-                        }
+                boolean wifi = device.isWifi();
+                boolean lowFlor = device.isLowFlor();
 
-                        return m1Name.compareTo(m2Name);
-                    }
+                String address = device.getAddress();
+                if (address == null){
+                    address = "---";
+                }
 
-                    int extractInt(String s) {
-                        String num = s.replaceAll("\\D", "");
-                        return num.isEmpty() ? 0 : Integer.parseInt(num);
-                    }
-                };
 
-                Collections.sort(data, mapComparator);
+                m.put(ATTRIBUTE_NAME_ID, id);
+                m.put(ATTRIBUTE_NAME_TEXT, description);
+                m.put(ATTRIBUTE_NAME_STATUS, status);
+                m.put(ATTRIBUTE_NAME_IMAGE, icon);
+                m.put(ATTRIBUTE_NAME_COLOR, color);
+                m.put(ATTRIBUTE_NAME_DATE, date);
+                m.put(ATTRIBUTE_NAME_DRIVER, driver);
+                m.put(ATTRIBUTE_NAME_TRAILER, trailer);
+                m.put(ATTRIBUTE_NAME_WIFI, wifi);
+                m.put(ATTRIBUTE_NAME_LOW_FLOR, lowFlor);
+                m.put(ATTRIBUTE_NAME_ADDRESS, address);
 
-            } catch (JSONException e) {
-                e.printStackTrace();
+                data.add(m);
             }
+
+            Comparator<Map<String, Object>> mapComparator = new Comparator<Map<String, Object>>() {
+                public int compare(Map<String, Object> m1, Map<String, Object> m2) {
+
+                    String m1Name = (String) m1.get(ATTRIBUTE_NAME_TEXT);
+                    String m2Name = (String) m2.get(ATTRIBUTE_NAME_TEXT);
+
+                    String name1 = m1Name.replaceAll("\\d", "");
+                    String name2 = m2Name.replaceAll("\\d", "");
+
+                    if (name1.equalsIgnoreCase(name2)){
+                        return extractInt(m1Name) - (extractInt(m2Name));
+                    }
+
+                    return m1Name.compareTo(m2Name);
+                }
+
+                int extractInt(String s) {
+                    String num = s.replaceAll("\\D", "");
+                    return num.isEmpty() ? 0 : Integer.parseInt(num);
+                }
+            };
+
+            Collections.sort(data, mapComparator);
+
 
             String[] from = { ATTRIBUTE_NAME_ID, ATTRIBUTE_NAME_TEXT, ATTRIBUTE_NAME_STATUS, ATTRIBUTE_NAME_IMAGE, ATTRIBUTE_NAME_COLOR, ATTRIBUTE_NAME_DATE,
                     ATTRIBUTE_NAME_DRIVER, ATTRIBUTE_NAME_TRAILER, ATTRIBUTE_NAME_WIFI, ATTRIBUTE_NAME_LOW_FLOR, ATTRIBUTE_NAME_ADDRESS};

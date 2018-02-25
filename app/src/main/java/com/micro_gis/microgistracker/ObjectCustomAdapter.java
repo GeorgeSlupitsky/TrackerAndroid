@@ -63,14 +63,14 @@ public class ObjectCustomAdapter extends ArrayAdapter<Map<String, Object>> {
 
         Integer id = (Integer) data.get(position).get(mFrom[0]);
         String text = (String) data.get(position).get(mFrom[1]);
-        String status = (String) data.get(position).get(mFrom[2]);
+        Integer status = (Integer) data.get(position).get(mFrom[2]);
         String image = (String) data.get(position).get(mFrom[3]);
         String color = (String) data.get(position).get(mFrom[4]);
         String date = (String) data.get(position).get(mFrom[5]);
         String driver = (String) data.get(position).get(mFrom[6]);
         String trailer = (String) data.get(position).get(mFrom[7]);
-        String wifi = (String) data.get(position).get(mFrom[8]);
-        String lowFlor = (String) data.get(position).get(mFrom[9]);
+        Boolean wifi = (Boolean) data.get(position).get(mFrom[8]);
+        Boolean lowFlor = (Boolean) data.get(position).get(mFrom[9]);
         String address = (String) data.get(position).get(mFrom[10]);
 
         final Integer index = id;
@@ -82,16 +82,16 @@ public class ObjectCustomAdapter extends ArrayAdapter<Map<String, Object>> {
         String statusIcon = null;
 
         switch (status){
-            case "61714":
+            case 61714:
                 statusIcon = "device_moving";
                 break;
-            case "61715":
+            case 61715:
                 statusIcon = "device_stop";
                 break;
-            case "63601":
+            case 63601:
                 statusIcon = "device_towing";
                 break;
-            case "62144":
+            case 62144:
                 statusIcon = "device_parking";
                 break;
         }
@@ -140,7 +140,7 @@ public class ObjectCustomAdapter extends ArrayAdapter<Map<String, Object>> {
 
         String wifiIcon;
 
-        if (wifi.equals("false")){
+        if (!wifi){
             wifiIcon = "wifi_grey";
         } else {
             wifiIcon = "wifi_green";
@@ -152,7 +152,7 @@ public class ObjectCustomAdapter extends ArrayAdapter<Map<String, Object>> {
 
         String lowFlorIcon;
 
-        if (lowFlor.equals("false")){
+        if (!lowFlor){
             lowFlorIcon = "lowflor_grey";
         } else {
             lowFlorIcon = "lowflor_green";

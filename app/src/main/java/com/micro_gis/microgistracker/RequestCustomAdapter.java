@@ -6,6 +6,7 @@ import android.content.Context;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -30,6 +31,7 @@ public class RequestCustomAdapter extends ArrayAdapter<Map<String, Object>>{
     ArrayList<Map<String, Object>> data;
     int layoutResourceId;
     private String[] mFrom;
+    SharedPreferences sharedPreferences;
     DBHelper dbHelper;
     SQLiteDatabase db;
 
@@ -43,6 +45,7 @@ public class RequestCustomAdapter extends ArrayAdapter<Map<String, Object>>{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        sharedPreferences = context.getSharedPreferences("mypref", Context.MODE_PRIVATE);
         View row = convertView;
         RequestHolder holder = new RequestHolder();
 
@@ -114,6 +117,7 @@ public class RequestCustomAdapter extends ArrayAdapter<Map<String, Object>>{
                             db.close();
                         }
                         data.remove(pos);
+                        sharedPreferences.edit().putInt("groupId", 999999999).apply();
                         notifyDataSetChanged();
                     }
 
