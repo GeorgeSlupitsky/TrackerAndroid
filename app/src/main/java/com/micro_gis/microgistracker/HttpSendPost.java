@@ -39,10 +39,10 @@ public class HttpSendPost {
     private AsyncTask<Void, Void, Void> async_cient;
     private String server, port;
     DBHelper dbHelper;
-    static int packetSend;
-    static int errorPacket;
-    static String timeLastSend ="";
-    HttpSendPost(String server, String port, DBHelper dbHelper){
+    public static int packetSend;
+    public static int errorPacket;
+    public static String timeLastSend ="";
+    public HttpSendPost(String server, String port, DBHelper dbHelper){
         this.server=server;
         this.port=port;
         this.dbHelper =dbHelper;

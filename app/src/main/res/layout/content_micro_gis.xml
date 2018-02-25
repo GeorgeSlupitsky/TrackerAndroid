@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.micro_gis.microgistracker.MicroGisActivity"
+    tools:context="com.micro_gis.microgistracker.activities.MicroGisActivity"
     tools:showIn="@layout/app_bar_micro_gis">
 
     <WebView

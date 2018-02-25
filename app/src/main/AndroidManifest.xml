@@ -34,51 +34,51 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".SettingActivity"
-            android:parentActivityName=".MicroGisActivity"
+            android:name=".activities.SettingActivity"
+            android:parentActivityName=".activities.MicroGisActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ControlActivity"
-            android:parentActivityName=".MicroGisActivity"
+            android:name=".activities.ControlActivity"
+            android:parentActivityName=".activities.MicroGisActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".GroupsActivity"
-            android:parentActivityName=".MicroGisActivity"
+            android:name=".activities.GroupsActivity"
+            android:parentActivityName=".activities.MicroGisActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".AdditionalSettingsActivity"
-            android:parentActivityName=".MicroGisActivity"
+            android:name=".activities.AdditionalSettingsActivity"
+            android:parentActivityName=".activities.MicroGisActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".ObjectsActivity"
-            android:parentActivityName=".MicroGisActivity"
+            android:name=".activities.ObjectsActivity"
+            android:parentActivityName=".activities.MicroGisActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".ObjectDetailInfoActivity"
-            android:parentActivityName=".ObjectsActivity"
+            android:name=".activities.ObjectDetailInfoActivity"
+            android:parentActivityName=".activities.ObjectsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".SettingSensorsActivity"
+            android:name=".activities.SettingSensorsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".RequestAddActivity"
+            android:name=".activities.AddRequestGroupActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".MicroGisActivity"
+            android:name=".activities.MicroGisActivity"
             android:label="@string/title_activity_micro_gis"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
@@ -90,32 +90,29 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TrackListActivity"
-            android:parentActivityName=".MicroGisActivity"
+            android:name=".activities.TracksActivity"
+            android:parentActivityName=".activities.MicroGisActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".TrackStatisticActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".PlaceListActivity"
-            android:parentActivityName=".MicroGisActivity"
+            android:name=".activities.MarkersActivity"
+            android:parentActivityName=".activities.MicroGisActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".TagsSettingActivity"
+            android:name=".activities.TagsSettingActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".AddPlaceActivity"
+            android:name=".activities.AddMarkerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".FiltersActivity" />
+        <activity android:name=".activities.FiltersActivity" />
         <activity
-            android:name=".EditPlaceActivity"
+            android:name=".activities.EditMarkerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".RequestActivity"></activity>
+        <activity android:name=".activities.RequestGroupsActivity"></activity>
     </application>
 
 </manifest>

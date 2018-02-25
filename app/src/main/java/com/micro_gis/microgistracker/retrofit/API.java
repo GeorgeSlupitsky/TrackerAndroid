@@ -1,7 +1,7 @@
 package com.micro_gis.microgistracker.retrofit;
 
-import com.micro_gis.microgistracker.models.RequestGroupsMoving;
-import com.micro_gis.microgistracker.models.ResponseGroupsMoving;
+import com.micro_gis.microgistracker.models.rest.RequestGroupsMoving;
+import com.micro_gis.microgistracker.models.rest.ResponseGroupsMoving;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.micro_gis.microgistracker.FiltersActivity">
+    tools:context="com.micro_gis.microgistracker.activities.FiltersActivity">
 
     <LinearLayout
         android:orientation="vertical"
