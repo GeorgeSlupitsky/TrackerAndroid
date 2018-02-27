@@ -39,7 +39,7 @@
     <string name="port_field">Порт:</string>
     <string name="time_period_field">Период(cек):</string>
     <string name="distance_field">Дистанcия(м):</string>
-    <string name="andle_field">Кут(град):</string>
+    <string name="andle_field">Угол(град):</string>
     <string name="filters">Фильтры</string>
     <string name="start">Старт</string>
     <string name="stop">Стоп</string>
@@ -73,6 +73,14 @@
     <string name="rlace_turn_oo_gps">Пожалуйста, включите GPS!</string>
     <string name="please_add_server_settings">Пожалуйста, добавьте настройки сервера!</string>
     <string name="please_add_server_monitoring_settings">Пожалуйста, добавьте настройки групп!</string>
+    <string name="warning_temporarily_suspended">Аккаунт временно недоступен из-за долга.</string>
+    <string name="warning_key_has_not_access">Данный ключ не имеет доступа к аккаунту.</string>
+    <string name="warning_have_not_group">В аккаунте отсутствуют группы или в группе нет объектов.</string>
+    <string name="warning_does_not_have_acces_to_device">Аккаунт не имеет доступа к объекту.</string>
+    <string name="key_left">Не корректные данные ключа.</string>
+    <string name="key_lifecycle_range_out">Срок действия ключа окончен.</string>
+    <string name="account_id_is_not_valid">Не корректный данные аккаунта.</string>
+    <string name="status_error">Нет данных по объектам.</string>
     <string name="edit">Редактировать</string>
 
     <string name="spisok_pust">Список пуст</string>
@@ -103,9 +111,9 @@
     <string name="sensorsToolbar">Сенсоры</string>
     <string name="tracksToolbar">Треки</string>
     <string name="search">Поиск объектов</string>
-    <string name="labelParams">Использование лейблов</string>
-    <string name="clusterParams">Использование кластеров</string>
-    <string name="geocoderParams">Использование геокодирования</string>
+    <string name="labelParams">Вкл. лейблы</string>
+    <string name="clusterParams">Вкл. кластеризацию</string>
+    <string name="geocoderParams">Вкл. геокодирование</string>
     <string name="address">Адресс: </string>
 
 </resources>

@@ -92,7 +92,6 @@ public class MicroGisActivity extends AppCompatActivity
     private static API api;
 
     Double lat, lon;
-    String responseJson;
     LocationManager mLocationManager;
     static String gprmc, gpgga, imeis, server, port;
     static int time, distance, angle, pointsOnTrack, timerCount;
@@ -118,258 +117,12 @@ public class MicroGisActivity extends AppCompatActivity
     String accaunt, key, interval, url, group;
     Button sendToserver;
     long firstStart = 0;
-//    static HttpAsyncTask httpAsyncTask;
     volatile boolean isRun;
     private int groupId;
     private int objectsCount, groupsCount, markersCount, tracksCount;
     NavigationView navigationView;
     boolean isLabelEnabled, isClusterEnabled, isGeocoderEnabled;
-
-
-//    public static String POST(JSONObject jsonObject,String url){
-//        InputStream inputStream = null;
-//        String result = "";
-//        try {
-//
-//            // 1. create HttpClient
-//            HttpClient httpclient = new DefaultHttpClient();
-//            if (!url.startsWith("http://")){
-//                url="http://"+url;
-//            }
-//            // 2. make POST request to the given URL
-//            HttpPost httpPost = new HttpPost(url);
-//
-//            String json = "";
-//
-//            // 4. convert JSONObject to JSON to String
-//            json = jsonObject.toString();
-//
-//            // ** Alternative way to convert Person custom_adapter_object to JSON string usin Jackson Lib
-//            // ObjectMapper mapper = new ObjectMapper();
-//            // json = mapper.writeValueAsString(person);
-//
-//            // 5. set json to StringEntity
-//            StringEntity se = new StringEntity(json);
-//
-//            // 6. set httpPost Entity
-//            httpPost.setEntity(se);
-//
-//            // 7. Set some headers to inform server about the type of the content
-//            httpPost.setHeader("Accept", "application/json");
-//            httpPost.setHeader("Content-type", "application/json");
-//
-//            // 8. Execute POST request to the given URL
-//            HttpResponse httpResponse = httpclient.execute(httpPost);
-//
-//            // 9. receive response as inputStream
-//            inputStream = httpResponse.getEntity().getContent();
-//
-//            // 10. convert inputstream to string
-//            if(inputStream != null)
-//                result = convertInputStreamToString(inputStream);
-//            else
-//                result = "Did not work!";
-//
-//        } catch (Exception e) {
-//            Log.d(" ", e.getLocalizedMessage());
-//        }
-//
-//        // 11. return result
-//        return result;
-//    }
-//    private static String convertInputStreamToString(InputStream inputStream) throws IOException{
-//        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
-//        String line = "";
-//        String result = "";
-//        while((line = bufferedReader.readLine()) != null)
-//            result += line;
-//
-//        inputStream.close();
-//        return result;
-//
-//    }
-//    private class HttpAsyncTask extends AsyncTask<String, Void, String> {
-//        @Override
-//        protected String doInBackground(String... urls) {
-//            isRun = true;
-//
-//            try {
-//
-//
-//                JSONObject form = new JSONObject();
-//                JSONArray accounts = new JSONArray();
-//
-//                JSONObject acc = new JSONObject();
-//                JSONArray grups = new JSONArray();
-//                grups.put(custom_adapter_request_group);
-//
-//                acc.put("account", accaunt);
-//                acc.put("useGeocoder", isGeocoderEnabled);
-//                acc.put("groups",grups);
-//                accounts.put(acc);
-//                form.put("key", key);
-//                form.put("accounts",accounts);
-//
-//                Log.i("$$$$$$$$$$$$", form.toString());
-//
-//                return POST(form,urls[0]);
-//
-//
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//            return null;
-//        }
-//        // onPostExecute displays the results of the AsyncTask.
-//        @Override
-//        protected void onPostExecute(String result) {
-//
-//
-//            try {
-//            if(result==null){
-//                Toast toast = Toast.makeText(getApplicationContext(),
-//                        getString(R.string.server_monitoring_message_corect), Toast.LENGTH_LONG);
-//                toast.show();
-//            }
-//            JSONObject obj  = new JSONObject(result);
-//            sharedpreferences.edit().putString("groupObjects", result).apply();
-//                String status = obj.getString("status");
-//                if(status.equalsIgnoreCase("WARNING")){
-//                    Toast toast = Toast.makeText(getApplicationContext(),
-//                            getString(R.string.server_monitoring_message_corect), Toast.LENGTH_LONG);
-//                    toast.show();
-//                }
-//                JSONArray arr = obj.getJSONArray("devices");
-//                for (int i = 0; i < arr.length(); i++)
-//                {
-//                    String icon = null;
-//                    try{
-//                        icon = arr.getJSONObject(i).getString("icon");
-//                    } catch (Exception e){
-//                        icon = "car_sedan";
-//                    }
-//                    String color = arr.getJSONObject(i).getString("color");
-//                    String lat = arr.getJSONObject(i).getString("lat");
-//                    String lng = arr.getJSONObject(i).getString("lng");
-//                    String description = arr.getJSONObject(i).getString("description");
-//                    String organization = arr.getJSONObject(i).getString("organization");
-//                    String speed = arr.getJSONObject(i).getString("speed");
-//                    String brand = arr.getJSONObject(i).getString("brand");
-//                    String event = arr.getJSONObject(i).getString("event");
-//                    String heading = arr.getJSONObject(i).getString("heading");
-//                    java.util.Date time = new java.util.Date(Long.parseLong(event)*1000);
-//                    String timel =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
-//
-//                    String altitude = arr.getJSONObject(i).getString("altitude");
-//                    String satCount = arr.getJSONObject(i).getString("satCount");
-//                    String hdop = arr.getJSONObject(i).getString("hdop");
-//                    String fuelLevel = arr.getJSONObject(i).getString("fuelLevel");
-//                    String fuelExpense = arr.getJSONObject(i).getString("fuelExpense");
-//
-//                    String descriptionStr = getString(R.string.descriptionObj);
-//                    String brandStr = getString(R.string.brand);
-//                    String companyStr = getString(R.string.company);
-//                    String lastDataStr = getString(R.string.lastData);
-//                    String speedStr = getString(R.string.speed);
-//                    String altitudeStr = getString(R.string.altitude);
-//                    String satCountStr = getString(R.string.satCount);
-//                    String hdopStr = "HDOP";
-//                    String fuelLevelStr = getString(R.string.fuelLevel);
-//                    String fuelExpenseStr = getString(R.string.fuelExpense);
-//
-//                    String html = descriptionStr + ": " +description+
-//                            " <br/>" + brandStr + ": " +brand+
-//                            " <br/>" + companyStr + ": " +organization+
-//                            " <br/>" + lastDataStr + ": " +timel+
-//                            " <br/>" + speedStr + ": " +speed+
-//                            " <br/>" + altitudeStr + ": " +altitude+
-//                            " <br/>" + satCountStr + ": " +satCount+
-//                            " <br/>" + hdopStr + ": " +hdop+
-//                            " <br/>" + fuelLevelStr + ": " +fuelLevel+
-//                            " <br/>" + fuelExpenseStr + ": " +fuelExpense;
-//
-//                    String[] DIRS = {"north","north-east","east","south-east","south","south-west","west","north-west"};
-//
-//                    int[] ANCOR_X = {31, 36, 32, 41, 30, 28, 31, 22};
-//                    int[] ANCOR_Y = {30, 30, 32, 45, 38, 42, 32, 23};
-//
-//                            int dirNdx = (int) (Math.floor(Integer.parseInt(heading) / 45) % 8);
-//                            String dirIconName = DIRS[dirNdx];
-//                            int ancX = ANCOR_X[dirNdx];
-//                            int ancY = ANCOR_Y[dirNdx];
-//                    if(Double.parseDouble(speed)>0){
-//                        myWebView.loadUrl("javascript: "+
-//                                "var arrow"+i+";"+
-//                                "var myIcon = new L.icon({\n" +
-//                                "iconUrl: 'file:///android_asset/images/"+dirIconName+".png',\n" +
-//                                "iconSize: [44,44],\n" +
-//                                "shadowUrl: null,\n" +
-//                                "shadowSize: null,\n" +
-//                                "iconAnchor: ["+ancX+", "+ancY+"],\n" +
-//                                "popupAnchor: [0, 0]\n" +
-//                                "});\n" +
-//                                "if(typeof(arrow"+i+")==='undefined')\n" +
-//                                " {\n" +
-//                                " arrow"+i+" = new L.marker(["+lat+","+lng+"], {icon: myIcon}).addTo(map);\n" +
-//                                "}else{\n" +
-//                                "arrow"+i+".setIcon(myIcon);"+
-//                                "arrow"+i+".setLatLng(["+lat+", "+lng+"]).addTo(map);\n" +
-//                                "}\n");
-//                    }else{
-//                        myWebView.loadUrl("javascript: "+
-//                                "var arrow"+i+";"+
-//                                "var myIcon = new L.icon({\n" +
-//                                "iconUrl: 'file:///android_asset/images/empty.png',\n" +
-//                                "iconSize: [44,44],\n" +
-//                                "shadowUrl: null,\n" +
-//                                "shadowSize: null,\n" +
-//                                "iconAnchor: ["+ancX+", "+ancY+"],\n" +
-//                                "popupAnchor: [0, 0]\n" +
-//                                "});\n"+
-//                                "if(typeof(arrow"+i+")==='undefined')\n" +
-//                                " {\n" +
-//                                " arrow"+i+" = new L.marker(["+lat+","+lng+"], {icon: myIcon}).addTo(map);\n" +
-//                                "}else{\n" +
-//                                "arrow"+i+".setIcon(myIcon);"+
-//                                "arrow"+i+".setLatLng(["+lat+", "+lng+"]).addTo(map);\n" +
-//                                "}\n");
-//                    }
-//
-//                    myWebView.loadUrl("javascript: var bus"+i+ ";" +
-//                    "var BusIcon = L.Icon.Default.extend({options: {iconUrl: 'file:///android_asset/images/deviceIcons/"+
-//                           icon+"_"+color+".png',iconSize:     [32, 32],\n" +
-//                            "    shadowSize:   [0, 0]} });" +
-//                            "var busIcon = new BusIcon();" +
-//                            "if(typeof(bus"+i+")==='undefined')\n" +
-//                            " {\n" +
-//                            "bus"+i+" = new L.marker([" + lat+","+lng + "], {icon: busIcon}).addTo(map);\n" +
-//                            " }\n" +
-//                            " else\n" +
-//                            " {\n" +
-//                            "bus"+i+".setIcon(busIcon);" +
-//                            "  bus"+i+".setLatLng([" + lat+","+lng + "]).addTo(map);\n" +
-//                            " }\n" +
-//                            "  bus"+i+".bindPopup(\""+html+"\");\n"
-//                           );
-//
-//                }
-//
-//            } catch (JSONException e) {
-//                Toast toast = Toast.makeText(getApplicationContext(),
-//                        getString(R.string.server_monitoring_message_corect), Toast.LENGTH_LONG);
-//                toast.show();
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-
-//    Runnable nav = new Runnable() {
-//        @Override
-//        public void run() {
-//            navigation(getLastKnownLocation(), (int)getLastKnownLocation().getBearing());
-//            handler.postDelayed(this, 1000L);
-//        }
-//    };
+    List<Device> devices;
 
     Runnable runnable = new Runnable() {
         public void run() {
@@ -462,8 +215,6 @@ public class MicroGisActivity extends AppCompatActivity
 //                "key": "6FD653E1C66232E2C78C983BFA624"
 //            }
 
-//                httpAsyncTask = new HttpAsyncTask();
-//                httpAsyncTask.execute(url);
             api = APIController.getApi(url);
 
             final RequestGroupsMoving requestGroupsMoving = new RequestGroupsMoving();
@@ -490,16 +241,53 @@ public class MicroGisActivity extends AppCompatActivity
                     sharedpreferences.edit().putString("groupObjects", json).apply();
 
                     assert responseGroupsMoving != null;
+
                     if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.WARNING.toString())){
+                        List <String> warnings = responseGroupsMoving.getWarnings();
+                        if (warnings.get(0).contains(ResponseGroupsMovingStatuses.WARNING_TEMPORARILY_SUSPENDED.toString())){
+                            Toast toast = Toast.makeText(getApplicationContext(),
+                                    getString(R.string.warning_temporarily_suspended), Toast.LENGTH_LONG);
+                            toast.show();
+                        } else if(warnings.get(0).contains(ResponseGroupsMovingStatuses.WARNING_HAVE_NOT_GROUP.toString())){
+                            Toast toast = Toast.makeText(getApplicationContext(),
+                                    getString(R.string.warning_have_not_group), Toast.LENGTH_LONG);
+                            toast.show();
+                        } else if(warnings.get(0).contains(ResponseGroupsMovingStatuses.WARNING_KEY_HAS_NOT_ACCESS.toString())) {
+                            Toast toast = Toast.makeText(getApplicationContext(),
+                                    getString(R.string.warning_key_has_not_access), Toast.LENGTH_LONG);
+                            toast.show();
+                        } else if(warnings.get(0).contains(ResponseGroupsMovingStatuses.WARNING_DOES_NOT_HAVE_ACCESS_TO_THE_DEVICE.toString())){
+                            Toast toast = Toast.makeText(getApplicationContext(),
+                                    getString(R.string.warning_does_not_have_acces_to_device), Toast.LENGTH_LONG);
+                            toast.show();
+                        }
+                    } else if(responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.ERROR.toString())){
                         Toast toast = Toast.makeText(getApplicationContext(),
-                                getString(R.string.server_monitoring_message_corect), Toast.LENGTH_LONG);
+                                getString(R.string.status_error), Toast.LENGTH_LONG);
+                        toast.show();
+                    } else if(responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.KEY_LIFECYCLE_RANGE_OUT.toString())){
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                getString(R.string.key_lifecycle_range_out), Toast.LENGTH_LONG);
+                        toast.show();
+                    } else if(responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.KEY_LEFT.toString())){
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                getString(R.string.key_left), Toast.LENGTH_LONG);
+                        toast.show();
+                    } else if(responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.ACCOUNT_ID_IS_NOT_VALID.toString())){
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                getString(R.string.account_id_is_not_valid), Toast.LENGTH_LONG);
                         toast.show();
                     } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.SUCCESS.toString())){
-                        List <Device> devices = responseGroupsMoving.getDevices();
+                        devices = responseGroupsMoving.getDevices();
 
                         objectsCount = devices.size();
 
                         int i = 0;
+
+                        if (isClusterEnabled){
+                            myWebView.loadUrl("javascript: "+
+                                    "var markers = L.markerClusterGroup();");
+                        }
 
                         for (Device device: devices){
                             String icon = device.getIcon();
@@ -546,72 +334,105 @@ public class MicroGisActivity extends AppCompatActivity
                                     " <br/>" + fuelLevelStr + ": " +fuelLevel+
                                     " <br/>" + fuelExpenseStr + ": " +fuelExpense;
 
-                            String[] DIRS = {"north","north-east","east","south-east","south","south-west","west","north-west"};
+//                            String[] DIRS = {"north","north-east","east","south-east","south","south-west","west","north-west"};
+//
+//                            int[] ANCOR_X = {31, 36, 32, 41, 30, 28, 31, 22};
+//                            int[] ANCOR_Y = {30, 30, 32, 45, 38, 42, 32, 23};
+//
+//                            int dirNdx = (int) (Math.floor(heading / 45) % 8);
+//                            String dirIconName = DIRS[dirNdx];
+//                            int ancX = ANCOR_X[dirNdx];
+//                            int ancY = ANCOR_Y[dirNdx];
 
-                            int[] ANCOR_X = {31, 36, 32, 41, 30, 28, 31, 22};
-                            int[] ANCOR_Y = {30, 30, 32, 45, 38, 42, 32, 23};
+                            if (isClusterEnabled){
 
-                            int dirNdx = (int) (Math.floor(heading / 45) % 8);
-                            String dirIconName = DIRS[dirNdx];
-                            int ancX = ANCOR_X[dirNdx];
-                            int ancY = ANCOR_Y[dirNdx];
-                            if(speed > 0){
-                                myWebView.loadUrl("javascript: "+
-                                        "var arrow"+i+";"+
-                                        "var myIcon = new L.icon({\n" +
-                                        "iconUrl: 'file:///android_asset/images/"+dirIconName+".png',\n" +
-                                        "iconSize: [44,44],\n" +
-                                        "shadowUrl: null,\n" +
-                                        "shadowSize: null,\n" +
-                                        "iconAnchor: ["+ancX+", "+ancY+"],\n" +
-                                        "popupAnchor: [0, 0]\n" +
-                                        "});\n" +
-                                        "if(typeof(arrow"+i+")==='undefined')\n" +
-                                        " {\n" +
-                                        " arrow"+i+" = new L.marker(["+lat+","+lng+"], {icon: myIcon}).addTo(map);\n" +
-                                        "}else{\n" +
-                                        "arrow"+i+".setIcon(myIcon);"+
-                                        "arrow"+i+".setLatLng(["+lat+", "+lng+"]).addTo(map);\n" +
-                                        "}\n");
-                            }else{
-                                myWebView.loadUrl("javascript: "+
-                                        "var arrow"+i+";"+
-                                        "var myIcon = new L.icon({\n" +
-                                        "iconUrl: 'file:///android_asset/images/empty.png',\n" +
-                                        "iconSize: [44,44],\n" +
-                                        "shadowUrl: null,\n" +
-                                        "shadowSize: null,\n" +
-                                        "iconAnchor: ["+ancX+", "+ancY+"],\n" +
-                                        "popupAnchor: [0, 0]\n" +
-                                        "});\n"+
-                                        "if(typeof(arrow"+i+")==='undefined')\n" +
-                                        " {\n" +
-                                        " arrow"+i+" = new L.marker(["+lat+","+lng+"], {icon: myIcon}).addTo(map);\n" +
-                                        "}else{\n" +
-                                        "arrow"+i+".setIcon(myIcon);"+
-                                        "arrow"+i+".setLatLng(["+lat+", "+lng+"]).addTo(map);\n" +
-                                        "}\n");
+                            } else {
+//                                if(speed > 0){
+//                                    myWebView.loadUrl("javascript: "+
+//                                            "var arrow"+i+";"+
+//                                            "var myIcon = new L.icon({\n" +
+//                                            "iconUrl: 'file:///android_asset/images/"+dirIconName+".png',\n" +
+//                                            "iconSize: [44,44],\n" +
+//                                            "shadowUrl: null,\n" +
+//                                            "shadowSize: null,\n" +
+//                                            "iconAnchor: ["+ancX+", "+ancY+"],\n" +
+//                                            "popupAnchor: [0, 0]\n" +
+//                                            "});\n" +
+//                                            "if(typeof(arrow"+i+")==='undefined')\n" +
+//                                            " {\n" +
+//                                            " arrow"+i+" = new L.marker(["+lat+","+lng+"], {icon: myIcon}).addTo(map);\n" +
+//                                            "}else{\n" +
+//                                            "arrow"+i+".setIcon(myIcon);"+
+//                                            "arrow"+i+".setLatLng(["+lat+", "+lng+"]).addTo(map);\n" +
+//                                            "}\n");
+//                                }else{
+//                                    myWebView.loadUrl("javascript: "+
+//                                            "var arrow"+i+";"+
+//                                            "var myIcon = new L.icon({\n" +
+//                                            "iconUrl: 'file:///android_asset/images/empty.png',\n" +
+//                                            "iconSize: [44,44],\n" +
+//                                            "shadowUrl: null,\n" +
+//                                            "shadowSize: null,\n" +
+//                                            "iconAnchor: ["+ancX+", "+ancY+"],\n" +
+//                                            "popupAnchor: [0, 0]\n" +
+//                                            "});\n"+
+//                                            "if(typeof(arrow"+i+")==='undefined')\n" +
+//                                            " {\n" +
+//                                            " arrow"+i+" = new L.marker(["+lat+","+lng+"], {icon: myIcon}).addTo(map);\n" +
+//                                            "}else{\n" +
+//                                            "arrow"+i+".setIcon(myIcon);"+
+//                                            "arrow"+i+".setLatLng(["+lat+", "+lng+"]).addTo(map);\n" +
+//                                            "}\n");
+//                                }
+
+                                if (isLabelEnabled){
+                                    myWebView.loadUrl("javascript: var bus"+i+ ";" +
+                                            "var BusIcon = L.Icon.Default.extend({options: {iconUrl: 'file:///android_asset/images/deviceIcons/"+
+                                            icon+"_"+color+".png',iconSize:     [32, 32],\n" +
+                                            "    shadowSize:   [0, 0]} });" +
+                                            "var busIcon = new BusIcon();" +
+                                            "if(typeof(bus"+i+")==='undefined')\n" +
+                                            " {\n" +
+                                            "bus"+i+" = new L.marker([" + lat+","+lng + "], {icon: busIcon}).addTo(map);\n" +
+                                            " }\n" +
+                                            " else\n" +
+                                            " {\n" +
+                                            "bus"+i+".setIcon(busIcon);" +
+                                            "  bus"+i+".bindTooltip(\"" + description + "\", {permanent: true});" +
+                                            "  bus"+i+".setLatLng([" + lat+","+lng + "]).addTo(map);\n" +
+                                            " }\n" +
+                                            "  bus"+i+".bindPopup(\""+html+"\");\n"
+                                    );
+                                } else {
+                                    myWebView.loadUrl("javascript: var bus"+i+ ";" +
+                                            "var BusIcon = L.Icon.Default.extend({options: {iconUrl: 'file:///android_asset/images/deviceIcons/"+
+                                            icon+"_"+color+".png',iconSize:     [32, 32],\n" +
+                                            "    shadowSize:   [0, 0]} });" +
+                                            "var busIcon = new BusIcon();" +
+                                            "if(typeof(bus"+i+")==='undefined')\n" +
+                                            " {\n" +
+                                            "bus"+i+" = new L.marker([" + lat+","+lng + "], {icon: busIcon}).addTo(map);\n" +
+                                            " }\n" +
+                                            " else\n" +
+                                            " {\n" +
+                                            "bus"+i+".setIcon(busIcon);" +
+                                            "  bus"+i+".setLatLng([" + lat+","+lng + "]).addTo(map);\n" +
+                                            " }\n" +
+                                            "  bus"+i+".bindPopup(\""+html+"\");\n"
+                                    );
+                                }
                             }
-
-                            myWebView.loadUrl("javascript: var bus"+i+ ";" +
-                                    "var BusIcon = L.Icon.Default.extend({options: {iconUrl: 'file:///android_asset/images/deviceIcons/"+
-                                    icon+"_"+color+".png',iconSize:     [32, 32],\n" +
-                                    "    shadowSize:   [0, 0]} });" +
-                                    "var busIcon = new BusIcon();" +
-                                    "if(typeof(bus"+i+")==='undefined')\n" +
-                                    " {\n" +
-                                    "bus"+i+" = new L.marker([" + lat+","+lng + "], {icon: busIcon}).addTo(map);\n" +
-                                    " }\n" +
-                                    " else\n" +
-                                    " {\n" +
-                                    "bus"+i+".setIcon(busIcon);" +
-                                    "  bus"+i+".setLatLng([" + lat+","+lng + "]).addTo(map);\n" +
-                                    " }\n" +
-                                    "  bus"+i+".bindPopup(\""+html+"\");\n"
-                            );
 
                             i++;
 
+                        }
+
+                        if (isClusterEnabled){
+                            myWebView.loadUrl("javascript: "+
+                                    "map.addLayer(markers);");
+                        } else {
+                            myWebView.loadUrl("javascript: "+
+                                    "map.removeLayer(markers);");
                         }
                     }
 
@@ -628,7 +449,13 @@ public class MicroGisActivity extends AppCompatActivity
                 }
             });
 
-            handler.postDelayed(this, 1000*Long.parseLong(interval));
+            if (interval.matches("[0-9]+")){
+                handler.postDelayed(this, 1000*Long.parseLong(interval));
+            } else {
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        getString(R.string.server_monitoring_message_corect), Toast.LENGTH_LONG);
+                toast.show();
+            }
 
         }
     };
@@ -854,7 +681,6 @@ public class MicroGisActivity extends AppCompatActivity
 
 
         myWebView.addJavascriptInterface(new WebAppInterface(this), "Android");
-
 
         final Button clean = (Button) findViewById(R.id.cleanlayers);
         assert clean != null;
@@ -1175,10 +1001,15 @@ public class MicroGisActivity extends AppCompatActivity
 
 
     @Override
+    protected void onStop() {
+        handler.removeCallbacks(requst);
+        super.onStop();
+    }
+
+    @Override
     public void onDestroy() {
         addddd = 0;
         mChronometer.stop();
-        handler.removeCallbacks(requst);
         if (pointsList.size() >= 2) {
             hronTime = mChronometer.getText().toString();
             timeStop = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
@@ -1748,9 +1579,11 @@ public class MicroGisActivity extends AppCompatActivity
     }
 
     private void clearMap(){
+        myWebView.loadUrl("javascript:console.log(markers);");
         myWebView.loadUrl("javascript:map.removeLayer(polyline);");
         myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
                 "if (layer instanceof L.Marker) {\n" +
+                "layer.unbindTooltip();\n" +
                 "map.removeLayer(layer)\n" +
                 "}\n" +
                 "map.closePopup()\n"+

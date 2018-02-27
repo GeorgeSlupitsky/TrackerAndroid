@@ -19,6 +19,10 @@ public class ResponseGroupsMoving {
     @Expose
     private List<Device> devices;
 
+    @SerializedName("warning")
+    @Expose
+    private List<String> warnings;
+
     public String getStatus() {
         return status;
     }
@@ -33,5 +37,13 @@ public class ResponseGroupsMoving {
 
     public void setDevices(List<Device> devices) {
         this.devices = devices;
+    }
+
+    public List<String> getWarnings() {
+        return warnings;
+    }
+
+    public void setWarnings(List<String> warnings) {
+        this.warnings = warnings;
     }
 }

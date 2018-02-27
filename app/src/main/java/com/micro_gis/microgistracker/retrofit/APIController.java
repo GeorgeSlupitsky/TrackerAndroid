@@ -3,6 +3,8 @@ package com.micro_gis.microgistracker.retrofit;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -16,8 +18,19 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class APIController {
 
     public static API getApi(String url) {
+        if (url == null){
+            url = "null";
+        }
+
         if (!url.contains("http://")){
             url = "http://" + url;
+        }
+
+        try {
+            URL url1 = new URL(url);
+            url = url1.toString();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
         }
 
         Gson gson = new GsonBuilder()

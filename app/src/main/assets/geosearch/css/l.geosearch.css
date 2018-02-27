@@ -17,6 +17,7 @@
 	background-size: 100% 100%;
 	height:50px;
 	width:50px;
+	opacity:0.80;
 }
 
 .leaflet-control-geosearch a.spinner {

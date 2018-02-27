@@ -19,53 +19,54 @@
             <TableRow
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent">
+                <CheckBox
+                    android:id="@+id/labelParamsCheckBox"
+                    android:checked="true"
+                    android:layout_gravity="center_horizontal" />
+
                 <TextView
                     android:id="@+id/labelParams"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/labelParams"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black"
+                    android:layout_marginLeft="25dp"/>
 
-                <CheckBox
-                    android:id="@+id/labelParamsCheckBox"
-                    android:checked="true"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginLeft="35dp"/>
             </TableRow>
             <TableRow
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent">
+                <CheckBox
+                    android:id="@+id/clusterParamsCheckBox"
+                    android:checked="true"
+                    android:layout_gravity="center_horizontal" />
+
                 <TextView
                     android:id="@+id/clusterParams"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/clusterParams"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@color/black"/>
-
-                <CheckBox
-                    android:id="@+id/clusterParamsCheckBox"
-                    android:checked="true"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginLeft="35dp"/>
+                    android:textColor="@color/black"
+                    android:layout_marginLeft="25dp"/>
             </TableRow>
             <TableRow
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent">
+                <CheckBox
+                    android:id="@+id/geocoderParamsCheckBox"
+                    android:checked="false"
+                    android:layout_gravity="center_horizontal" />
+
                 <TextView
                     android:id="@+id/geocoderParams"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/geocoderParams"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@color/black"/>
-
-                <CheckBox
-                    android:id="@+id/geocoderParamsCheckBox"
-                    android:checked="false"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginLeft="35dp"/>
+                    android:textColor="@color/black"
+                    android:layout_marginLeft="25dp"/>
             </TableRow>
 
 
