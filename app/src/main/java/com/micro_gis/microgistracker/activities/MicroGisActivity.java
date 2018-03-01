@@ -289,10 +289,10 @@ public class MicroGisActivity extends AppCompatActivity
                                 "var isLabelEnabled = " + isLabelEnabled + ";\n" +
                                 "if (isClusterEnabled){\n" +
                                     "if (typeof(cluster) === 'undefined'){\n" +
-                                        "cluster = L.markerClusterGroup();\n" +
+                                        "cluster = L.markerClusterGroup({maxClusterRadius: 50});\n" +
                                     "} else {\n" +
                                         "map.removeLayer(cluster);\n" +
-                                        "cluster = L.markerClusterGroup();\n" +
+                                        "cluster = L.markerClusterGroup({maxClusterRadius: 50});\n" +
                                     "}\n" +
                                 "}\n" +
                                 "var markers = [];\n" +
@@ -360,6 +360,7 @@ public class MicroGisActivity extends AppCompatActivity
                                     "iconSize: [32, 32],\n" +
                                     "iconAnchor: [16, 16],\n" +
                                     "shadowSize: [0, 0],\n" +
+                                    "popupAnchor: [0, -10],\n" +
                                     "tooltipAnchor: [16, 0]} });\n" +
                                     "var arrow" + i + ";\n" +
                                     "if (speed > 0){\n" +
@@ -369,13 +370,15 @@ public class MicroGisActivity extends AppCompatActivity
                                             "shadowUrl: null,\n" +
                                             "shadowSize: null,\n" +
                                             "iconAnchor: [" + ancX + ", " + ancY + "],\n" +
-                                            "popupAnchor: [0, 0]\n" +
+                                            "popupAnchor: [0, -10]\n" +
                                         "});\n" +
                                         "if (typeof(arrow" + i + ") === 'undefined'){\n" +
                                             "arrow" + i + " = new L.marker([" + lat + ", " + lng + "], {icon: arrowIcon});\n" +
+                                            "arrow" + i + ".bindPopup(\"" + html + "\");"+
                                             "arrow" + i + ".typeMarker = 'arrow';\n" +
                                         "} else {\n" +
                                             "arrow" + i + ".setIcon(arrowIcon);\n" +
+                                            "arrow" + i + ".bindPopup(\"" + html + "\");"+
                                             "arrow" + i + ".setLatLng([" + lat + ", " + lng + "]);\n" +
                                         "}\n" +
                                     "} else {\n" +
@@ -389,9 +392,11 @@ public class MicroGisActivity extends AppCompatActivity
                                         "});\n"+
                                         "if (typeof(arrow" + i + ")==='undefined'){\n" +
                                             "arrow" +  i + " = new L.marker([" + lat + ", " + lng + "], {icon: arrowIcon});\n" +
+                                            "arrow" + i + ".bindPopup(\"" + html + "\");"+
                                             "arrow" + i + ".typeMarker = 'arrow';\n" +
                                         "} else {\n" +
                                             "arrow" + i + ".setIcon(arrowIcon);"+
+                                            "arrow" + i + ".bindPopup(\"" + html + "\");"+
                                             "arrow" + i + ".setLatLng([" + lat + ", " + lng + "]);\n" +
                                         "}\n" +
                                     "}\n" +
@@ -404,12 +409,14 @@ public class MicroGisActivity extends AppCompatActivity
                                             "bus" + i + ".typeMarker = 'car';\n" +
                                             "bus" + i + ".speed = speed;\n" +
                                             "bus" + i + ".arrow = arrow" + i + ";\n" +
+                                            "bus" + i + ".popup = \"" + html + "\";\n" +
                                         "} else {\n" +
                                             "bus" + i + " = new L.marker([" + lat + ", " + lng + "], {icon: icon})" +
                                             ".bindPopup(\"" + html + "\");\n" +
                                             "bus" + i + ".typeMarker = 'car';\n" +
                                             "bus" + i + ".speed = speed;\n" +
                                             "bus" + i + ".arrow = arrow" + i + ";\n" +
+                                            "bus" + i + ".popup = \"" + html + "\";\n" +
                                         "}\n" +
                                     "} else {\n" +
                                         "bus" + i + ".setIcon(icon);\n" +
@@ -421,6 +428,7 @@ public class MicroGisActivity extends AppCompatActivity
                                         "bus" + i + ".typeMarker = 'car';\n" +
                                         "bus" + i + ".speed = speed;\n" +
                                         "bus" + i + ".arrow = arrow" + i + ";\n" +
+                                        "bus" + i + ".popup = \"" + html + "\";\n" +
                                     "}\n" +
                                     "if (isClusterEnabled){\n" +
                                         "cluster.addLayer(bus" + i + ");\n" +
@@ -433,7 +441,6 @@ public class MicroGisActivity extends AppCompatActivity
                             i++;
                         }
 
-                        //Не eachLayer, а $each, підключити jQuery
                         myWebView.loadUrl("javascript: " +
                                 "if (isClusterEnabled){\n" +
                                     "map.addLayer(cluster);\n" +
@@ -442,6 +449,7 @@ public class MicroGisActivity extends AppCompatActivity
                                         "$.each(layers, function (index, layer) {\n" +
                                             "if (layer.typeMarker === 'car'){\n" +
                                                 "if (layer.speed > 0){\n" +
+                                                    "layer.arrow.bindPopup(layer.popup);\n" +
                                                     "map.addLayer(layer.arrow);\n" +
                                                 "} else {\n" +
                                                     "map.removeLayer(layer.arrow)\n" +
@@ -449,7 +457,8 @@ public class MicroGisActivity extends AppCompatActivity
                                             "} else {\n" +
                                                 "var array = layer.getAllChildMarkers();\n" +
                                                 "for (var i = 0; i < array.length; i++) {\n" +
-                                                    "map.removeLayer(array[i].arrow)\n" +
+                                                    "map.removeLayer(array[i].arrow);\n" +
+                                                    "array[i].closeTooltip();\n" +
                                                 "}\n" +
                                             "};\n" +
                                         "});\n" +
@@ -457,6 +466,7 @@ public class MicroGisActivity extends AppCompatActivity
                                         "$.each(groupLayers, function (index, layer) {\n" +
                                             "if (layer.typeMarker === 'car') {\n" +
                                                 "if (layer.speed > 0) {\n" +
+                                                    "layer.arrow.bindPopup(layer.popup);\n" +
                                                     "map.addLayer(layer.arrow);\n" +
                                                 "} else {\n" +
                                                     "map.removeLayer(layer.arrow);\n" +
