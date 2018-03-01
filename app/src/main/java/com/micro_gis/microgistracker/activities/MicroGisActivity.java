@@ -121,7 +121,7 @@ public class MicroGisActivity extends AppCompatActivity
     private int groupId;
     private int objectsCount, groupsCount, markersCount, tracksCount;
     NavigationView navigationView;
-    boolean isLabelEnabled, isClusterEnabled, isGeocoderEnabled;
+    boolean isLabelEnabled, isClusterEnabled, isGeocoderEnabled, isNavigationEnabled;
     List<Device> devices;
 
     Runnable runnable = new Runnable() {
@@ -242,56 +242,65 @@ public class MicroGisActivity extends AppCompatActivity
 
                     assert responseGroupsMoving != null;
 
-                    if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.WARNING.toString())){
-                        List <String> warnings = responseGroupsMoving.getWarnings();
-                        if (warnings.get(0).contains(ResponseGroupsMovingStatuses.WARNING_TEMPORARILY_SUSPENDED.toString())){
+                    if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.WARNING.toString())) {
+                        List<String> warnings = responseGroupsMoving.getWarnings();
+                        if (warnings.get(0).contains(ResponseGroupsMovingStatuses.WARNING_TEMPORARILY_SUSPENDED.toString())) {
                             Toast toast = Toast.makeText(getApplicationContext(),
                                     getString(R.string.warning_temporarily_suspended), Toast.LENGTH_LONG);
                             toast.show();
-                        } else if(warnings.get(0).contains(ResponseGroupsMovingStatuses.WARNING_HAVE_NOT_GROUP.toString())){
+                        } else if (warnings.get(0).contains(ResponseGroupsMovingStatuses.WARNING_HAVE_NOT_GROUP.toString())) {
                             Toast toast = Toast.makeText(getApplicationContext(),
                                     getString(R.string.warning_have_not_group), Toast.LENGTH_LONG);
                             toast.show();
-                        } else if(warnings.get(0).contains(ResponseGroupsMovingStatuses.WARNING_KEY_HAS_NOT_ACCESS.toString())) {
+                        } else if (warnings.get(0).contains(ResponseGroupsMovingStatuses.WARNING_KEY_HAS_NOT_ACCESS.toString())) {
                             Toast toast = Toast.makeText(getApplicationContext(),
                                     getString(R.string.warning_key_has_not_access), Toast.LENGTH_LONG);
                             toast.show();
-                        } else if(warnings.get(0).contains(ResponseGroupsMovingStatuses.WARNING_DOES_NOT_HAVE_ACCESS_TO_THE_DEVICE.toString())){
+                        } else if (warnings.get(0).contains(ResponseGroupsMovingStatuses.WARNING_DOES_NOT_HAVE_ACCESS_TO_THE_DEVICE.toString())) {
                             Toast toast = Toast.makeText(getApplicationContext(),
                                     getString(R.string.warning_does_not_have_acces_to_device), Toast.LENGTH_LONG);
                             toast.show();
                         }
-                    } else if(responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.ERROR.toString())){
+                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.ERROR.toString())) {
                         Toast toast = Toast.makeText(getApplicationContext(),
                                 getString(R.string.status_error), Toast.LENGTH_LONG);
                         toast.show();
-                    } else if(responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.KEY_LIFECYCLE_RANGE_OUT.toString())){
+                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.KEY_LIFECYCLE_RANGE_OUT.toString())) {
                         Toast toast = Toast.makeText(getApplicationContext(),
                                 getString(R.string.key_lifecycle_range_out), Toast.LENGTH_LONG);
                         toast.show();
-                    } else if(responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.KEY_LEFT.toString())){
+                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.KEY_LEFT.toString())) {
                         Toast toast = Toast.makeText(getApplicationContext(),
                                 getString(R.string.key_left), Toast.LENGTH_LONG);
                         toast.show();
-                    } else if(responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.ACCOUNT_ID_IS_NOT_VALID.toString())){
+                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.ACCOUNT_ID_IS_NOT_VALID.toString())) {
                         Toast toast = Toast.makeText(getApplicationContext(),
                                 getString(R.string.account_id_is_not_valid), Toast.LENGTH_LONG);
                         toast.show();
-                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.SUCCESS.toString())){
+                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.SUCCESS.toString())) {
                         devices = responseGroupsMoving.getDevices();
 
                         objectsCount = devices.size();
 
                         int i = 0;
 
-                        if (isClusterEnabled){
-                            myWebView.loadUrl("javascript: "+
-                                    "var markers = L.markerClusterGroup();");
-                        }
+                        myWebView.loadUrl("javascript: " +
+                                "var isClusterEnabled = " + isClusterEnabled + ";\n" +
+                                "var isLabelEnabled = " + isLabelEnabled + ";\n" +
+                                "if (isClusterEnabled){\n" +
+                                    "if (typeof(cluster) === 'undefined'){\n" +
+                                        "cluster = L.markerClusterGroup();\n" +
+                                    "} else {\n" +
+                                        "map.removeLayer(cluster);\n" +
+                                        "cluster = L.markerClusterGroup();\n" +
+                                    "}\n" +
+                                "}\n" +
+                                "var markers = [];\n" +
+                                "var arrows = [];\n");
 
-                        for (Device device: devices){
+                        for (Device device : devices) {
                             String icon = device.getIcon();
-                            if (icon == null){
+                            if (icon == null) {
                                 icon = "car_sedan";
                             }
                             String color = device.getColor();
@@ -303,8 +312,8 @@ public class MicroGisActivity extends AppCompatActivity
                             String brand = device.getBrand();
                             long event = device.getEvent();
                             int heading = device.getHeading();
-                            java.util.Date time = new java.util.Date(event*1000);
-                            String timel =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
+                            java.util.Date time = new java.util.Date(event * 1000);
+                            String timel = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
 
                             int altitude = device.getAltitude();
                             int satCount = device.getSatCount();
@@ -323,117 +332,152 @@ public class MicroGisActivity extends AppCompatActivity
                             String fuelLevelStr = getString(R.string.fuelLevel);
                             String fuelExpenseStr = getString(R.string.fuelExpense);
 
-                            String html = descriptionStr + ": " +description+
-                                    " <br/>" + brandStr + ": " +brand+
-                                    " <br/>" + companyStr + ": " +organization+
-                                    " <br/>" + lastDataStr + ": " +timel+
-                                    " <br/>" + speedStr + ": " +speed+
-                                    " <br/>" + altitudeStr + ": " +altitude+
-                                    " <br/>" + satCountStr + ": " +satCount+
-                                    " <br/>" + hdopStr + ": " +hdop+
-                                    " <br/>" + fuelLevelStr + ": " +fuelLevel+
-                                    " <br/>" + fuelExpenseStr + ": " +fuelExpense;
+                            String html = descriptionStr + ": " + description +
+                                    " <br/>" + brandStr + ": " + brand +
+                                    " <br/>" + companyStr + ": " + organization +
+                                    " <br/>" + lastDataStr + ": " + timel +
+                                    " <br/>" + speedStr + ": " + speed +
+                                    " <br/>" + altitudeStr + ": " + altitude +
+                                    " <br/>" + satCountStr + ": " + satCount +
+                                    " <br/>" + hdopStr + ": " + hdop +
+                                    " <br/>" + fuelLevelStr + ": " + fuelLevel +
+                                    " <br/>" + fuelExpenseStr + ": " + fuelExpense;
 
-//                            String[] DIRS = {"north","north-east","east","south-east","south","south-west","west","north-west"};
-//
-//                            int[] ANCOR_X = {31, 36, 32, 41, 30, 28, 31, 22};
-//                            int[] ANCOR_Y = {30, 30, 32, 45, 38, 42, 32, 23};
-//
-//                            int dirNdx = (int) (Math.floor(heading / 45) % 8);
-//                            String dirIconName = DIRS[dirNdx];
-//                            int ancX = ANCOR_X[dirNdx];
-//                            int ancY = ANCOR_Y[dirNdx];
+                            String[] DIRS = {"north","north-east","east","south-east","south","south-west","west","north-west"};
 
-                            if (isClusterEnabled){
+                            int[] ANCOR_X = {20, 20, 17, 25, 20, 20, 27, 25};
+                            int[] ANCOR_Y = {20, 20, 20, 25, 25, 25, 20, 15};
 
-                            } else {
-//                                if(speed > 0){
-//                                    myWebView.loadUrl("javascript: "+
-//                                            "var arrow"+i+";"+
-//                                            "var myIcon = new L.icon({\n" +
-//                                            "iconUrl: 'file:///android_asset/images/"+dirIconName+".png',\n" +
-//                                            "iconSize: [44,44],\n" +
-//                                            "shadowUrl: null,\n" +
-//                                            "shadowSize: null,\n" +
-//                                            "iconAnchor: ["+ancX+", "+ancY+"],\n" +
-//                                            "popupAnchor: [0, 0]\n" +
-//                                            "});\n" +
-//                                            "if(typeof(arrow"+i+")==='undefined')\n" +
-//                                            " {\n" +
-//                                            " arrow"+i+" = new L.marker(["+lat+","+lng+"], {icon: myIcon}).addTo(map);\n" +
-//                                            "}else{\n" +
-//                                            "arrow"+i+".setIcon(myIcon);"+
-//                                            "arrow"+i+".setLatLng(["+lat+", "+lng+"]).addTo(map);\n" +
-//                                            "}\n");
-//                                }else{
-//                                    myWebView.loadUrl("javascript: "+
-//                                            "var arrow"+i+";"+
-//                                            "var myIcon = new L.icon({\n" +
-//                                            "iconUrl: 'file:///android_asset/images/empty.png',\n" +
-//                                            "iconSize: [44,44],\n" +
-//                                            "shadowUrl: null,\n" +
-//                                            "shadowSize: null,\n" +
-//                                            "iconAnchor: ["+ancX+", "+ancY+"],\n" +
-//                                            "popupAnchor: [0, 0]\n" +
-//                                            "});\n"+
-//                                            "if(typeof(arrow"+i+")==='undefined')\n" +
-//                                            " {\n" +
-//                                            " arrow"+i+" = new L.marker(["+lat+","+lng+"], {icon: myIcon}).addTo(map);\n" +
-//                                            "}else{\n" +
-//                                            "arrow"+i+".setIcon(myIcon);"+
-//                                            "arrow"+i+".setLatLng(["+lat+", "+lng+"]).addTo(map);\n" +
-//                                            "}\n");
-//                                }
+                            int dirNdx = (int) (Math.floor(heading / 45) % 8);
+                            String dirIconName = DIRS[dirNdx];
+                            int ancX = ANCOR_X[dirNdx];
+                            int ancY = ANCOR_Y[dirNdx];
 
-                                if (isLabelEnabled){
-                                    myWebView.loadUrl("javascript: var bus"+i+ ";" +
-                                            "var BusIcon = L.Icon.Default.extend({options: {iconUrl: 'file:///android_asset/images/deviceIcons/"+
-                                            icon+"_"+color+".png',iconSize:     [32, 32],\n" +
-                                            "    shadowSize:   [0, 0]} });" +
-                                            "var busIcon = new BusIcon();" +
-                                            "if(typeof(bus"+i+")==='undefined')\n" +
-                                            " {\n" +
-                                            "bus"+i+" = new L.marker([" + lat+","+lng + "], {icon: busIcon}).addTo(map);\n" +
-                                            " }\n" +
-                                            " else\n" +
-                                            " {\n" +
-                                            "bus"+i+".setIcon(busIcon);" +
-                                            "  bus"+i+".bindTooltip(\"" + description + "\", {permanent: true});" +
-                                            "  bus"+i+".setLatLng([" + lat+","+lng + "]).addTo(map);\n" +
-                                            " }\n" +
-                                            "  bus"+i+".bindPopup(\""+html+"\");\n"
-                                    );
-                                } else {
-                                    myWebView.loadUrl("javascript: var bus"+i+ ";" +
-                                            "var BusIcon = L.Icon.Default.extend({options: {iconUrl: 'file:///android_asset/images/deviceIcons/"+
-                                            icon+"_"+color+".png',iconSize:     [32, 32],\n" +
-                                            "    shadowSize:   [0, 0]} });" +
-                                            "var busIcon = new BusIcon();" +
-                                            "if(typeof(bus"+i+")==='undefined')\n" +
-                                            " {\n" +
-                                            "bus"+i+" = new L.marker([" + lat+","+lng + "], {icon: busIcon}).addTo(map);\n" +
-                                            " }\n" +
-                                            " else\n" +
-                                            " {\n" +
-                                            "bus"+i+".setIcon(busIcon);" +
-                                            "  bus"+i+".setLatLng([" + lat+","+lng + "]).addTo(map);\n" +
-                                            " }\n" +
-                                            "  bus"+i+".bindPopup(\""+html+"\");\n"
-                                    );
-                                }
-                            }
+                            myWebView.loadUrl("javascript: " +
+                                    "var speed = " + speed + ";\n" +
+                                    "var busIcon = L.Icon.Default.extend({options: \n" +
+                                    "{iconUrl: 'file:///android_asset/images/deviceIcons/" + icon + "_" + color + ".png',\n" +
+                                    "iconSize: [32, 32],\n" +
+                                    "iconAnchor: [16, 16],\n" +
+                                    "shadowSize: [0, 0],\n" +
+                                    "tooltipAnchor: [16, 0]} });\n" +
+                                    "var arrow" + i + ";\n" +
+                                    "if (speed > 0){\n" +
+                                        "var arrowIcon = new L.icon({\n" +
+                                            "iconUrl: 'file:///android_asset/images/" + dirIconName + ".png',\n" +
+                                            "iconSize: [44,44],\n" +
+                                            "shadowUrl: null,\n" +
+                                            "shadowSize: null,\n" +
+                                            "iconAnchor: [" + ancX + ", " + ancY + "],\n" +
+                                            "popupAnchor: [0, 0]\n" +
+                                        "});\n" +
+                                        "if (typeof(arrow" + i + ") === 'undefined'){\n" +
+                                            "arrow" + i + " = new L.marker([" + lat + ", " + lng + "], {icon: arrowIcon});\n" +
+                                            "arrow" + i + ".typeMarker = 'arrow';\n" +
+                                        "} else {\n" +
+                                            "arrow" + i + ".setIcon(arrowIcon);\n" +
+                                            "arrow" + i + ".setLatLng([" + lat + ", " + lng + "]);\n" +
+                                        "}\n" +
+                                    "} else {\n" +
+                                        "var arrowIcon = new L.icon({\n" +
+                                            "iconUrl: 'file:///android_asset/images/empty.png',\n" +
+                                            "iconSize: [44, 44],\n" +
+                                            "shadowUrl: null,\n" +
+                                            "shadowSize: null,\n" +
+                                            "iconAnchor: [" + ancX + ", " + ancY + "],\n" +
+                                            "popupAnchor: [0, 0]\n" +
+                                        "});\n"+
+                                        "if (typeof(arrow" + i + ")==='undefined'){\n" +
+                                            "arrow" +  i + " = new L.marker([" + lat + ", " + lng + "], {icon: arrowIcon});\n" +
+                                            "arrow" + i + ".typeMarker = 'arrow';\n" +
+                                        "} else {\n" +
+                                            "arrow" + i + ".setIcon(arrowIcon);"+
+                                            "arrow" + i + ".setLatLng([" + lat + ", " + lng + "]);\n" +
+                                        "}\n" +
+                                    "}\n" +
+                                    "var icon = new busIcon();\n" +
+                                    "if (typeof(bus" + i + ") === 'undefined'){\n" +
+                                        "if (isLabelEnabled){\n" +
+                                            "bus" + i + " = new L.marker([" + lat + ", " + lng + "], {icon: icon})" +
+                                            ".bindTooltip(\"" + description + "\", {permanent: true})" +
+                                            ".bindPopup(\"" + html + "\");\n" +
+                                            "bus" + i + ".typeMarker = 'car';\n" +
+                                            "bus" + i + ".speed = speed;\n" +
+                                            "bus" + i + ".arrow = arrow" + i + ";\n" +
+                                        "} else {\n" +
+                                            "bus" + i + " = new L.marker([" + lat + ", " + lng + "], {icon: icon})" +
+                                            ".bindPopup(\"" + html + "\");\n" +
+                                            "bus" + i + ".typeMarker = 'car';\n" +
+                                            "bus" + i + ".speed = speed;\n" +
+                                            "bus" + i + ".arrow = arrow" + i + ";\n" +
+                                        "}\n" +
+                                    "} else {\n" +
+                                        "bus" + i + ".setIcon(icon);\n" +
+                                        "bus" + i + ".setLatLng([" + lat + ", " + lng + "]);\n" +
+                                        "if (isLabelEnabled){\n" +
+                                            "bus" + i + ".bindTooltip(\"" + description + "\", {permanent: true});" +
+                                        "}\n" +
+                                        "bus" + i + ".bindPopup(\"" + html + "\");\n" +
+                                        "bus" + i + ".typeMarker = 'car';\n" +
+                                        "bus" + i + ".speed = speed;\n" +
+                                        "bus" + i + ".arrow = arrow" + i + ";\n" +
+                                    "}\n" +
+                                    "if (isClusterEnabled){\n" +
+                                        "cluster.addLayer(bus" + i + ");\n" +
+                                    "} else {\n" +
+                                        "markers.push(bus" + i + ");\n" +
+                                        "arrows.push(arrow" + i + ");\n" +
+                                    "}\n"
+                            );
 
                             i++;
-
                         }
 
-                        if (isClusterEnabled){
-                            myWebView.loadUrl("javascript: "+
-                                    "map.addLayer(markers);");
-                        } else {
-                            myWebView.loadUrl("javascript: "+
-                                    "map.removeLayer(markers);");
-                        }
+                        //Не eachLayer, а $each, підключити jQuery
+                        myWebView.loadUrl("javascript: " +
+                                "if (isClusterEnabled){\n" +
+                                    "map.addLayer(cluster);\n" +
+                                    "cluster.on('animationend', function (a) {\n" +
+                                        "var layers = cluster._featureGroup._layers;\n" +
+                                        "$.each(layers, function (index, layer) {\n" +
+                                            "if (layer.typeMarker === 'car'){\n" +
+                                                "if (layer.speed > 0){\n" +
+                                                    "map.addLayer(layer.arrow);\n" +
+                                                "} else {\n" +
+                                                    "map.removeLayer(layer.arrow)\n" +
+                                                "}\n" +
+                                            "} else {\n" +
+                                                "var array = layer.getAllChildMarkers();\n" +
+                                                "for (var i = 0; i < array.length; i++) {\n" +
+                                                    "map.removeLayer(array[i].arrow)\n" +
+                                                "}\n" +
+                                            "};\n" +
+                                        "});\n" +
+                                        "var groupLayers = cluster._map._layers;\n" +
+                                        "$.each(groupLayers, function (index, layer) {\n" +
+                                            "if (layer.typeMarker === 'car') {\n" +
+                                                "if (layer.speed > 0) {\n" +
+                                                    "map.addLayer(layer.arrow);\n" +
+                                                "} else {\n" +
+                                                    "map.removeLayer(layer.arrow);\n" +
+                                                "}\n" +
+                                            "}\n" +
+                                        "});\n" +
+                                    "});\n" +
+                                "} else {\n" +
+                                    "if (typeof(cluster) === 'undefined'){\n" +
+                                        "for (var i = 0; i < markers.length; i++){\n" +
+                                            "markers[i].addTo(map);\n" +
+                                            "arrows[i].addTo(map);\n" +
+                                        "}\n" +
+                                    "} else {\n" +
+                                        "map.removeLayer(cluster);\n" +
+                                        "for (var i = 0; i < markers.length; i++){\n" +
+                                            "markers[i].addTo(map);\n" +
+                                            "arrows[i].addTo(map);\n" +
+                                        "}\n" +
+                                    "}\n" +
+                                "}\n");
                     }
 
                 }
@@ -682,6 +726,9 @@ public class MicroGisActivity extends AppCompatActivity
 
         myWebView.addJavascriptInterface(new WebAppInterface(this), "Android");
 
+        myWebView.loadUrl("javascript: " +
+                "var cluster;");
+
         final Button clean = (Button) findViewById(R.id.cleanlayers);
         assert clean != null;
         clean.setOnClickListener(new View.OnClickListener() {
@@ -690,12 +737,14 @@ public class MicroGisActivity extends AppCompatActivity
 
                 clearMap();
                 getMarkers();
-                if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                    navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-                } else {
-                    Toast toast = Toast.makeText(getApplicationContext(),
-                            getString(R.string.enable_gps), Toast.LENGTH_LONG);
-                    toast.show();
+                if (isNavigationEnabled){
+                    if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                        navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                    } else {
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                getString(R.string.enable_gps), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
                 }
             }
         });
@@ -710,12 +759,14 @@ public class MicroGisActivity extends AppCompatActivity
             public void onClick(View v) {
                 if (!isRun) {
                     if (groupId != 999999999){
-                        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                            navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-                        } else {
-                            Toast toast = Toast.makeText(getApplicationContext(),
-                                    getString(R.string.enable_gps), Toast.LENGTH_LONG);
-                            toast.show();
+                        if (isNavigationEnabled){
+                            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                                navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                            } else {
+                                Toast toast = Toast.makeText(getApplicationContext(),
+                                        getString(R.string.enable_gps), Toast.LENGTH_LONG);
+                                toast.show();
+                            }
                         }
 
                         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -749,12 +800,14 @@ public class MicroGisActivity extends AppCompatActivity
 
                         c.close();
                     } else {
-                        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                            navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-                        } else {
-                            Toast toast = Toast.makeText(getApplicationContext(),
-                                    getString(R.string.enable_gps), Toast.LENGTH_LONG);
-                            toast.show();
+                        if (isNavigationEnabled){
+                            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                                navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                            } else {
+                                Toast toast = Toast.makeText(getApplicationContext(),
+                                        getString(R.string.enable_gps), Toast.LENGTH_LONG);
+                                toast.show();
+                            }
                         }
 
                         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -784,6 +837,8 @@ public class MicroGisActivity extends AppCompatActivity
                             toast.show();
                             sendToserver.setBackgroundResource(R.drawable.disconnect);
                         }
+
+                        c.close();
                     }
                 } else {
                     isRun = false;
@@ -792,12 +847,14 @@ public class MicroGisActivity extends AppCompatActivity
                     sendToserver.setBackgroundResource(R.drawable.disconnect);
                     clearMap();
                     getMarkers();
-                    if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                        navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-                    } else {
-                        Toast toast = Toast.makeText(getApplicationContext(),
-                                getString(R.string.enable_gps), Toast.LENGTH_LONG);
-                        toast.show();
+                    if (isNavigationEnabled){
+                        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                            navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                        } else {
+                            Toast toast = Toast.makeText(getApplicationContext(),
+                                    getString(R.string.enable_gps), Toast.LENGTH_LONG);
+                            toast.show();
+                        }
                     }
                 }
             }
@@ -1208,6 +1265,19 @@ public class MicroGisActivity extends AppCompatActivity
         isLabelEnabled = sharedpreferences.getBoolean("label", true);
         isClusterEnabled = sharedpreferences.getBoolean("cluster", true);
         isGeocoderEnabled = sharedpreferences.getBoolean("geocoder", false);
+        isNavigationEnabled = sharedpreferences.getBoolean("navigation", true);
+
+        if (!isNavigationEnabled){
+            clearMap();
+        } else {
+            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+            } else {
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        getString(R.string.enable_gps), Toast.LENGTH_LONG);
+                toast.show();
+            }
+        }
 
         int id = sharedpreferences.getInt("groupId", 999999999);
 
@@ -1242,20 +1312,35 @@ public class MicroGisActivity extends AppCompatActivity
             clearMap();
             getMarkers();
 
-            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-            } else {
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        getString(R.string.enable_gps), Toast.LENGTH_LONG);
-                toast.show();
+            if (isNavigationEnabled){
+                if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                    navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            getString(R.string.enable_gps), Toast.LENGTH_LONG);
+                    toast.show();
+                }
             }
+
 
             SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-            String selection = "id = ?";
-            String[] selectionArgs = new String[]{String.valueOf(id)};
+            Cursor c;
 
-            Cursor c = db.query("requestgroup", null, selection, selectionArgs, null, null, null);
+            String selection = "id = ?";
+
+            if (id == 999999999){
+                id = 0;
+                do{
+                    String[] selectionArgs = new String[]{String.valueOf(id)};
+                    c = db.query("requestgroup", null, selection, selectionArgs, null, null, null);
+                    id++;
+                } while (!c.moveToFirst());
+            } else {
+                String[] selectionArgs = new String[]{String.valueOf(id)};
+
+                c = db.query("requestgroup", null, selection, selectionArgs, null, null, null);
+            }
 
             if (c.moveToFirst()) {
                 int accountColIndex = c.getColumnIndex("account");
@@ -1276,6 +1361,8 @@ public class MicroGisActivity extends AppCompatActivity
                 toast.show();
                 sendToserver.setBackgroundResource(R.drawable.disconnect);
             }
+
+            c.close();
         }
 
         groupId = sharedpreferences.getInt("groupId", 999999999);
@@ -1419,12 +1506,14 @@ public class MicroGisActivity extends AppCompatActivity
         mLastLocation = location;
         setLtLn();
 
-        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-        } else {
-            Toast toast = Toast.makeText(getApplicationContext(),
-                    getString(R.string.enable_gps), Toast.LENGTH_LONG);
-            toast.show();
+        if (isNavigationEnabled){
+            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+            } else {
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        getString(R.string.enable_gps), Toast.LENGTH_LONG);
+                toast.show();
+            }
         }
 
     }

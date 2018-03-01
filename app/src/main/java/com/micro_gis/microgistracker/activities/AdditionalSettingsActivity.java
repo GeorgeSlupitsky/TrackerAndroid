@@ -20,6 +20,7 @@ public class AdditionalSettingsActivity extends AppCompatActivity {
     CheckBox labelParamsCheckBox;
     CheckBox clusterParamsCheckBox;
     CheckBox geocoderParamsCheckBox;
+    CheckBox navigationParamsCheckBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +32,12 @@ public class AdditionalSettingsActivity extends AppCompatActivity {
         labelParamsCheckBox = (CheckBox) findViewById(R.id.labelParamsCheckBox);
         clusterParamsCheckBox = (CheckBox) findViewById(R.id.clusterParamsCheckBox);
         geocoderParamsCheckBox = (CheckBox) findViewById(R.id.geocoderParamsCheckBox);
+        navigationParamsCheckBox = (CheckBox) findViewById(R.id.navigationParamsCheckBox);
 
         labelParamsCheckBox.setChecked(sharedpreferences.getBoolean("label", true));
         clusterParamsCheckBox.setChecked(sharedpreferences.getBoolean("cluster", true));
         geocoderParamsCheckBox.setChecked(sharedpreferences.getBoolean("geocoder", false));
+        navigationParamsCheckBox.setChecked(sharedpreferences.getBoolean("navigation", true));
 
         labelParamsCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,6 +68,17 @@ public class AdditionalSettingsActivity extends AppCompatActivity {
                     sharedpreferences.edit().putBoolean("geocoder", true).apply();
                 } else {
                     sharedpreferences.edit().putBoolean("geocoder", false).apply();
+                }
+            }
+        });
+
+        navigationParamsCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (navigationParamsCheckBox.isChecked()){
+                    sharedpreferences.edit().putBoolean("navigation", true).apply();
+                } else {
+                    sharedpreferences.edit().putBoolean("navigation", false).apply();
                 }
             }
         });

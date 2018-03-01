@@ -15,9 +15,6 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="title_activity_micro_gis">MicroGIS Tracker</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="action_settings">Settings</string>
 
     <!--navbar menu-->
@@ -73,6 +70,7 @@
     <string name="key_lifecycle_range_out">Key lifecycle range out.</string>
     <string name="account_id_is_not_valid">Account is not valid.</string>
     <string name="device_id_is_not_valid">Device is not valid.</string>
+    <string name="status_error">No device data.</string>
     <string name="track_color">Track color:</string>
     <string name="track_width">Track width (px):</string>
     <string name="min_satelites">Min satellites:</string>
@@ -115,5 +113,6 @@
     <string name="labelParams">Enable labels</string>
     <string name="clusterParams">Enable clusters</string>
     <string name="geocoderParams">Enable geocoder</string>
+    <string name="navigationParams">Enable navigation</string>
     <string name="address">Address: </string>
 </resources>

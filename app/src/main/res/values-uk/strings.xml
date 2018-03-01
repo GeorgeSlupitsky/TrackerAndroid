@@ -68,8 +68,8 @@
     <string name="addGroup">Додати групу</string>
     <string name="spisok_pust">Список пустий</string>
     <string name="rlace_turn_oo_gps">Будь ласка, включіть GPS!</string>
-    <string name="please_add_server_settings">Будь ласка, добавте налаштування сервера!</string>
-    <string name="please_add_server_monitoring_settings">Будь ласка, добавте налаштування груп!</string>
+    <string name="please_add_server_settings">Будь ласка, додайте налаштування сервера!</string>
+    <string name="please_add_server_monitoring_settings">Будь ласка, додайте налаштування груп!</string>
     <string name="warning_temporarily_suspended">Аккаунт тимчасово недоступний через борг.</string>
     <string name="warning_key_has_not_access">Ключ не має доступу до аккаунту.</string>
     <string name="warning_have_not_group">В аккаунті відсутні групи або в группі не має об`єктів.</string>
@@ -77,6 +77,7 @@
     <string name="key_left">Не коректні дані ключа.</string>
     <string name="key_lifecycle_range_out">Термін дії ключа закінчено.</string>
     <string name="account_id_is_not_valid">Не корректні дані аккаунту.</string>
+    <string name="device_id_is_not_valid">Не коректні дані объекту.</string>
     <string name="status_error">Відсутні дані по об`єктам.</string>
     <string name="edit">Редагувати</string>
     <string name="choose_group">Оберіть группу об`єктів</string>
@@ -108,6 +109,8 @@
     <string name="labelParams">Вкл. лейбли</string>
     <string name="clusterParams">Вкл. кластерізацію</string>
     <string name="geocoderParams">Вкл. геокодування</string>
+    <string name="navigationParams">Вкл. навігацію</string>
     <string name="address">Адреса: </string>
+    <string name="action_settings">Налаштування</string>
 
 </resources>

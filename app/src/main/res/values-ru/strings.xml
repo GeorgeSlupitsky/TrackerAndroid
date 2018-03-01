@@ -80,6 +80,7 @@
     <string name="key_left">Не корректные данные ключа.</string>
     <string name="key_lifecycle_range_out">Срок действия ключа окончен.</string>
     <string name="account_id_is_not_valid">Не корректный данные аккаунта.</string>
+    <string name="device_id_is_not_valid">Не корректные данные объекта.</string>
     <string name="status_error">Нет данных по объектам.</string>
     <string name="edit">Редактировать</string>
 
@@ -114,6 +115,7 @@
     <string name="labelParams">Вкл. лейблы</string>
     <string name="clusterParams">Вкл. кластеризацию</string>
     <string name="geocoderParams">Вкл. геокодирование</string>
+    <string name="navigationParams">Вкл. навигацию</string>
     <string name="address">Адресс: </string>
 
 </resources>
