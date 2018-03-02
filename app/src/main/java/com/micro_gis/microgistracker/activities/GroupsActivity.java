@@ -89,11 +89,13 @@ public class GroupsActivity extends AppCompatActivity{
                     String m1Name = (String) m1.get(ATTRIBUTE_NAME_TEXT);
                     String m2Name = (String) m2.get(ATTRIBUTE_NAME_TEXT);
 
-                    String name1 = m1Name.replaceAll("\\d", "");
-                    String name2 = m2Name.replaceAll("\\d", "");
+                    if (!m1Name.matches("[0-9]+") || !m2Name.matches("[0-9]+")){
+                        String name1 = m1Name.replaceAll("\\d", "");
+                        String name2 = m2Name.replaceAll("\\d", "");
 
-                    if (name1.equalsIgnoreCase(name2)){
-                        return extractInt(m1Name) - (extractInt(m2Name));
+                        if (name1.equalsIgnoreCase(name2)){
+                            return extractInt(m1Name) - (extractInt(m2Name));
+                        }
                     }
 
                     return m1Name.compareTo(m2Name);

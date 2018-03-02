@@ -22,7 +22,7 @@ import java.util.Map;
  * Created by User3 on 19.02.2018.
  */
 
-public class ObjectCustomAdapter extends ArrayAdapter<Map<String, Object>> {
+public class ObjectsCustomAdapter extends ArrayAdapter<Map<String, Object>> {
 
     private Context context;
     private ArrayList<Map<String, Object>> data;
@@ -30,7 +30,7 @@ public class ObjectCustomAdapter extends ArrayAdapter<Map<String, Object>> {
     private int layoutResourceId;
     private String[] mFrom;
 
-    public ObjectCustomAdapter(Context context, int resource, ArrayList<Map<String, Object>> data, String[] mFrom) {
+    public ObjectsCustomAdapter(Context context, int resource, ArrayList<Map<String, Object>> data, String[] mFrom) {
         super(context, resource, data);
         this.context = context;
         this.data = data;
@@ -63,7 +63,7 @@ public class ObjectCustomAdapter extends ArrayAdapter<Map<String, Object>> {
         holder.geozone = (TextView) row.findViewById(R.id.geozone);
 
         Integer id = (Integer) data.get(position).get(mFrom[0]);
-        String text = (String) data.get(position).get(mFrom[1]);
+        final String text = (String) data.get(position).get(mFrom[1]);
         Integer status = (Integer) data.get(position).get(mFrom[2]);
         String image = (String) data.get(position).get(mFrom[3]);
         String color = (String) data.get(position).get(mFrom[4]);
@@ -174,6 +174,7 @@ public class ObjectCustomAdapter extends ArrayAdapter<Map<String, Object>> {
             public void onClick(View v) {
                 Intent intent = new Intent(context, ObjectDetailInfoActivity.class);
                 intent.putExtra("id", index+"");
+                intent.putExtra("description", text);
                 context.startActivity(intent);
 
             }

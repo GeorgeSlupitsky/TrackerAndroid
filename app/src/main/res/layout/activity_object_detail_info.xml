@@ -26,14 +26,22 @@
                     android:id="@+id/back_buttonObject"
                     android:background="@drawable/ic_arrow_back_white_24dp"/>
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="@string/object"
-                    android:gravity = "center"
-                    android:textColor="@color/white"
-                    android:id="@+id/toolbar_title"
-                    android:textSize="24dp" />
+                    android:layout_height="30dp"
+                    android:orientation="horizontal"
+                    android:gravity = "center_vertical|center_horizontal">
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/object"
+                        android:textColor="@color/white"
+                        android:id="@+id/toolbar_titleObject"
+                        android:textSize="24dp" />
+
+                </LinearLayout>
 
             </android.support.v7.widget.Toolbar>
 
@@ -44,10 +52,19 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/ObjectId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:id="@+id/objectMap">
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/objectContent"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent">
+
+            </FrameLayout>
 
         </LinearLayout>
     </LinearLayout>

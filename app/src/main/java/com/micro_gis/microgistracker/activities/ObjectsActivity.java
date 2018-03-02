@@ -12,7 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.micro_gis.microgistracker.adapters.ObjectCustomAdapter;
+import com.micro_gis.microgistracker.adapters.ObjectsCustomAdapter;
 import com.micro_gis.microgistracker.R;
 import com.micro_gis.microgistracker.models.rest.Device;
 import com.micro_gis.microgistracker.models.rest.ResponseGroupsMoving;
@@ -45,7 +45,7 @@ public class ObjectsActivity extends AppCompatActivity {
     final String ATTRIBUTE_NAME_LOW_FLOR = "lowFlor";
     final String ATTRIBUTE_NAME_ADDRESS = "address";
 
-    ObjectCustomAdapter objectCustomAdapter;
+    ObjectsCustomAdapter objectsCustomAdapter;
     SharedPreferences sharedPreferences;
     ArrayList<Map<String, Object>> data;
     String objects;
@@ -154,13 +154,15 @@ public class ObjectsActivity extends AppCompatActivity {
                     String m1Name = (String) m1.get(ATTRIBUTE_NAME_TEXT);
                     String m2Name = (String) m2.get(ATTRIBUTE_NAME_TEXT);
 
-                    String name1 = m1Name.replaceAll("\\d", "");
-                    String name2 = m2Name.replaceAll("\\d", "");
+                    if (!m1Name.matches("[0-9]+") || !m2Name.matches("[0-9]+")){
+                        String name1 = m1Name.replaceAll("\\d", "");
+                        String name2 = m2Name.replaceAll("\\d", "");
 
-                    if (name1.equalsIgnoreCase(name2)){
-                        return extractInt(m1Name) - (extractInt(m2Name));
+                        if (name1.equalsIgnoreCase(name2)){
+                            return extractInt(m1Name) - (extractInt(m2Name));
+                        }
+
                     }
-
                     return m1Name.compareTo(m2Name);
                 }
 
@@ -176,11 +178,11 @@ public class ObjectsActivity extends AppCompatActivity {
             String[] from = { ATTRIBUTE_NAME_ID, ATTRIBUTE_NAME_TEXT, ATTRIBUTE_NAME_STATUS, ATTRIBUTE_NAME_IMAGE, ATTRIBUTE_NAME_COLOR, ATTRIBUTE_NAME_DATE,
                     ATTRIBUTE_NAME_DRIVER, ATTRIBUTE_NAME_TRAILER, ATTRIBUTE_NAME_WIFI, ATTRIBUTE_NAME_LOW_FLOR, ATTRIBUTE_NAME_ADDRESS};
 
-            objectCustomAdapter = new ObjectCustomAdapter(this, R.layout.custom_adapter_object, data, from);
+            objectsCustomAdapter = new ObjectsCustomAdapter(this, R.layout.custom_adapter_object, data, from);
 
             listView = (ListView) findViewById(R.id.lvObjects);
 
-            listView.setAdapter(objectCustomAdapter);
+            listView.setAdapter(objectsCustomAdapter);
 
             search.addTextChangedListener(new TextWatcher() {
 
@@ -197,7 +199,7 @@ public class ObjectsActivity extends AppCompatActivity {
                 @Override
                 public void afterTextChanged(Editable arg0) {
                     String text = search.getText().toString().toLowerCase(Locale.getDefault());
-                    objectCustomAdapter.filter(text);
+                    objectsCustomAdapter.filter(text);
                 }
             });
 

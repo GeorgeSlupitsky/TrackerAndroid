@@ -1,21 +1,51 @@
 package com.micro_gis.microgistracker.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.micro_gis.microgistracker.R;
+import com.micro_gis.microgistracker.fragments.ContentObjectFragment;
+import com.micro_gis.microgistracker.fragments.MapObjectFragment;
+import com.micro_gis.microgistracker.models.rest.Device;
+import com.micro_gis.microgistracker.models.rest.RequestObjectMoving;
+import com.micro_gis.microgistracker.models.rest.ResponseObjectMoving;
+import com.micro_gis.microgistracker.models.rest.ResponseStatuses;
+import com.micro_gis.microgistracker.retrofit.API;
+import com.micro_gis.microgistracker.retrofit.APIController;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by User3 on 19.02.2018.
  */
 
-public class ObjectDetailInfoActivity extends AppCompatActivity {
+public class ObjectDetailInfoActivity extends FragmentActivity {
 
-    TextView textView;
+    private static API api;
+
+    private SharedPreferences sharedPreferences;
+
+    private String id;
+    private String url;
+    private String account;
+    private String key;
+    private String interval;
+    private boolean isGeocoderEnabled;
+
+    private MapObjectFragment mapObjectFragment;
+    private ContentObjectFragment contentObjectFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,13 +60,101 @@ public class ObjectDetailInfoActivity extends AppCompatActivity {
             }
         });
 
-        textView = (TextView) findViewById(R.id.ObjectId);
+        TextView toolbarTitleObject = (TextView) findViewById(R.id.toolbar_titleObject);
+
+        sharedPreferences = getSharedPreferences("mypref", MODE_PRIVATE);
 
         Intent intent = getIntent();
 
-        String id = intent.getStringExtra("id");
+        id = intent.getStringExtra("id");
+        url = sharedPreferences.getString("url", "");
+        account = sharedPreferences.getString("account", "");
+        key = sharedPreferences.getString("key", "");
+        interval = sharedPreferences.getString("interval", "");
+        isGeocoderEnabled = sharedPreferences.getBoolean("geocoder", false);
 
-        textView.setText(id);
+        String description = intent.getStringExtra("description");
+
+        toolbarTitleObject.setText(description);
+
+        api = APIController.getApi(url);
+
+        final RequestObjectMoving requestObjectMoving = new RequestObjectMoving();
+        requestObjectMoving.setAccount(account);
+        requestObjectMoving.setKey(key);
+        requestObjectMoving.setId(id);
+        requestObjectMoving.setUseGeocoder(isGeocoderEnabled);
+
+        api.responseObjectsMoving(requestObjectMoving).enqueue(new Callback<ResponseObjectMoving>() {
+            @Override
+            public void onResponse(Call<ResponseObjectMoving> call, Response<ResponseObjectMoving> response) {
+                ResponseObjectMoving responseObjectMoving = response.body();
+
+                assert responseObjectMoving != null;
+
+                if (responseObjectMoving.getStatus().equalsIgnoreCase(ResponseStatuses.WARNING.toString())){
+                    List<String> warnings = responseObjectMoving.getWarnings();
+                    if (warnings.get(0).contains(ResponseStatuses.WARNING_DOES_NOT_HAVE_ACCESS_TO_THE_DEVICE.toString())) {
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                getString(R.string.warning_does_not_have_acces_to_device), Toast.LENGTH_LONG);
+                        toast.show();
+                        finish();
+                    }
+                } else if (responseObjectMoving.getStatus().equalsIgnoreCase(ResponseStatuses.DEVICE_ID_IS_NOT_VALID.toString())){
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            getString(R.string.device_id_is_not_valid), Toast.LENGTH_LONG);
+                    toast.show();
+                    finish();
+                } else if (responseObjectMoving.getStatus().equalsIgnoreCase(ResponseStatuses.SUCCESS.toString())){
+                    mapObjectFragment = new MapObjectFragment();
+                    contentObjectFragment = new ContentObjectFragment();
+
+                    Device device = responseObjectMoving.getDevice();
+                    Bundle bundleMap = new Bundle();
+                    bundleMap.putString("description", device.getDescription());
+                    bundleMap.putString("driverName", device.getDriverName());
+                    bundleMap.putString("trailer", device.getTrailer());
+                    bundleMap.putString("address", device.getAddress());
+                    bundleMap.putString("organization", device.getOrganization());
+                    bundleMap.putString("plate", device.getPlate());
+                    bundleMap.putDouble("lat", device.getLat());
+                    bundleMap.putDouble("lng", device.getLng());
+                    bundleMap.putDouble("speed", device.getSpeed());
+                    bundleMap.putLong("event", device.getEvent());
+                    bundleMap.putInt("heading", device.getHeading());
+                    bundleMap.putString("brand", device.getBrand());
+                    bundleMap.putString("color", device.getColor());
+                    bundleMap.putString("icon", device.getIcon());
+                    bundleMap.putString("id", id);
+                    bundleMap.putInt("statusCode", device.getStatusCode());
+                    bundleMap.putBoolean("wifi", device.isWifi());
+                    bundleMap.putBoolean("lowFlor", device.isLowFlor());
+                    bundleMap.putInt("altitude", device.getAltitude());
+                    bundleMap.putInt("satCount", device.getSatCount());
+                    bundleMap.putDouble("hdop", device.getHdop());
+                    bundleMap.putDouble("fuelExpense", device.getFuelExpense());
+                    bundleMap.putDouble("fuelLevel", device.getFuelLevel());
+                    bundleMap.putString("account", account);
+                    bundleMap.putString("key", key);
+                    bundleMap.putString("url", url);
+                    bundleMap.putBoolean("geocoder", isGeocoderEnabled);
+
+                    mapObjectFragment.setArguments(bundleMap);
+
+                    FragmentTransaction transaction =
+                            getSupportFragmentManager().beginTransaction();
+
+                    transaction.add(R.id.objectMap, mapObjectFragment);
+
+                    transaction.commitAllowingStateLoss();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseObjectMoving> call, Throwable t) {
+                finish();
+            }
+        });
 
     }
 

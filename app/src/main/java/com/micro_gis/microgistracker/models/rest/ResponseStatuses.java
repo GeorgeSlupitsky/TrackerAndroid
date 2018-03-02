@@ -4,7 +4,7 @@ package com.micro_gis.microgistracker.models.rest;
  * Created by postp on 25.02.2018.
  */
 
-public enum ResponseGroupsMovingStatuses {
+public enum ResponseStatuses {
 
     SUCCESS("SUCCESS"),
     WARNING("WARNING"),
@@ -22,7 +22,7 @@ public enum ResponseGroupsMovingStatuses {
 
     private final String status;
 
-    ResponseGroupsMovingStatuses(final String status){
+    ResponseStatuses(final String status){
         this.status = status;
     }
 

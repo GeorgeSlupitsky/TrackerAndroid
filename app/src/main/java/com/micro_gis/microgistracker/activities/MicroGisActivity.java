@@ -62,7 +62,7 @@ import com.micro_gis.microgistracker.models.rest.Account;
 import com.micro_gis.microgistracker.models.rest.Device;
 import com.micro_gis.microgistracker.models.rest.RequestGroupsMoving;
 import com.micro_gis.microgistracker.models.rest.ResponseGroupsMoving;
-import com.micro_gis.microgistracker.models.rest.ResponseGroupsMovingStatuses;
+import com.micro_gis.microgistracker.models.rest.ResponseStatuses;
 import com.micro_gis.microgistracker.retrofit.API;
 import com.micro_gis.microgistracker.retrofit.APIController;
 
@@ -238,46 +238,55 @@ public class MicroGisActivity extends AppCompatActivity
 
                     Gson gson = new Gson();
                     String json = gson.toJson(responseGroupsMoving);
-                    sharedpreferences.edit().putString("groupObjects", json).apply();
 
                     assert responseGroupsMoving != null;
 
-                    if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.WARNING.toString())) {
+                    if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseStatuses.WARNING.toString())) {
                         List<String> warnings = responseGroupsMoving.getWarnings();
-                        if (warnings.get(0).contains(ResponseGroupsMovingStatuses.WARNING_TEMPORARILY_SUSPENDED.toString())) {
+                        if (warnings.get(0).contains(ResponseStatuses.WARNING_TEMPORARILY_SUSPENDED.toString())) {
                             Toast toast = Toast.makeText(getApplicationContext(),
                                     getString(R.string.warning_temporarily_suspended), Toast.LENGTH_LONG);
                             toast.show();
-                        } else if (warnings.get(0).contains(ResponseGroupsMovingStatuses.WARNING_HAVE_NOT_GROUP.toString())) {
+                            sharedpreferences.edit().putString("groupObjects", "empty").apply();
+                        } else if (warnings.get(0).contains(ResponseStatuses.WARNING_HAVE_NOT_GROUP.toString())) {
                             Toast toast = Toast.makeText(getApplicationContext(),
                                     getString(R.string.warning_have_not_group), Toast.LENGTH_LONG);
                             toast.show();
-                        } else if (warnings.get(0).contains(ResponseGroupsMovingStatuses.WARNING_KEY_HAS_NOT_ACCESS.toString())) {
+                            sharedpreferences.edit().putString("groupObjects", "empty").apply();
+                        } else if (warnings.get(0).contains(ResponseStatuses.WARNING_KEY_HAS_NOT_ACCESS.toString())) {
                             Toast toast = Toast.makeText(getApplicationContext(),
                                     getString(R.string.warning_key_has_not_access), Toast.LENGTH_LONG);
                             toast.show();
-                        } else if (warnings.get(0).contains(ResponseGroupsMovingStatuses.WARNING_DOES_NOT_HAVE_ACCESS_TO_THE_DEVICE.toString())) {
+                            sharedpreferences.edit().putString("groupObjects", "empty").apply();
+                        } else if (warnings.get(0).contains(ResponseStatuses.WARNING_DOES_NOT_HAVE_ACCESS_TO_THE_DEVICE.toString())) {
                             Toast toast = Toast.makeText(getApplicationContext(),
                                     getString(R.string.warning_does_not_have_acces_to_device), Toast.LENGTH_LONG);
                             toast.show();
+                            sharedpreferences.edit().putString("groupObjects", "empty").apply();
                         }
-                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.ERROR.toString())) {
+                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseStatuses.ERROR.toString())) {
                         Toast toast = Toast.makeText(getApplicationContext(),
                                 getString(R.string.status_error), Toast.LENGTH_LONG);
                         toast.show();
-                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.KEY_LIFECYCLE_RANGE_OUT.toString())) {
+                        sharedpreferences.edit().putString("groupObjects", "empty").apply();
+                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseStatuses.KEY_LIFECYCLE_RANGE_OUT.toString())) {
                         Toast toast = Toast.makeText(getApplicationContext(),
                                 getString(R.string.key_lifecycle_range_out), Toast.LENGTH_LONG);
                         toast.show();
-                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.KEY_LEFT.toString())) {
+                        sharedpreferences.edit().putString("groupObjects", "empty").apply();
+                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseStatuses.KEY_LEFT.toString())) {
                         Toast toast = Toast.makeText(getApplicationContext(),
                                 getString(R.string.key_left), Toast.LENGTH_LONG);
                         toast.show();
-                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.ACCOUNT_ID_IS_NOT_VALID.toString())) {
+                        sharedpreferences.edit().putString("groupObjects", "empty").apply();
+                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseStatuses.ACCOUNT_ID_IS_NOT_VALID.toString())) {
                         Toast toast = Toast.makeText(getApplicationContext(),
                                 getString(R.string.account_id_is_not_valid), Toast.LENGTH_LONG);
                         toast.show();
-                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseGroupsMovingStatuses.SUCCESS.toString())) {
+                        sharedpreferences.edit().putString("groupObjects", "empty").apply();
+                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseStatuses.SUCCESS.toString())) {
+                        sharedpreferences.edit().putString("groupObjects", json).apply();
+
                         devices = responseGroupsMoving.getDevices();
 
                         objectsCount = devices.size();
@@ -657,10 +666,12 @@ public class MicroGisActivity extends AppCompatActivity
 
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        if (mLocationManager != null){
-            if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(myIntent);
+        if (isNavigationEnabled){
+            if (mLocationManager != null){
+                if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                    Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(myIntent);
+                }
             }
         }
 
@@ -794,9 +805,21 @@ public class MicroGisActivity extends AppCompatActivity
                             int groupsColIndex = c.getColumnIndex("groups");
 
                             accaunt = c.getString(accountColIndex);
+
+                            sharedpreferences.edit().putString("account", accaunt).apply();
+
                             key = c.getString(keyColIndex);
+
+                            sharedpreferences.edit().putString("key", key).apply();
+
                             interval = c.getString(requestIntervalColIndex);
+
+                            sharedpreferences.edit().putString("interval", interval).apply();
+
                             url = c.getString(urlColIndex);
+
+                            sharedpreferences.edit().putString("url", url).apply();
+
                             group = c.getString(groupsColIndex);
 
                             handler.post(requst);
@@ -832,9 +855,21 @@ public class MicroGisActivity extends AppCompatActivity
                             int groupsColIndex = c.getColumnIndex("groups");
 
                             accaunt = c.getString(accountColIndex);
+
+                            sharedpreferences.edit().putString("account", accaunt).apply();
+
                             key = c.getString(keyColIndex);
+
+                            sharedpreferences.edit().putString("key", key).apply();
+
                             interval = c.getString(requestIntervalColIndex);
+
+                            sharedpreferences.edit().putString("interval", interval).apply();
+
                             url = c.getString(urlColIndex);
+
+                            sharedpreferences.edit().putString("url", url).apply();
+
                             group = c.getString(groupsColIndex);
 
                             handler.post(requst);
@@ -1360,9 +1395,17 @@ public class MicroGisActivity extends AppCompatActivity
                 int groupsColIndex = c.getColumnIndex("groups");
 
                 accaunt = c.getString(accountColIndex);
+                sharedpreferences.edit().putString("account", accaunt).apply();
+
                 key = c.getString(keyColIndex);
+                sharedpreferences.edit().putString("key", key).apply();
+
                 interval = c.getString(requestIntervalColIndex);
+                sharedpreferences.edit().putString("interval", interval).apply();
+
                 url = c.getString(urlColIndex);
+                sharedpreferences.edit().putString("url", url).apply();
+
                 group = c.getString(groupsColIndex);
             } else {
                 Toast toast = Toast.makeText(getApplicationContext(),
