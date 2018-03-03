@@ -4,9 +4,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,13 +19,17 @@ import com.google.gson.Gson;
 import com.micro_gis.microgistracker.R;
 import com.micro_gis.microgistracker.fragments.ContentObjectFragment;
 import com.micro_gis.microgistracker.fragments.MapObjectFragment;
+import com.micro_gis.microgistracker.models.rest.Account;
 import com.micro_gis.microgistracker.models.rest.Device;
+import com.micro_gis.microgistracker.models.rest.RequestGroupsMoving;
 import com.micro_gis.microgistracker.models.rest.RequestObjectMoving;
+import com.micro_gis.microgistracker.models.rest.ResponseGroupsMoving;
 import com.micro_gis.microgistracker.models.rest.ResponseObjectMoving;
 import com.micro_gis.microgistracker.models.rest.ResponseStatuses;
 import com.micro_gis.microgistracker.retrofit.API;
 import com.micro_gis.microgistracker.retrofit.APIController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -39,13 +48,21 @@ public class ObjectDetailInfoActivity extends FragmentActivity {
 
     private String id;
     private String url;
-    private String account;
+    private String accaunt;
     private String key;
     private String interval;
+    private String group;
     private boolean isGeocoderEnabled;
+    private boolean isLabelEnabled;
+
 
     private MapObjectFragment mapObjectFragment;
     private ContentObjectFragment contentObjectFragment;
+
+    private ImageView downArrow;
+    private ImageView upArrow;
+
+    private boolean isNormal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +73,35 @@ public class ObjectDetailInfoActivity extends FragmentActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                final RequestGroupsMoving requestGroupsMoving = new RequestGroupsMoving();
+                requestGroupsMoving.setKey(key);
+                Account account = new Account();
+                account.setAccount(accaunt);
+                account.setUseGeocoder(isGeocoderEnabled);
+                List <String> grups = new ArrayList<>();
+                grups.add(group);
+                account.setGroups(grups);
+                List<Account> accounts = new ArrayList<>();
+                accounts.add(account);
+                requestGroupsMoving.setAccounts(accounts);
+
+                api.responseGroupsMoving(requestGroupsMoving).enqueue(new Callback<ResponseGroupsMoving>() {
+                    @Override
+                    public void onResponse(Call<ResponseGroupsMoving> call, Response<ResponseGroupsMoving> response) {
+                        ResponseGroupsMoving responseGroupsMoving = response.body();
+
+                        Gson gson = new Gson();
+                        String json = gson.toJson(responseGroupsMoving);
+
+                        sharedPreferences.edit().putString("groupObjects", json).apply();
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseGroupsMoving> call, Throwable t) {
+
+                    }
+                });
+
                 finish();
             }
         });
@@ -68,10 +114,12 @@ public class ObjectDetailInfoActivity extends FragmentActivity {
 
         id = intent.getStringExtra("id");
         url = sharedPreferences.getString("url", "");
-        account = sharedPreferences.getString("account", "");
+        accaunt = sharedPreferences.getString("account", "");
         key = sharedPreferences.getString("key", "");
         interval = sharedPreferences.getString("interval", "");
         isGeocoderEnabled = sharedPreferences.getBoolean("geocoder", false);
+        isLabelEnabled = sharedPreferences.getBoolean("label", true);
+        group = sharedPreferences.getString("group", "");
 
         String description = intent.getStringExtra("description");
 
@@ -80,7 +128,7 @@ public class ObjectDetailInfoActivity extends FragmentActivity {
         api = APIController.getApi(url);
 
         final RequestObjectMoving requestObjectMoving = new RequestObjectMoving();
-        requestObjectMoving.setAccount(account);
+        requestObjectMoving.setAccount(accaunt);
         requestObjectMoving.setKey(key);
         requestObjectMoving.setId(id);
         requestObjectMoving.setUseGeocoder(isGeocoderEnabled);
@@ -112,11 +160,7 @@ public class ObjectDetailInfoActivity extends FragmentActivity {
                     Device device = responseObjectMoving.getDevice();
                     Bundle bundleMap = new Bundle();
                     bundleMap.putString("description", device.getDescription());
-                    bundleMap.putString("driverName", device.getDriverName());
-                    bundleMap.putString("trailer", device.getTrailer());
-                    bundleMap.putString("address", device.getAddress());
                     bundleMap.putString("organization", device.getOrganization());
-                    bundleMap.putString("plate", device.getPlate());
                     bundleMap.putDouble("lat", device.getLat());
                     bundleMap.putDouble("lng", device.getLng());
                     bundleMap.putDouble("speed", device.getSpeed());
@@ -126,18 +170,17 @@ public class ObjectDetailInfoActivity extends FragmentActivity {
                     bundleMap.putString("color", device.getColor());
                     bundleMap.putString("icon", device.getIcon());
                     bundleMap.putString("id", id);
-                    bundleMap.putInt("statusCode", device.getStatusCode());
-                    bundleMap.putBoolean("wifi", device.isWifi());
-                    bundleMap.putBoolean("lowFlor", device.isLowFlor());
                     bundleMap.putInt("altitude", device.getAltitude());
                     bundleMap.putInt("satCount", device.getSatCount());
                     bundleMap.putDouble("hdop", device.getHdop());
                     bundleMap.putDouble("fuelExpense", device.getFuelExpense());
                     bundleMap.putDouble("fuelLevel", device.getFuelLevel());
-                    bundleMap.putString("account", account);
+                    bundleMap.putString("account", accaunt);
                     bundleMap.putString("key", key);
                     bundleMap.putString("url", url);
+                    bundleMap.putString("interval", interval);
                     bundleMap.putBoolean("geocoder", isGeocoderEnabled);
+                    bundleMap.putBoolean("label", isLabelEnabled);
 
                     mapObjectFragment.setArguments(bundleMap);
 
@@ -145,6 +188,7 @@ public class ObjectDetailInfoActivity extends FragmentActivity {
                             getSupportFragmentManager().beginTransaction();
 
                     transaction.add(R.id.objectMap, mapObjectFragment);
+                    transaction.add(R.id.objectContent, contentObjectFragment);
 
                     transaction.commitAllowingStateLoss();
                 }
@@ -156,6 +200,55 @@ public class ObjectDetailInfoActivity extends FragmentActivity {
             }
         });
 
-    }
+        downArrow = findViewById(R.id.arrowDownA);
+        upArrow = findViewById(R.id.arrowUpA);
 
+        isNormal = true;
+
+        downArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isNormal){
+                    DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+                    int height = displayMetrics.heightPixels;
+                    LinearLayout linearLayout = mapObjectFragment.getView().findViewById(R.id.webViewLL);
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, height - 155);
+                    linearLayout.setLayoutParams(lp);
+                    isNormal = false;
+                    v.setVisibility(View.INVISIBLE);
+                } else {
+                    FragmentManager fm = getSupportFragmentManager();
+                    fm.beginTransaction()
+                            .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                            .show(mapObjectFragment).commit();
+                    isNormal = true;
+                    upArrow.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        upArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isNormal){
+                    float density = getResources().getDisplayMetrics().density;
+                    float height = 225 * density;
+                    LinearLayout linearLayout = mapObjectFragment.getView().findViewById(R.id.webViewLL);
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int)height);
+                    linearLayout.setLayoutParams(lp);
+                    isNormal = true;
+                    downArrow.setVisibility(View.VISIBLE);
+                } else {
+                    FragmentManager fm = getSupportFragmentManager();
+                    fm.beginTransaction()
+                            .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                            .hide(mapObjectFragment).commit();
+                    isNormal = false;
+                    v.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
+
+    }
 }

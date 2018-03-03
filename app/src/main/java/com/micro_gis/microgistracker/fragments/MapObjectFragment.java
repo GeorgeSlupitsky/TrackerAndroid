@@ -1,23 +1,40 @@
 package com.micro_gis.microgistracker.fragments;
 
-
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.micro_gis.microgistracker.R;
 import com.micro_gis.microgistracker.WebAppInterface;
+import com.micro_gis.microgistracker.activities.ObjectDetailInfoActivity;
+import com.micro_gis.microgistracker.models.rest.Device;
+import com.micro_gis.microgistracker.models.rest.RequestObjectMoving;
+import com.micro_gis.microgistracker.models.rest.ResponseObjectMoving;
+import com.micro_gis.microgistracker.retrofit.API;
+import com.micro_gis.microgistracker.retrofit.APIController;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.google.android.gms.internal.zzip.runOnUiThread;
 
@@ -27,50 +44,187 @@ import static com.google.android.gms.internal.zzip.runOnUiThread;
 
 public class MapObjectFragment extends Fragment {
 
-    WebView webView;
-    TextView driverName;
-    TextView trailerName;
-    TextView objectDate;
-    TextView geozone;
-    ImageView imageViewObject;
-    ImageView imageViewStatus;
-    ImageView imageViewDriver;
-    ImageView imageViewTrailer;
-    ImageView imageViewWiFi;
-    ImageView imageViewLowFlor;
+    private static API api;
+    private WebView webView;
 
-    String description;
-    String driver;
-    String trailer;
-    String address;
-    String organization;
-    String plate;
-    Double lat;
-    Double lng;
-    Double speed;
-    Long event;
-    Integer heading;
-    String brand;
-    String color;
-    String icon;
-    String id;
-    Integer statusCode;
-    Boolean wifi;
-    Boolean isLowFlor;
-    Integer altitude;
-    Integer satCount;
-    Double hdop;
-    Double fuelExpense;
-    Double fuelLevel;
-    String account;
-    String key;
-    String url;
-    Boolean geocoder;
+    private Boolean isLabelEnabled;
+
+    private String description;
+    private String organization;
+    private Double lat;
+    private Double lng;
+    private Double speed;
+    private Integer heading;
+    private Long event;
+    private String brand;
+    private String color;
+    private String icon;
+    private String id;
+    private Integer altitude;
+    private Integer satCount;
+    private Double hdop;
+    private Double fuelExpense;
+    private Double fuelLevel;
+    private String account;
+    private String key;
+    private String url;
+    private String interval;
+    private Boolean geocoder;
+    private String date;
+
+    private Handler handler = new Handler();
+
+    Runnable requst = new Runnable() {
+        @Override
+        public void run() {
+            api = APIController.getApi(url);
+
+            final RequestObjectMoving requestObjectMoving = new RequestObjectMoving();
+            requestObjectMoving.setAccount(account);
+            requestObjectMoving.setKey(key);
+            requestObjectMoving.setId(id);
+            requestObjectMoving.setUseGeocoder(geocoder);
+
+            api.responseObjectsMoving(requestObjectMoving).enqueue(new Callback<ResponseObjectMoving>() {
+                @Override
+                public void onResponse(Call<ResponseObjectMoving> call, Response<ResponseObjectMoving> response) {
+                    ResponseObjectMoving responseObjectMoving = response.body();
+
+                    assert responseObjectMoving != null;
+                    Device device = responseObjectMoving.getDevice();
+
+                    description = device.getDescription();
+                    brand = device.getBrand();
+                    organization = device.getOrganization();
+                    event = device.getEvent();
+                    Date time = new java.util.Date(event *1000);
+                    date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
+                    speed = device.getSpeed();
+                    altitude = device.getAltitude();
+                    satCount = device.getSatCount();
+                    hdop = device.getHdop();
+                    fuelLevel = device.getFuelLevel();
+                    fuelExpense = device.getFuelExpense();
+                    heading = device.getHeading();
+                    color = device.getColor();
+                    lat = device.getLat();
+                    lng = device.getLng();
+
+                    String descriptionStr = getString(R.string.descriptionObj);
+                    String brandStr = getString(R.string.brand);
+                    String companyStr = getString(R.string.company);
+                    String lastDataStr = getString(R.string.lastData);
+                    String speedStr = getString(R.string.speed);
+                    String altitudeStr = getString(R.string.altitude);
+                    String satCountStr = getString(R.string.satCount);
+                    String hdopStr = "HDOP";
+                    String fuelLevelStr = getString(R.string.fuelLevel);
+                    String fuelExpenseStr = getString(R.string.fuelExpense);
+
+                    String html = descriptionStr + ": " + description +
+                            " <br/>" + brandStr + ": " + brand +
+                            " <br/>" + companyStr + ": " + organization +
+                            " <br/>" + lastDataStr + ": " + date +
+                            " <br/>" + speedStr + ": " + speed +
+                            " <br/>" + altitudeStr + ": " + altitude +
+                            " <br/>" + satCountStr + ": " + satCount +
+                            " <br/>" + hdopStr + ": " + hdop +
+                            " <br/>" + fuelLevelStr + ": " + fuelLevel +
+                            " <br/>" + fuelExpenseStr + ": " + fuelExpense;
+
+                    String[] DIRS = {"north","north-east","east","south-east","south","south-west","west","north-west"};
+
+                    int[] ANCOR_X = {20, 20, 17, 25, 20, 20, 27, 25};
+                    int[] ANCOR_Y = {20, 20, 20, 25, 25, 25, 20, 15};
+
+                    int dirNdx = (int) (Math.floor(heading / 45) % 8);
+                    String dirIconName = DIRS[dirNdx];
+                    int ancX = ANCOR_X[dirNdx];
+                    int ancY = ANCOR_Y[dirNdx];
+
+                    webView.loadUrl("javascript: " +
+                            "map.panTo(new L.LatLng(" + lat + ", " + lng +"));\n" +
+                            "var isLabelEnabled = " + isLabelEnabled + ";\n" +
+                            "var speed = " + speed + ";\n" +
+                            "var busIcon = L.Icon.Default.extend({options: \n" +
+                                "{iconUrl: 'file:///android_asset/images/deviceIcons/" + icon + "_" + color + ".png',\n" +
+                                "iconSize: [32, 32],\n" +
+                                "iconAnchor: [16, 16],\n" +
+                                "shadowSize: [0, 0],\n" +
+                                "popupAnchor: [0, -10],\n" +
+                                "tooltipAnchor: [16, 0]} });\n" +
+                            "var arrow" + id + ";\n" +
+                            "if (speed > 0){\n" +
+                                "var arrowIcon = new L.icon({\n" +
+                                    "iconUrl: 'file:///android_asset/images/" + dirIconName + ".png',\n" +
+                                    "iconSize: [44,44],\n" +
+                                    "shadowUrl: null,\n" +
+                                    "shadowSize: null,\n" +
+                                    "iconAnchor: [" + ancX + ", " + ancY + "],\n" +
+                                    "popupAnchor: [0, -10]\n" +
+                                "});\n" +
+                                "if (typeof(arrow" + id + ") === 'undefined'){\n" +
+                                    "arrow" + id + " = new L.marker([" + lat + ", " + lng + "], {icon: arrowIcon});\n" +
+                                    "arrow" + id + ".bindPopup(\"" + html + "\");"+
+                                "} else {\n" +
+                                    "arrow" + id + ".setIcon(arrowIcon);\n" +
+                                    "arrow" + id + ".bindPopup(\"" + html + "\");"+
+                                    "arrow" + id + ".setLatLng([" + lat + ", " + lng + "]);\n" +
+                                "}\n" +
+                            "} else {\n" +
+                                "var arrowIcon = new L.icon({\n" +
+                                    "iconUrl: 'file:///android_asset/images/empty.png',\n" +
+                                    "iconSize: [44, 44],\n" +
+                                    "shadowUrl: null,\n" +
+                                    "shadowSize: null,\n" +
+                                    "iconAnchor: [" + ancX + ", " + ancY + "],\n" +
+                                    "popupAnchor: [0, 0]\n" +
+                                "});\n"+
+                                "if (typeof(arrow" + id + ")==='undefined'){\n" +
+                                    "arrow" +  id + " = new L.marker([" + lat + ", " + lng + "], {icon: arrowIcon});\n" +
+                                    "arrow" + id + ".bindPopup(\"" + html + "\");"+
+                                    "arrow" + id + ".typeMarker = 'arrow';\n" +
+                                "} else {\n" +
+                                    "arrow" + id + ".setIcon(arrowIcon);"+
+                                    "arrow" + id + ".bindPopup(\"" + html + "\");"+
+                                    "arrow" + id + ".setLatLng([" + lat + ", " + lng + "]);\n" +
+                                "}\n" +
+                            "}\n" +
+                            "var icon = new busIcon();\n" +
+                            "if (typeof(bus" + id + ") === 'undefined'){\n" +
+                                "if (isLabelEnabled){\n" +
+                                    "bus" + id + " = new L.marker([" + lat + ", " + lng + "], {icon: icon})" +
+                                        ".bindTooltip(\"" + description + "\", {permanent: true})" +
+                                        ".bindPopup(\"" + html + "\");\n" +
+                                "} else {\n" +
+                                    "bus" + id + " = new L.marker([" + lat + ", " + lng + "], {icon: icon})" +
+                                        ".bindPopup(\"" + html + "\");\n" +
+                                "}\n" +
+                            "} else {\n" +
+                                "bus" + id + ".setIcon(icon);\n" +
+                                "bus" + id + ".setLatLng([" + lat + ", " + lng + "]);\n" +
+                                    "if (isLabelEnabled){\n" +
+                                        "bus" + id + ".bindTooltip(\"" + description + "\", {permanent: true});" +
+                                    "}\n" +
+                                "bus" + id + ".bindPopup(\"" + html + "\");\n" +
+                            "}\n" +
+                            "bus" + id + ".addTo(map);\n" +
+                            "arrow" + id + ".addTo(map);");
+                }
+
+                @Override
+                public void onFailure(Call<ResponseObjectMoving> call, Throwable t) {
+
+                }
+            });
+            handler.postDelayed(this, 1000*Long.parseLong(interval));
+        }
+    };
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_map_object, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_map_object, container, false);
 
 
         webView = (WebView) rootView.findViewById(R.id.webviewMapOdject);
@@ -87,39 +241,9 @@ public class MapObjectFragment extends Fragment {
 
         webView.addJavascriptInterface(new WebAppInterface(rootView.getContext()), "Android");
 
-        driverName = (TextView) rootView.findViewById(R.id.driverNameF);
-        trailerName = (TextView) rootView.findViewById(R.id.trailerNameF);
-        objectDate = (TextView) rootView.findViewById(R.id.objectDateF);
-        geozone = (TextView) rootView.findViewById(R.id.addressF);
-
-        imageViewObject = (ImageView) rootView.findViewById(R.id.imageViewObjectF);
-        imageViewStatus = (ImageView) rootView.findViewById(R.id.imageViewStatusF);
-        imageViewDriver = (ImageView) rootView.findViewById(R.id.imageViewDriverF);
-        imageViewTrailer = (ImageView) rootView.findViewById(R.id.imageViewTrailerF);
-        imageViewWiFi = (ImageView) rootView.findViewById(R.id.imageViewWiFiF);
-        imageViewLowFlor = (ImageView) rootView.findViewById(R.id.imageViewLowFlorF);
-
         description = getArguments().getString("description");
-        driver = getArguments().getString("driverName");
-
-        if (driver == null){
-            driver = "empty";
-        }
-
-        trailer = getArguments().getString("trailer");
-
-        if (trailer == null){
-            trailer = "empty";
-        }
-
-        address = getArguments().getString("address");
-
-        if (address == null){
-            address = "---";
-        }
 
         organization = getArguments().getString("organization");
-        plate = getArguments().getString("plate");
         lat = getArguments().getDouble("lat");
         lng = getArguments().getDouble("lng");
         speed = getArguments().getDouble("speed");
@@ -133,12 +257,7 @@ public class MapObjectFragment extends Fragment {
             icon = "car_sedan";
         }
 
-        String image = icon + "_" + color;
-
         id = getArguments().getString("id");
-        statusCode = getArguments().getInt("statusCode");
-        wifi = getArguments().getBoolean("wifi");
-        isLowFlor = getArguments().getBoolean("lowFlor");
         altitude = getArguments().getInt("altitude");
         satCount = getArguments().getInt("satCount");
         hdop = getArguments().getDouble("hdop");
@@ -148,101 +267,18 @@ public class MapObjectFragment extends Fragment {
         key = getArguments().getString("key");
         url = getArguments().getString("url");
         geocoder = getArguments().getBoolean("geocoder");
+        isLabelEnabled = getArguments().getBoolean("label");
+        interval = getArguments().getString("interval");
 
-        String statusIcon = null;
-
-        switch (statusCode){
-            case 61714:
-                statusIcon = "device_moving";
-                break;
-            case 61715:
-                statusIcon = "device_stop";
-                break;
-            case 63601:
-                statusIcon = "device_towing";
-                break;
-            case 62144:
-                statusIcon = "device_parking";
-                break;
-        }
-
-        Resources resources = container.getContext().getResources();
-
-        final int resourceId = resources.getIdentifier(image, "drawable",
-                container.getContext().getPackageName());
-
-        imageViewObject.setImageResource(resourceId);
-
-        Date time = new java.util.Date(event*1000);
-        String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
-        objectDate.setText(date);
-
-        if (statusIcon != null){
-            final int statusResourceId = resources.getIdentifier(statusIcon, "drawable",
-                    container.getContext().getPackageName());
-            imageViewStatus.setImageResource(statusResourceId);
-        }
-
-        String driverIcon;
-
-        if (driver.equals("empty")){
-            driverIcon = "driver_grey";
-            driverName.setText("");
-        } else {
-            driverIcon = "driver_green";
-            driverName.setText(driver);
-        }
-
-        final int driverResourceId = resources.getIdentifier(driverIcon, "drawable",
-                container.getContext().getPackageName());
-
-        imageViewDriver.setImageResource(driverResourceId);
-
-        String trailerIcon;
-
-        if (trailer.equals("empty")){
-            trailerIcon = "trailer_grey";
-            trailerName.setText("");
-        } else {
-            trailerIcon = "trailer_green";
-            trailerName.setText(trailer);
-        }
-
-        final int trailerResourceId = resources.getIdentifier(trailerIcon, "drawable",
-                container.getContext().getPackageName());
-        imageViewTrailer.setImageResource(trailerResourceId);
-
-        String wifiIcon;
-
-        if (!wifi){
-            wifiIcon = "wifi_grey";
-        } else {
-            wifiIcon = "wifi_green";
-        }
-
-        final int wifiResourceId = resources.getIdentifier(wifiIcon, "drawable",
-                container.getContext().getPackageName());
-        imageViewWiFi.setImageResource(wifiResourceId);
-
-        String lowFlorIcon;
-
-        if (!isLowFlor){
-            lowFlorIcon = "lowflor_grey";
-        } else {
-            lowFlorIcon = "lowflor_green";
-        }
-
-        final int lowFlorResourceId = resources.getIdentifier(lowFlorIcon, "drawable",
-                container.getContext().getPackageName());
-        imageViewLowFlor.setImageResource(lowFlorResourceId);
-
-        if (address.equals("---")){
-            geozone.setText("");
-        } else {
-            geozone.setText(address);
-        }
-
+        handler.post(requst);
 
         return rootView;
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        handler.removeCallbacks(requst);
+    }
+
 }

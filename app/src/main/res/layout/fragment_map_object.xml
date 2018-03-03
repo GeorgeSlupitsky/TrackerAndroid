@@ -3,161 +3,16 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
+        android:layout_height="225dp"
+        android:id="@+id/webViewLL">
         <WebView
             android:layout_width="match_parent"
-            android:layout_height="225dp"
+            android:layout_height="match_parent"
             android:id="@+id/webviewMapOdject">
-
         </WebView>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:weightSum="1">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:id="@+id/imageViewObjectF"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginLeft="10dp"/>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginLeft="10dp">
-                    <ImageView
-                        android:id="@+id/imageViewDriverF"
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_marginTop="5dp"/>
-
-                    <ImageView
-                        android:id="@+id/imageViewTrailerF"
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginLeft="4dp"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginLeft="10dp">
-
-                    <ImageView
-                        android:id="@+id/imageViewWiFiF"
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_marginTop="5dp"/>
-
-                    <ImageView
-                        android:id="@+id/imageViewLowFlorF"
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginLeft="4dp"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/driverNameF"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingLeft="15dp"
-                        android:paddingTop="5dp"
-                        android:text="Driver"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/black"/>
-
-                    <TextView
-                        android:id="@+id/trailerNameF"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingLeft="15dp"
-                        android:paddingTop="5dp"
-                        android:text="Trailer"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/black"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:id="@+id/imageViewStatusF"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:layout_marginLeft="15dp"/>
-
-                    <TextView
-                        android:id="@+id/objectDateF"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:paddingLeft="15dp"
-                        android:text="Date"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@color/black" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/addressF"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:paddingLeft="15dp"
-                        android:paddingTop="5dp"
-                        android:text="@string/address"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/black"/>
-
-                    <TextView
-                        android:id="@+id/geozoneF"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:paddingLeft="15dp"
-                        android:paddingTop="5dp"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/black"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </LinearLayout>
 
     </LinearLayout>
 

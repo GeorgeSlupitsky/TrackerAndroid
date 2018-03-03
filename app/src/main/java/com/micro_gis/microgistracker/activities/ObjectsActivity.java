@@ -68,18 +68,12 @@ public class ObjectsActivity extends AppCompatActivity {
             }
         });
 
-        Gson gson = new Gson();
-
         search = (EditText) findViewById(R.id.inputSearch);
         noObjects = (TextView) findViewById(R.id.tvNoObjects);
         clearSearch = (Button) findViewById(R.id.clearSearch);
 
         sharedPreferences = getSharedPreferences("mypref", MODE_PRIVATE);
-        objects = sharedPreferences.getString("groupObjects", "empty");
-        objectsCount = sharedPreferences.getInt("objectsCount", 0);
 
-        TextView title = findViewById(R.id.toolbar_title);
-        title.setText(getString(R.string.objectsGroup) + " (" + objectsCount + ")");
 
         clearSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +81,20 @@ public class ObjectsActivity extends AppCompatActivity {
                 search.setText("");
             }
         });
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Gson gson = new Gson();
+
+        objects = sharedPreferences.getString("groupObjects", "empty");
+        objectsCount = sharedPreferences.getInt("objectsCount", 0);
+
+        TextView title = findViewById(R.id.toolbar_title);
+        title.setText(getString(R.string.objectsGroup) + " (" + objectsCount + ")");
 
         if(objects.equals("empty")){
             noObjects.setText(getString(R.string.empty_object_list));
@@ -131,7 +139,6 @@ public class ObjectsActivity extends AppCompatActivity {
                 if (address == null){
                     address = "---";
                 }
-
 
                 m.put(ATTRIBUTE_NAME_ID, id);
                 m.put(ATTRIBUTE_NAME_TEXT, description);
@@ -204,6 +211,5 @@ public class ObjectsActivity extends AppCompatActivity {
             });
 
         }
-
     }
 }

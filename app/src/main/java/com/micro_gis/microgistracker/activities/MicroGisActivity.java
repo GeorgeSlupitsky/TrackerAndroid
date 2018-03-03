@@ -822,6 +822,8 @@ public class MicroGisActivity extends AppCompatActivity
 
                             group = c.getString(groupsColIndex);
 
+                            sharedpreferences.edit().putString("group", group).apply();
+
                             handler.post(requst);
 
                             sendToserver.setBackgroundResource(R.drawable.connect);
@@ -871,6 +873,8 @@ public class MicroGisActivity extends AppCompatActivity
                             sharedpreferences.edit().putString("url", url).apply();
 
                             group = c.getString(groupsColIndex);
+
+                            sharedpreferences.edit().putString("group", group).apply();
 
                             handler.post(requst);
 
@@ -1407,6 +1411,7 @@ public class MicroGisActivity extends AppCompatActivity
                 sharedpreferences.edit().putString("url", url).apply();
 
                 group = c.getString(groupsColIndex);
+                sharedpreferences.edit().putString("group", group).apply();
             } else {
                 Toast toast = Toast.makeText(getApplicationContext(),
                         getString(R.string.please_add_server_monitoring_settings), Toast.LENGTH_SHORT);
