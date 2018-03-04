@@ -1320,7 +1320,9 @@ public class MicroGisActivity extends AppCompatActivity
             clearMap();
         } else {
             if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                if (mPreviousLocation != null && mLastLocation != null){
+                    navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                }
             } else {
                 Toast toast = Toast.makeText(getApplicationContext(),
                         getString(R.string.enable_gps), Toast.LENGTH_LONG);
