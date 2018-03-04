@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 27
@@ -30,6 +31,7 @@ repositories {
     maven {
         url "https://jitpack.io"
     }
+    mavenCentral()
 }
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -48,5 +50,6 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     //noinspection DuplicatePlatformClasses
     compile group: 'org.json', name: 'json', version: '20160810'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
 }
