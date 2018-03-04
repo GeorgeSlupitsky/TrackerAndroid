@@ -52,5 +52,6 @@ dependencies {
     //noinspection DuplicatePlatformClasses
     compile group: 'org.json', name: 'json', version: '20160810'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile "org.jetbrains.anko:anko-appcompat-v7:0.10.1"
 
 }
