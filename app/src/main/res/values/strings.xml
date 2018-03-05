@@ -95,6 +95,9 @@
     <string name="brand">Brand of object</string>
     <string name="company">Organization</string>
     <string name="lastData">Last data</string>
+    <string name="driver">Driver</string>
+    <string name="trailer">Trailer</string>
+    <string name="plate">Plate</string>
     <string name="speed">Speed</string>
     <string name="altitude">Altitude</string>
     <string name="satCount">Satellite count</string>
@@ -115,4 +118,11 @@
     <string name="geocoderParams">Enable geocoder</string>
     <string name="navigationParams">Enable navigation</string>
     <string name="address">Address: </string>
+    <string name="addressObjInfo">Address</string>
+
+    <string name="Info">Info</string>
+    <string name="Events">Events</string>
+    <string name="Control">Control</string>
+    <string name="Trips">Trips</string>
+    <string name="Sensors">Sensors</string>
 </resources>

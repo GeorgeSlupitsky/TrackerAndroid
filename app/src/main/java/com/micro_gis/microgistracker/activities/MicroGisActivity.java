@@ -760,7 +760,9 @@ public class MicroGisActivity extends AppCompatActivity
                 getMarkers();
                 if (isNavigationEnabled){
                     if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                        navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                        if (mPreviousLocation != null && mLastLocation != null){
+                            navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                        }
                     } else {
                         Toast toast = Toast.makeText(getApplicationContext(),
                                 getString(R.string.enable_gps), Toast.LENGTH_LONG);
@@ -782,7 +784,9 @@ public class MicroGisActivity extends AppCompatActivity
                     if (groupId != 999999999){
                         if (isNavigationEnabled){
                             if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                                navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                                if (mPreviousLocation != null && mLastLocation != null){
+                                    navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                                }
                             } else {
                                 Toast toast = Toast.makeText(getApplicationContext(),
                                         getString(R.string.enable_gps), Toast.LENGTH_LONG);
@@ -837,7 +841,9 @@ public class MicroGisActivity extends AppCompatActivity
                     } else {
                         if (isNavigationEnabled){
                             if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                                navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                                if (mPreviousLocation != null && mLastLocation != null){
+                                    navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                                }
                             } else {
                                 Toast toast = Toast.makeText(getApplicationContext(),
                                         getString(R.string.enable_gps), Toast.LENGTH_LONG);
@@ -898,7 +904,9 @@ public class MicroGisActivity extends AppCompatActivity
                     getMarkers();
                     if (isNavigationEnabled){
                         if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                            navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                            if (mPreviousLocation != null && mLastLocation != null){
+                                navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                            }
                         } else {
                             Toast toast = Toast.makeText(getApplicationContext(),
                                     getString(R.string.enable_gps), Toast.LENGTH_LONG);
@@ -1365,7 +1373,9 @@ public class MicroGisActivity extends AppCompatActivity
 
             if (isNavigationEnabled){
                 if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                    navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                    if (mPreviousLocation != null && mLastLocation != null){
+                        navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                    }
                 } else {
                     Toast toast = Toast.makeText(getApplicationContext(),
                             getString(R.string.enable_gps), Toast.LENGTH_LONG);
@@ -1568,7 +1578,9 @@ public class MicroGisActivity extends AppCompatActivity
 
         if (isNavigationEnabled){
             if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                if (mPreviousLocation != null && mLastLocation != null){
+                    navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                }
             } else {
                 Toast toast = Toast.makeText(getApplicationContext(),
                         getString(R.string.enable_gps), Toast.LENGTH_LONG);

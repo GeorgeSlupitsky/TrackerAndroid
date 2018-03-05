@@ -97,6 +97,9 @@
     <string name="brand">Марка объекта</string>
     <string name="company">Компания</string>
     <string name="lastData">Последние данные</string>
+    <string name="driver">Водитель</string>
+    <string name="trailer">Прицеп</string>
+    <string name="plate">Номерной знак</string>
     <string name="speed">Скорость</string>
     <string name="altitude">Высота</string>
     <string name="satCount">Количество спутников</string>
@@ -117,5 +120,11 @@
     <string name="geocoderParams">Вкл. геокодирование</string>
     <string name="navigationParams">Вкл. навигацию</string>
     <string name="address">Адресс: </string>
+    <string name="addressObjInfo">Адресс</string>
 
+    <string name="Info">Инфо</string>
+    <string name="Events">События</string>
+    <string name="Control">Контроль</string>
+    <string name="Trips">Поездки</string>
+    <string name="Sensors">Шлейф</string>
 </resources>

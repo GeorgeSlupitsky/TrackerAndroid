@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.micro_gis.microgistracker.R;
+import com.micro_gis.microgistracker.adapters.InfoObjectAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,13 +22,19 @@ import java.util.List;
 
 public class ContentObjectFragment extends Fragment {
 
+    private InfoObjectFragment infoObjectFragment;
+    private SensorsObjectFragment sensorsObjectFragment;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_content_object, container, false);
 
+        infoObjectFragment = new InfoObjectFragment();
+        sensorsObjectFragment = new SensorsObjectFragment();
+
         ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
         setupViewPager(viewPager);
-        // Set Tabs inside Toolbar
+
         TabLayout tabs = (TabLayout) rootView.findViewById(R.id.result_tabs);
         tabs.setupWithViewPager(viewPager);
 
@@ -36,13 +43,12 @@ public class ContentObjectFragment extends Fragment {
 
     private void setupViewPager(ViewPager viewPager) {
 
-
         Adapter adapter = new Adapter(getChildFragmentManager());
-        adapter.addFragment(new Fragment(), "Today");
-        adapter.addFragment(new Fragment(), "Week");
-        adapter.addFragment(new Fragment(), "Month");
-        adapter.addFragment(new Fragment(), "Month");
-        adapter.addFragment(new Fragment(), "My Teams");
+        adapter.addFragment(infoObjectFragment, getString(R.string.Info));
+        adapter.addFragment(sensorsObjectFragment, getString(R.string.Sensors));
+        adapter.addFragment(new Fragment(), getString(R.string.Events));
+        adapter.addFragment(new Fragment(), getString(R.string.Control));
+        adapter.addFragment(new Fragment(), getString(R.string.Trips));
         viewPager.setAdapter(adapter);
 
     }

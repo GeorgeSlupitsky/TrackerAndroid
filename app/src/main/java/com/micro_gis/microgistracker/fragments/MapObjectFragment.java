@@ -1,28 +1,20 @@
 package com.micro_gis.microgistracker.fragments;
 
 import android.content.Context;
-import android.content.res.Resources;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.micro_gis.microgistracker.R;
 import com.micro_gis.microgistracker.WebAppInterface;
-import com.micro_gis.microgistracker.activities.ObjectDetailInfoActivity;
 import com.micro_gis.microgistracker.models.rest.Device;
 import com.micro_gis.microgistracker.models.rest.RequestObjectMoving;
 import com.micro_gis.microgistracker.models.rest.ResponseObjectMoving;
@@ -72,6 +64,8 @@ public class MapObjectFragment extends Fragment {
     private Boolean geocoder;
     private String date;
 
+    private SharedPreferences sharedPreferences;
+
     private Handler handler = new Handler();
 
     Runnable requst = new Runnable() {
@@ -92,6 +86,12 @@ public class MapObjectFragment extends Fragment {
 
                     assert responseObjectMoving != null;
                     Device device = responseObjectMoving.getDevice();
+
+                    Gson gson = new Gson();
+
+                    String deviceJSON = gson.toJson(device);
+
+                    sharedPreferences.edit().putString("deviceJSON", deviceJSON).apply();
 
                     description = device.getDescription();
                     brand = device.getBrand();
@@ -226,7 +226,6 @@ public class MapObjectFragment extends Fragment {
 
         final View rootView = inflater.inflate(R.layout.fragment_map_object, container, false);
 
-
         webView = (WebView) rootView.findViewById(R.id.webviewMapOdject);
         runOnUiThread(new Runnable() {
             @Override
@@ -238,6 +237,8 @@ public class MapObjectFragment extends Fragment {
 
             }
         });
+
+        sharedPreferences = getActivity().getSharedPreferences("mypref", Context.MODE_PRIVATE);
 
         webView.addJavascriptInterface(new WebAppInterface(rootView.getContext()), "Android");
 
