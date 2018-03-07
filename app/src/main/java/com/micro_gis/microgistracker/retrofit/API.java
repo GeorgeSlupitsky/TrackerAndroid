@@ -2,8 +2,10 @@ package com.micro_gis.microgistracker.retrofit;
 
 import com.micro_gis.microgistracker.models.rest.RequestGroupsMoving;
 import com.micro_gis.microgistracker.models.rest.RequestObjectMoving;
+import com.micro_gis.microgistracker.models.rest.RequestObjectTrip;
 import com.micro_gis.microgistracker.models.rest.ResponseGroupsMoving;
 import com.micro_gis.microgistracker.models.rest.ResponseObjectMoving;
+import com.micro_gis.microgistracker.models.rest.ResponseObjectTrip;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -20,5 +22,8 @@ public interface API {
 
     @POST("/api/object")
     Call<ResponseObjectMoving> responseObjectsMoving(@Body RequestObjectMoving requestObjectsMoving);
+
+    @POST("/api/trips")
+    Call<ResponseObjectTrip> responseObjectsTrip(@Body RequestObjectTrip requestObjectsTrip);
 
 }

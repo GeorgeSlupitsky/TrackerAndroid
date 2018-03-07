@@ -11,11 +11,13 @@ import android.widget.ListView;
 
 import com.google.gson.Gson;
 import com.micro_gis.microgistracker.R;
-import com.micro_gis.microgistracker.adapters.InfoObjectAdapter;
+import com.micro_gis.microgistracker.adapters.SensorsCustomAdapter;
 import com.micro_gis.microgistracker.models.rest.Device;
+import com.micro_gis.microgistracker.models.rest.Sensor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,8 +28,9 @@ public class SensorsObjectFragment extends Fragment {
 
     private final String ATTRIBUTE_NAME_KEY = "key";
     private final String ATTRIBUTE_NAME_VALUE = "value";
+    private final String ATTRIBUTE_NAME_MEASURE = "measure";
 
-    private String[] from = {ATTRIBUTE_NAME_KEY, ATTRIBUTE_NAME_VALUE};
+    private String[] from = {ATTRIBUTE_NAME_KEY, ATTRIBUTE_NAME_VALUE, ATTRIBUTE_NAME_MEASURE};
 
     private SharedPreferences sharedPreferences;
 
@@ -46,22 +49,23 @@ public class SensorsObjectFragment extends Fragment {
 
         ArrayList<Map<String, String>> data = new ArrayList<>();
 
-        Map <String, String> map = device.getSensors();
+        List <Sensor> sensors = device.getSensors();
 
-        for (String key: map.keySet()){
+        for (Sensor sensor: sensors){
             Map<String, String> m = new HashMap<>();
 
-            m.put(ATTRIBUTE_NAME_KEY, key);
-            m.put(ATTRIBUTE_NAME_VALUE, map.get(key));
+            m.put(ATTRIBUTE_NAME_KEY, sensor.getDescription());
+            m.put(ATTRIBUTE_NAME_VALUE, sensor.getValue());
+            m.put(ATTRIBUTE_NAME_MEASURE, sensor.getUnitMeasure());
 
             data.add(m);
         }
 
         ListView listView = rootView.findViewById(R.id.listViewSensorsObject);
 
-        InfoObjectAdapter infoObjectAdapter = new InfoObjectAdapter(getContext(), R.layout.custom_adapter_object_info, data, from);
+        SensorsCustomAdapter sensorsCustomAdapter = new SensorsCustomAdapter(getContext(), R.layout.custom_adapter_object_info, data, from);
 
-        listView.setAdapter(infoObjectAdapter);
+        listView.setAdapter(sensorsCustomAdapter);
 
         return rootView;
     }

@@ -422,6 +422,7 @@ public class MicroGisActivity extends AppCompatActivity
                                         "} else {\n" +
                                             "bus" + i + " = new L.marker([" + lat + ", " + lng + "], {icon: icon})" +
                                             ".bindPopup(\"" + html + "\");\n" +
+                                            "bus" + i + ".unbindTooltip();\n" +
                                             "bus" + i + ".typeMarker = 'car';\n" +
                                             "bus" + i + ".speed = speed;\n" +
                                             "bus" + i + ".arrow = arrow" + i + ";\n" +
@@ -430,6 +431,7 @@ public class MicroGisActivity extends AppCompatActivity
                                     "} else {\n" +
                                         "bus" + i + ".setIcon(icon);\n" +
                                         "bus" + i + ".setLatLng([" + lat + ", " + lng + "]);\n" +
+                                        "bus" + i + ".unbindTooltip();\n" +
                                         "if (isLabelEnabled){\n" +
                                             "bus" + i + ".bindTooltip(\"" + description + "\", {permanent: true});" +
                                         "}\n" +
@@ -1744,7 +1746,9 @@ public class MicroGisActivity extends AppCompatActivity
         myWebView.loadUrl("javascript:map.removeLayer(polyline);");
         myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
                 "if (layer instanceof L.Marker) {\n" +
-                "layer.unbindTooltip();\n" +
+                    "if (layer.typeMarker == 'car'){\n" +
+                        "layer.unbindTooltip();\n" +
+                    "}\n" +
                 "map.removeLayer(layer)\n" +
                 "}\n" +
                 "map.closePopup()\n"+

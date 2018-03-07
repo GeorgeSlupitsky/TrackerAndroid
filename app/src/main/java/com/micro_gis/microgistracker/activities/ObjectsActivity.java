@@ -33,27 +33,27 @@ import java.util.Map;
 
 public class ObjectsActivity extends AppCompatActivity {
 
-    final String ATTRIBUTE_NAME_ID = "id";
-    final String ATTRIBUTE_NAME_TEXT = "text";
-    final String ATTRIBUTE_NAME_IMAGE = "image";
-    final String ATTRIBUTE_NAME_STATUS = "status";
-    final String ATTRIBUTE_NAME_COLOR = "color";
-    final String ATTRIBUTE_NAME_DATE = "date";
-    final String ATTRIBUTE_NAME_DRIVER = "driver";
-    final String ATTRIBUTE_NAME_TRAILER = "trailer";
-    final String ATTRIBUTE_NAME_WIFI = "wifi";
-    final String ATTRIBUTE_NAME_LOW_FLOR = "lowFlor";
-    final String ATTRIBUTE_NAME_ADDRESS = "address";
+    private final String ATTRIBUTE_NAME_ID = "id";
+    private final String ATTRIBUTE_NAME_TEXT = "text";
+    private final String ATTRIBUTE_NAME_IMAGE = "image";
+    private final String ATTRIBUTE_NAME_STATUS = "status";
+    private final String ATTRIBUTE_NAME_COLOR = "color";
+    private final String ATTRIBUTE_NAME_DATE = "date";
+    private final String ATTRIBUTE_NAME_DRIVER = "driver";
+    private final String ATTRIBUTE_NAME_TRAILER = "trailer";
+    private final String ATTRIBUTE_NAME_WIFI = "wifi";
+    private final String ATTRIBUTE_NAME_LOW_FLOR = "lowFlor";
+    private final String ATTRIBUTE_NAME_ADDRESS = "address";
 
-    ObjectsCustomAdapter objectsCustomAdapter;
-    SharedPreferences sharedPreferences;
-    ArrayList<Map<String, Object>> data;
-    String objects;
-    TextView noObjects;
-    ListView listView;
-    Button clearSearch;
-    int objectsCount;
-    EditText search;
+    private ObjectsCustomAdapter objectsCustomAdapter;
+    private SharedPreferences sharedPreferences;
+    private ArrayList<Map<String, Object>> data;
+    private String objects;
+    private TextView noObjects;
+    private ListView listView;
+    private Button clearSearch;
+    private int objectsCount;
+    private  EditText search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

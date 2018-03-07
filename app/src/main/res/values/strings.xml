@@ -105,6 +105,7 @@
     <string name="fuelExpense">Fuel expense</string>
     <string name="not_connected">To see objects list please connect to server</string>
     <string name="empty_object_list">List of objects is empty</string>
+    <string name="empty_trips_list">List of trips is empty</string>
     <string name="information">Information</string>
     <string name="objectGroups">Object Groups</string>
     <string name="objectsGroup">Objects</string>
@@ -125,4 +126,17 @@
     <string name="Control">Control</string>
     <string name="Trips">Trips</string>
     <string name="Sensors">Sensors</string>
+
+    <string name="Km">Km</string>
+    <string name="KmH">Km/H</string>
+    <string name="Hour">H</string>
+    <string name="Min">Min</string>
+
+    <string name="litres">l</string>
+    <string name="celsium">\u00B0C</string>
+    <string name="rpm">r/min</string>
+    <string name="volts">V</string>
+    <string name="acceleration">G</string>
+
+
 </resources>

@@ -45,8 +45,6 @@ public class ObjectDetailInfoActivity extends FragmentActivity {
 
     private static API api;
 
-    public static String jsonInfo;
-
     private SharedPreferences sharedPreferences;
 
     private String id;
@@ -186,37 +184,20 @@ public class ObjectDetailInfoActivity extends FragmentActivity {
 
                     mapObjectFragment.setArguments(bundleMap);
 
+                    Bundle bundleContent = new Bundle();
+                    bundleContent.putString("id", id);
+                    bundleContent.putString("account", accaunt);
+                    bundleContent.putString("key", key);
+                    bundleContent.putString("url", url);
+                    bundleContent.putBoolean("geocoder", isGeocoderEnabled);
+
+                    contentObjectFragment.setArguments(bundleContent);
+
                     Gson gson = new Gson();
 
                     String deviceJSON = gson.toJson(device);
 
                     sharedPreferences.edit().putString("deviceJSON", deviceJSON).apply();
-
-//                    Bundle bundleInfo = new Bundle();
-//                    bundleInfo.putString("description", device.getDescription());
-//                    bundleInfo.putString("organization", device.getOrganization());
-//                    bundleInfo.putString("lat", String.valueOf(device.getLat()));
-//                    bundleInfo.putString("lng", String.valueOf(device.getLng()));
-//                    bundleInfo.putString("speed", String.valueOf(device.getSpeed()));
-//                    bundleInfo.putString("event", String.valueOf(device.getEvent()));
-//                    bundleInfo.putString("heading", String.valueOf(device.getHeading()));
-//                    bundleInfo.putString("brand", String.valueOf(device.getBrand()));
-//                    bundleInfo.putString("color", String.valueOf(device.getColor()));
-//                    bundleInfo.putString("icon", device.getIcon());
-//                    bundleInfo.putString("plate", device.getPlate());
-//                    bundleInfo.putString("altitude", String.valueOf(device.getAltitude()));
-//                    bundleInfo.putString("satCount", String.valueOf(device.getSatCount()));
-//                    bundleInfo.putString("hdop", String.valueOf(device.getHdop()));
-//                    bundleInfo.putString("fuelExpense", String.valueOf(device.getFuelExpense()));
-//                    bundleInfo.putString("fuelLevel", String.valueOf(device.getFuelLevel()));
-//                    bundleInfo.putString("statusCode", String.valueOf(device.getStatusCode()));
-//                    bundleInfo.putString("wifi", String.valueOf(device.isWifi()));
-//                    bundleInfo.putString("lowFlor", String.valueOf(device.isLowFlor()));
-//                    bundleInfo.putString("driverName", device.getDriverName());
-//                    bundleInfo.putString("trailer", device.getTrailer());
-//                    bundleInfo.putString("address", device.getAddress());
-//
-//                    contentObjectFragment.setArguments(bundleInfo);
 
                     FragmentTransaction transaction =
                             getSupportFragmentManager().beginTransaction();

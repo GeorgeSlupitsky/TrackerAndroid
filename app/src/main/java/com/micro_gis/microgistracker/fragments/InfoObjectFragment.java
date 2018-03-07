@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +13,7 @@ import android.widget.ListView;
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
 import com.micro_gis.microgistracker.R;
-import com.micro_gis.microgistracker.adapters.InfoObjectAdapter;
+import com.micro_gis.microgistracker.adapters.InfoObjectCustomAdapter;
 import com.micro_gis.microgistracker.models.rest.Device;
 
 import java.text.SimpleDateFormat;
@@ -23,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Created by User9 on 05.03.2018.
@@ -46,7 +43,7 @@ public class InfoObjectFragment extends Fragment {
 
     private String[] from = {ATTRIBUTE_NAME_KEY, ATTRIBUTE_NAME_VALUE};
 
-    private InfoObjectAdapter infoObjectAdapter;
+    private InfoObjectCustomAdapter infoObjectCustomAdapter;
 
     private String deviceJSON;
 
@@ -73,9 +70,9 @@ public class InfoObjectFragment extends Fragment {
                 data.add(m);
             }
 
-            infoObjectAdapter = new InfoObjectAdapter(getContext(), R.layout.custom_adapter_object_info, data, from);
+            infoObjectCustomAdapter = new InfoObjectCustomAdapter(getContext(), R.layout.custom_adapter_object_info, data, from);
 
-            listView.setAdapter(infoObjectAdapter);
+            listView.setAdapter(infoObjectCustomAdapter);
 
             handler.postDelayed(this, 1000* Long.parseLong(interval));
         }
@@ -100,8 +97,6 @@ public class InfoObjectFragment extends Fragment {
 
         createTempData(device);
 
-        Map<String, String> map = device.getSensors();
-
         for (String key: tempData.keySet()){
             Map<String, String> m = new HashMap<>();
 
@@ -114,9 +109,9 @@ public class InfoObjectFragment extends Fragment {
 
         listView = rootView.findViewById(R.id.listViewInfoObject);
 
-        infoObjectAdapter = new InfoObjectAdapter(getContext(), R.layout.custom_adapter_object_info, data, from);
+        infoObjectCustomAdapter = new InfoObjectCustomAdapter(getContext(), R.layout.custom_adapter_object_info, data, from);
 
-        listView.setAdapter(infoObjectAdapter);
+        listView.setAdapter(infoObjectCustomAdapter);
 
         handler.post(request);
 

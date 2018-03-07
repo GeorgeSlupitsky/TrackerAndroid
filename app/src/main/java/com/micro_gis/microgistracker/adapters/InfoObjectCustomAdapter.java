@@ -19,14 +19,14 @@ import java.util.Map;
  * Created by User9 on 05.03.2018.
  */
 
-public class InfoObjectAdapter extends ArrayAdapter<Map<String, String>> {
+public class InfoObjectCustomAdapter extends ArrayAdapter<Map<String, String>> {
 
     private Context context;
     private ArrayList<Map<String, String>> data;
     private int layoutResourceId;
     private String[] mFrom;
 
-    public InfoObjectAdapter(Context context, int resource, ArrayList<Map<String, String>> data, String[] mFrom) {
+    public InfoObjectCustomAdapter(Context context, int resource, ArrayList<Map<String, String>> data, String[] mFrom) {
         super(context, resource, data);
         this.context = context;
         this.data = data;

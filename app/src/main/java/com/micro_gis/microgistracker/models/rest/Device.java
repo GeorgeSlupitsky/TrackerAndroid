@@ -3,6 +3,7 @@ package com.micro_gis.microgistracker.models.rest;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -117,7 +118,7 @@ public class Device {
 
     @SerializedName("sensors")
     @Expose
-    private Map<String, String> sensors;
+    private List<Sensor> sensors;
 
     public String getCode() {
         return code;
@@ -327,11 +328,11 @@ public class Device {
         this.fuelLevel = fuelLevel;
     }
 
-    public Map<String, String> getSensors() {
+    public List<Sensor> getSensors() {
         return sensors;
     }
 
-    public void setSensors(Map<String, String> sensors) {
+    public void setSensors(List<Sensor> sensors) {
         this.sensors = sensors;
     }
 }

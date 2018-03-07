@@ -101,6 +101,7 @@
     <string name="fuelExpense">Використання палива</string>
     <string name="not_connected">Для того щоб переглянути лист об`єктів, будь ласка, підключіться до сервера</string>
     <string name="empty_object_list">Лист об`єктів пустий</string>
+    <string name="empty_trips_list">Лист поїздок пустий</string>
     <string name="information">Інформація</string>
     <string name="objectGroups">Групи об`єктів</string>
     <string name="objectsGroup">Об`єкти</string>
@@ -122,4 +123,15 @@
     <string name="Control">Контроль</string>
     <string name="Trips">Поїздки</string>
     <string name="Sensors">Шлейф</string>
+
+    <string name="Km">км</string>
+    <string name="KmH">км/год</string>
+    <string name="Hour">год</string>
+    <string name="Min">хв</string>
+
+    <string name="litres">л</string>
+    <string name="celsium">\u00B0C</string>
+    <string name="rpm">р/хв</string>
+    <string name="volts">В</string>
+    <string name="acceleration">G</string>
 </resources>

@@ -110,7 +110,7 @@ public class MapObjectFragment extends Fragment {
                     lat = device.getLat();
                     lng = device.getLng();
 
-                    String descriptionStr = getString(R.string.descriptionObj);
+                    String descriptionStr = getContext().getString(R.string.descriptionObj);
                     String brandStr = getString(R.string.brand);
                     String companyStr = getString(R.string.company);
                     String lastDataStr = getString(R.string.lastData);
@@ -203,6 +203,7 @@ public class MapObjectFragment extends Fragment {
                             "} else {\n" +
                                 "bus" + id + ".setIcon(icon);\n" +
                                 "bus" + id + ".setLatLng([" + lat + ", " + lng + "]);\n" +
+                                "bus" + id + ".unbindTooltip();\n" +
                                     "if (isLabelEnabled){\n" +
                                         "bus" + id + ".bindTooltip(\"" + description + "\", {permanent: true});" +
                                     "}\n" +
