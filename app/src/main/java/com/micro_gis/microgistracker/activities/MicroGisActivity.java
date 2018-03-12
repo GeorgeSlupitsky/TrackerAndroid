@@ -239,266 +239,266 @@ public class MicroGisActivity extends AppCompatActivity
                     Gson gson = new Gson();
                     String json = gson.toJson(responseGroupsMoving);
 
-                    assert responseGroupsMoving != null;
-
-                    if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseStatuses.WARNING.toString())) {
-                        List<String> warnings = responseGroupsMoving.getWarnings();
-                        if (warnings.get(0).contains(ResponseStatuses.WARNING_TEMPORARILY_SUSPENDED.toString())) {
-                            Toast toast = Toast.makeText(getApplicationContext(),
-                                    getString(R.string.warning_temporarily_suspended), Toast.LENGTH_LONG);
-                            toast.show();
-                            sharedpreferences.edit().putString("groupObjects", "empty").apply();
-                        } else if (warnings.get(0).contains(ResponseStatuses.WARNING_HAVE_NOT_GROUP.toString())) {
-                            Toast toast = Toast.makeText(getApplicationContext(),
-                                    getString(R.string.warning_have_not_group), Toast.LENGTH_LONG);
-                            toast.show();
-                            sharedpreferences.edit().putString("groupObjects", "empty").apply();
-                        } else if (warnings.get(0).contains(ResponseStatuses.WARNING_KEY_HAS_NOT_ACCESS.toString())) {
-                            Toast toast = Toast.makeText(getApplicationContext(),
-                                    getString(R.string.warning_key_has_not_access), Toast.LENGTH_LONG);
-                            toast.show();
-                            sharedpreferences.edit().putString("groupObjects", "empty").apply();
-                        } else if (warnings.get(0).contains(ResponseStatuses.WARNING_DOES_NOT_HAVE_ACCESS_TO_THE_DEVICE.toString())) {
-                            Toast toast = Toast.makeText(getApplicationContext(),
-                                    getString(R.string.warning_does_not_have_acces_to_device), Toast.LENGTH_LONG);
-                            toast.show();
-                            sharedpreferences.edit().putString("groupObjects", "empty").apply();
-                        }
-                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseStatuses.ERROR.toString())) {
-                        Toast toast = Toast.makeText(getApplicationContext(),
-                                getString(R.string.status_error), Toast.LENGTH_LONG);
-                        toast.show();
-                        sharedpreferences.edit().putString("groupObjects", "empty").apply();
-                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseStatuses.KEY_LIFECYCLE_RANGE_OUT.toString())) {
-                        Toast toast = Toast.makeText(getApplicationContext(),
-                                getString(R.string.key_lifecycle_range_out), Toast.LENGTH_LONG);
-                        toast.show();
-                        sharedpreferences.edit().putString("groupObjects", "empty").apply();
-                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseStatuses.KEY_LEFT.toString())) {
-                        Toast toast = Toast.makeText(getApplicationContext(),
-                                getString(R.string.key_left), Toast.LENGTH_LONG);
-                        toast.show();
-                        sharedpreferences.edit().putString("groupObjects", "empty").apply();
-                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseStatuses.ACCOUNT_ID_IS_NOT_VALID.toString())) {
-                        Toast toast = Toast.makeText(getApplicationContext(),
-                                getString(R.string.account_id_is_not_valid), Toast.LENGTH_LONG);
-                        toast.show();
-                        sharedpreferences.edit().putString("groupObjects", "empty").apply();
-                    } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseStatuses.SUCCESS.toString())) {
-                        sharedpreferences.edit().putString("groupObjects", json).apply();
-
-                        devices = responseGroupsMoving.getDevices();
-
-                        objectsCount = devices.size();
-
-                        int i = 0;
-
-                        myWebView.loadUrl("javascript: " +
-                                "var isClusterEnabled = " + isClusterEnabled + ";\n" +
-                                "var isLabelEnabled = " + isLabelEnabled + ";\n" +
-                                "if (isClusterEnabled){\n" +
-                                    "if (typeof(cluster) === 'undefined'){\n" +
-                                        "cluster = L.markerClusterGroup({maxClusterRadius: 50});\n" +
-                                    "} else {\n" +
-                                        "map.removeLayer(cluster);\n" +
-                                        "cluster = L.markerClusterGroup({maxClusterRadius: 50});\n" +
-                                    "}\n" +
-                                "}\n" +
-                                "var markers = [];\n" +
-                                "var arrows = [];\n");
-
-                        for (Device device : devices) {
-                            String icon = device.getIcon();
-                            if (icon == null) {
-                                icon = "car_sedan";
+                    if (responseGroupsMoving != null){
+                        if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseStatuses.WARNING.toString())) {
+                            List<String> warnings = responseGroupsMoving.getWarnings();
+                            if (warnings.get(0).contains(ResponseStatuses.WARNING_TEMPORARILY_SUSPENDED.toString())) {
+                                Toast toast = Toast.makeText(getApplicationContext(),
+                                        getString(R.string.warning_temporarily_suspended), Toast.LENGTH_LONG);
+                                toast.show();
+                                sharedpreferences.edit().putString("groupObjects", "empty").apply();
+                            } else if (warnings.get(0).contains(ResponseStatuses.WARNING_HAVE_NOT_GROUP.toString())) {
+                                Toast toast = Toast.makeText(getApplicationContext(),
+                                        getString(R.string.warning_have_not_group), Toast.LENGTH_LONG);
+                                toast.show();
+                                sharedpreferences.edit().putString("groupObjects", "empty").apply();
+                            } else if (warnings.get(0).contains(ResponseStatuses.WARNING_KEY_HAS_NOT_ACCESS.toString())) {
+                                Toast toast = Toast.makeText(getApplicationContext(),
+                                        getString(R.string.warning_key_has_not_access), Toast.LENGTH_LONG);
+                                toast.show();
+                                sharedpreferences.edit().putString("groupObjects", "empty").apply();
+                            } else if (warnings.get(0).contains(ResponseStatuses.WARNING_DOES_NOT_HAVE_ACCESS_TO_THE_DEVICE.toString())) {
+                                Toast toast = Toast.makeText(getApplicationContext(),
+                                        getString(R.string.warning_does_not_have_acces_to_device), Toast.LENGTH_LONG);
+                                toast.show();
+                                sharedpreferences.edit().putString("groupObjects", "empty").apply();
                             }
-                            String color = device.getColor();
-                            double lat = device.getLat();
-                            double lng = device.getLng();
-                            String description = device.getDescription();
-                            String organization = device.getOrganization();
-                            double speed = device.getSpeed();
-                            String brand = device.getBrand();
-                            long event = device.getEvent();
-                            int heading = device.getHeading();
-                            java.util.Date time = new java.util.Date(event * 1000);
-                            String timel = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
+                        } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseStatuses.ERROR.toString())) {
+                            Toast toast = Toast.makeText(getApplicationContext(),
+                                    getString(R.string.status_error), Toast.LENGTH_LONG);
+                            toast.show();
+                            sharedpreferences.edit().putString("groupObjects", "empty").apply();
+                        } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseStatuses.KEY_LIFECYCLE_RANGE_OUT.toString())) {
+                            Toast toast = Toast.makeText(getApplicationContext(),
+                                    getString(R.string.key_lifecycle_range_out), Toast.LENGTH_LONG);
+                            toast.show();
+                            sharedpreferences.edit().putString("groupObjects", "empty").apply();
+                        } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseStatuses.KEY_LEFT.toString())) {
+                            Toast toast = Toast.makeText(getApplicationContext(),
+                                    getString(R.string.key_left), Toast.LENGTH_LONG);
+                            toast.show();
+                            sharedpreferences.edit().putString("groupObjects", "empty").apply();
+                        } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseStatuses.ACCOUNT_ID_IS_NOT_VALID.toString())) {
+                            Toast toast = Toast.makeText(getApplicationContext(),
+                                    getString(R.string.account_id_is_not_valid), Toast.LENGTH_LONG);
+                            toast.show();
+                            sharedpreferences.edit().putString("groupObjects", "empty").apply();
+                        } else if (responseGroupsMoving.getStatus().equalsIgnoreCase(ResponseStatuses.SUCCESS.toString())) {
+                            sharedpreferences.edit().putString("groupObjects", json).apply();
 
-                            int altitude = device.getAltitude();
-                            int satCount = device.getSatCount();
-                            double hdop = device.getHdop();
-                            double fuelLevel = device.getFuelLevel();
-                            double fuelExpense = device.getFuelExpense();
+                            devices = responseGroupsMoving.getDevices();
 
-                            String descriptionStr = getString(R.string.descriptionObj);
-                            String brandStr = getString(R.string.brand);
-                            String companyStr = getString(R.string.company);
-                            String lastDataStr = getString(R.string.lastData);
-                            String speedStr = getString(R.string.speed);
-                            String altitudeStr = getString(R.string.altitude);
-                            String satCountStr = getString(R.string.satCount);
-                            String hdopStr = "HDOP";
-                            String fuelLevelStr = getString(R.string.fuelLevel);
-                            String fuelExpenseStr = getString(R.string.fuelExpense);
+                            objectsCount = devices.size();
 
-                            String html = descriptionStr + ": " + description +
-                                    " <br/>" + brandStr + ": " + brand +
-                                    " <br/>" + companyStr + ": " + organization +
-                                    " <br/>" + lastDataStr + ": " + timel +
-                                    " <br/>" + speedStr + ": " + speed +
-                                    " <br/>" + altitudeStr + ": " + altitude +
-                                    " <br/>" + satCountStr + ": " + satCount +
-                                    " <br/>" + hdopStr + ": " + hdop +
-                                    " <br/>" + fuelLevelStr + ": " + fuelLevel +
-                                    " <br/>" + fuelExpenseStr + ": " + fuelExpense;
-
-                            String[] DIRS = {"north","north-east","east","south-east","south","south-west","west","north-west"};
-
-                            int[] ANCOR_X = {20, 20, 17, 25, 20, 20, 27, 25};
-                            int[] ANCOR_Y = {20, 20, 20, 25, 25, 25, 20, 15};
-
-                            int dirNdx = (int) (Math.floor(heading / 45) % 8);
-                            String dirIconName = DIRS[dirNdx];
-                            int ancX = ANCOR_X[dirNdx];
-                            int ancY = ANCOR_Y[dirNdx];
+                            int i = 0;
 
                             myWebView.loadUrl("javascript: " +
-                                    "var speed = " + speed + ";\n" +
-                                    "var busIcon = L.Icon.Default.extend({options: \n" +
-                                    "{iconUrl: 'file:///android_asset/images/deviceIcons/" + icon + "_" + color + ".png',\n" +
-                                    "iconSize: [32, 32],\n" +
-                                    "iconAnchor: [16, 16],\n" +
-                                    "shadowSize: [0, 0],\n" +
-                                    "popupAnchor: [0, -10],\n" +
-                                    "tooltipAnchor: [16, 0]} });\n" +
-                                    "var arrow" + i + ";\n" +
-                                    "if (speed > 0){\n" +
+                                    "var isClusterEnabled = " + isClusterEnabled + ";\n" +
+                                    "var isLabelEnabled = " + isLabelEnabled + ";\n" +
+                                    "if (isClusterEnabled){\n" +
+                                    "if (typeof(cluster) === 'undefined'){\n" +
+                                    "cluster = L.markerClusterGroup({maxClusterRadius: 50});\n" +
+                                    "} else {\n" +
+                                    "map.removeLayer(cluster);\n" +
+                                    "cluster = L.markerClusterGroup({maxClusterRadius: 50});\n" +
+                                    "}\n" +
+                                    "}\n" +
+                                    "var markers = [];\n" +
+                                    "var arrows = [];\n");
+
+                            for (Device device : devices) {
+                                String icon = device.getIcon();
+                                if (icon == null) {
+                                    icon = "car_sedan";
+                                }
+                                String color = device.getColor();
+                                double lat = device.getLat();
+                                double lng = device.getLng();
+                                String description = device.getDescription();
+                                String organization = device.getOrganization();
+                                double speed = device.getSpeed();
+                                String brand = device.getBrand();
+                                long event = device.getEvent();
+                                int heading = device.getHeading();
+                                java.util.Date time = new java.util.Date(event * 1000);
+                                String timel = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
+
+                                int altitude = device.getAltitude();
+                                int satCount = device.getSatCount();
+                                double hdop = device.getHdop();
+                                double fuelLevel = device.getFuelLevel();
+                                double fuelExpense = device.getFuelExpense();
+
+                                String descriptionStr = getString(R.string.descriptionObj);
+                                String brandStr = getString(R.string.brand);
+                                String companyStr = getString(R.string.company);
+                                String lastDataStr = getString(R.string.lastData);
+                                String speedStr = getString(R.string.speed);
+                                String altitudeStr = getString(R.string.altitude);
+                                String satCountStr = getString(R.string.satCount);
+                                String hdopStr = "HDOP";
+                                String fuelLevelStr = getString(R.string.fuelLevel);
+                                String fuelExpenseStr = getString(R.string.fuelExpense);
+
+                                String html = descriptionStr + ": " + description +
+                                        " <br/>" + brandStr + ": " + brand +
+                                        " <br/>" + companyStr + ": " + organization +
+                                        " <br/>" + lastDataStr + ": " + timel +
+                                        " <br/>" + speedStr + ": " + speed +
+                                        " <br/>" + altitudeStr + ": " + altitude +
+                                        " <br/>" + satCountStr + ": " + satCount +
+                                        " <br/>" + hdopStr + ": " + hdop +
+                                        " <br/>" + fuelLevelStr + ": " + fuelLevel +
+                                        " <br/>" + fuelExpenseStr + ": " + fuelExpense;
+
+                                String[] DIRS = {"north","north-east","east","south-east","south","south-west","west","north-west"};
+
+                                int[] ANCOR_X = {20, 20, 17, 25, 20, 20, 27, 25};
+                                int[] ANCOR_Y = {20, 20, 20, 25, 25, 25, 20, 15};
+
+                                int dirNdx = (int) (Math.floor(heading / 45) % 8);
+                                String dirIconName = DIRS[dirNdx];
+                                int ancX = ANCOR_X[dirNdx];
+                                int ancY = ANCOR_Y[dirNdx];
+
+                                myWebView.loadUrl("javascript: " +
+                                        "var speed = " + speed + ";\n" +
+                                        "var busIcon = L.Icon.Default.extend({options: \n" +
+                                        "{iconUrl: 'file:///android_asset/images/deviceIcons/" + icon + "_" + color + ".png',\n" +
+                                        "iconSize: [32, 32],\n" +
+                                        "iconAnchor: [16, 16],\n" +
+                                        "shadowSize: [0, 0],\n" +
+                                        "popupAnchor: [0, -10],\n" +
+                                        "tooltipAnchor: [16, 0]} });\n" +
+                                        "var arrow" + i + ";\n" +
+                                        "if (speed > 0){\n" +
                                         "var arrowIcon = new L.icon({\n" +
-                                            "iconUrl: 'file:///android_asset/images/" + dirIconName + ".png',\n" +
-                                            "iconSize: [44,44],\n" +
-                                            "shadowUrl: null,\n" +
-                                            "shadowSize: null,\n" +
-                                            "iconAnchor: [" + ancX + ", " + ancY + "],\n" +
-                                            "popupAnchor: [0, -10]\n" +
+                                        "iconUrl: 'file:///android_asset/images/" + dirIconName + ".png',\n" +
+                                        "iconSize: [44,44],\n" +
+                                        "shadowUrl: null,\n" +
+                                        "shadowSize: null,\n" +
+                                        "iconAnchor: [" + ancX + ", " + ancY + "],\n" +
+                                        "popupAnchor: [0, -10]\n" +
                                         "});\n" +
                                         "if (typeof(arrow" + i + ") === 'undefined'){\n" +
-                                            "arrow" + i + " = new L.marker([" + lat + ", " + lng + "], {icon: arrowIcon});\n" +
-                                            "arrow" + i + ".bindPopup(\"" + html + "\");"+
-                                            "arrow" + i + ".typeMarker = 'arrow';\n" +
+                                        "arrow" + i + " = new L.marker([" + lat + ", " + lng + "], {icon: arrowIcon});\n" +
+                                        "arrow" + i + ".bindPopup(\"" + html + "\");"+
+                                        "arrow" + i + ".typeMarker = 'arrow';\n" +
                                         "} else {\n" +
-                                            "arrow" + i + ".setIcon(arrowIcon);\n" +
-                                            "arrow" + i + ".bindPopup(\"" + html + "\");"+
-                                            "arrow" + i + ".setLatLng([" + lat + ", " + lng + "]);\n" +
+                                        "arrow" + i + ".setIcon(arrowIcon);\n" +
+                                        "arrow" + i + ".bindPopup(\"" + html + "\");"+
+                                        "arrow" + i + ".setLatLng([" + lat + ", " + lng + "]);\n" +
                                         "}\n" +
-                                    "} else {\n" +
+                                        "} else {\n" +
                                         "var arrowIcon = new L.icon({\n" +
-                                            "iconUrl: 'file:///android_asset/images/empty.png',\n" +
-                                            "iconSize: [44, 44],\n" +
-                                            "shadowUrl: null,\n" +
-                                            "shadowSize: null,\n" +
-                                            "iconAnchor: [" + ancX + ", " + ancY + "],\n" +
-                                            "popupAnchor: [0, 0]\n" +
+                                        "iconUrl: 'file:///android_asset/images/empty.png',\n" +
+                                        "iconSize: [44, 44],\n" +
+                                        "shadowUrl: null,\n" +
+                                        "shadowSize: null,\n" +
+                                        "iconAnchor: [" + ancX + ", " + ancY + "],\n" +
+                                        "popupAnchor: [0, 0]\n" +
                                         "});\n"+
                                         "if (typeof(arrow" + i + ")==='undefined'){\n" +
-                                            "arrow" +  i + " = new L.marker([" + lat + ", " + lng + "], {icon: arrowIcon});\n" +
-                                            "arrow" + i + ".bindPopup(\"" + html + "\");"+
-                                            "arrow" + i + ".typeMarker = 'arrow';\n" +
+                                        "arrow" +  i + " = new L.marker([" + lat + ", " + lng + "], {icon: arrowIcon});\n" +
+                                        "arrow" + i + ".bindPopup(\"" + html + "\");"+
+                                        "arrow" + i + ".typeMarker = 'arrow';\n" +
                                         "} else {\n" +
-                                            "arrow" + i + ".setIcon(arrowIcon);"+
-                                            "arrow" + i + ".bindPopup(\"" + html + "\");"+
-                                            "arrow" + i + ".setLatLng([" + lat + ", " + lng + "]);\n" +
+                                        "arrow" + i + ".setIcon(arrowIcon);"+
+                                        "arrow" + i + ".bindPopup(\"" + html + "\");"+
+                                        "arrow" + i + ".setLatLng([" + lat + ", " + lng + "]);\n" +
                                         "}\n" +
-                                    "}\n" +
-                                    "var icon = new busIcon();\n" +
-                                    "if (typeof(bus" + i + ") === 'undefined'){\n" +
+                                        "}\n" +
+                                        "var icon = new busIcon();\n" +
+                                        "if (typeof(bus" + i + ") === 'undefined'){\n" +
                                         "if (isLabelEnabled){\n" +
-                                            "bus" + i + " = new L.marker([" + lat + ", " + lng + "], {icon: icon})" +
-                                            ".bindTooltip(\"" + description + "\", {permanent: true})" +
-                                            ".bindPopup(\"" + html + "\");\n" +
-                                            "bus" + i + ".typeMarker = 'car';\n" +
-                                            "bus" + i + ".speed = speed;\n" +
-                                            "bus" + i + ".arrow = arrow" + i + ";\n" +
-                                            "bus" + i + ".popup = \"" + html + "\";\n" +
+                                        "bus" + i + " = new L.marker([" + lat + ", " + lng + "], {icon: icon})" +
+                                        ".bindTooltip(\"" + description + "\", {permanent: true})" +
+                                        ".bindPopup(\"" + html + "\");\n" +
+                                        "bus" + i + ".typeMarker = 'car';\n" +
+                                        "bus" + i + ".speed = speed;\n" +
+                                        "bus" + i + ".arrow = arrow" + i + ";\n" +
+                                        "bus" + i + ".popup = \"" + html + "\";\n" +
                                         "} else {\n" +
-                                            "bus" + i + " = new L.marker([" + lat + ", " + lng + "], {icon: icon})" +
-                                            ".bindPopup(\"" + html + "\");\n" +
-                                            "bus" + i + ".unbindTooltip();\n" +
-                                            "bus" + i + ".typeMarker = 'car';\n" +
-                                            "bus" + i + ".speed = speed;\n" +
-                                            "bus" + i + ".arrow = arrow" + i + ";\n" +
-                                            "bus" + i + ".popup = \"" + html + "\";\n" +
+                                        "bus" + i + " = new L.marker([" + lat + ", " + lng + "], {icon: icon})" +
+                                        ".bindPopup(\"" + html + "\");\n" +
+                                        "bus" + i + ".unbindTooltip();\n" +
+                                        "bus" + i + ".typeMarker = 'car';\n" +
+                                        "bus" + i + ".speed = speed;\n" +
+                                        "bus" + i + ".arrow = arrow" + i + ";\n" +
+                                        "bus" + i + ".popup = \"" + html + "\";\n" +
                                         "}\n" +
-                                    "} else {\n" +
+                                        "} else {\n" +
                                         "bus" + i + ".setIcon(icon);\n" +
                                         "bus" + i + ".setLatLng([" + lat + ", " + lng + "]);\n" +
                                         "bus" + i + ".unbindTooltip();\n" +
                                         "if (isLabelEnabled){\n" +
-                                            "bus" + i + ".bindTooltip(\"" + description + "\", {permanent: true});" +
+                                        "bus" + i + ".bindTooltip(\"" + description + "\", {permanent: true});" +
                                         "}\n" +
                                         "bus" + i + ".bindPopup(\"" + html + "\");\n" +
                                         "bus" + i + ".typeMarker = 'car';\n" +
                                         "bus" + i + ".speed = speed;\n" +
                                         "bus" + i + ".arrow = arrow" + i + ";\n" +
                                         "bus" + i + ".popup = \"" + html + "\";\n" +
-                                    "}\n" +
-                                    "if (isClusterEnabled){\n" +
+                                        "}\n" +
+                                        "if (isClusterEnabled){\n" +
                                         "cluster.addLayer(bus" + i + ");\n" +
-                                    "} else {\n" +
+                                        "} else {\n" +
                                         "markers.push(bus" + i + ");\n" +
                                         "arrows.push(arrow" + i + ");\n" +
-                                    "}\n"
-                            );
+                                        "}\n"
+                                );
 
-                            i++;
-                        }
+                                i++;
+                            }
 
-                        myWebView.loadUrl("javascript: " +
-                                "if (isClusterEnabled){\n" +
+                            myWebView.loadUrl("javascript: " +
+                                    "if (isClusterEnabled){\n" +
                                     "map.addLayer(cluster);\n" +
                                     "cluster.on('animationend', function (a) {\n" +
-                                        "var layers = cluster._featureGroup._layers;\n" +
-                                        "$.each(layers, function (index, layer) {\n" +
-                                            "if (layer.typeMarker === 'car'){\n" +
-                                                "if (layer.speed > 0){\n" +
-                                                    "layer.arrow.bindPopup(layer.popup);\n" +
-                                                    "map.addLayer(layer.arrow);\n" +
-                                                "} else {\n" +
-                                                    "map.removeLayer(layer.arrow)\n" +
-                                                "}\n" +
-                                            "} else {\n" +
-                                                "var array = layer.getAllChildMarkers();\n" +
-                                                "for (var i = 0; i < array.length; i++) {\n" +
-                                                    "map.removeLayer(array[i].arrow);\n" +
-                                                    "array[i].closeTooltip();\n" +
-                                                "}\n" +
-                                            "};\n" +
-                                        "});\n" +
-                                        "var groupLayers = cluster._map._layers;\n" +
-                                        "$.each(groupLayers, function (index, layer) {\n" +
-                                            "if (layer.typeMarker === 'car') {\n" +
-                                                "if (layer.speed > 0) {\n" +
-                                                    "layer.arrow.bindPopup(layer.popup);\n" +
-                                                    "map.addLayer(layer.arrow);\n" +
-                                                "} else {\n" +
-                                                    "map.removeLayer(layer.arrow);\n" +
-                                                "}\n" +
-                                            "}\n" +
-                                        "});\n" +
-                                    "});\n" +
-                                "} else {\n" +
-                                    "if (typeof(cluster) === 'undefined'){\n" +
-                                        "for (var i = 0; i < markers.length; i++){\n" +
-                                            "markers[i].addTo(map);\n" +
-                                            "arrows[i].addTo(map);\n" +
-                                        "}\n" +
+                                    "var layers = cluster._featureGroup._layers;\n" +
+                                    "$.each(layers, function (index, layer) {\n" +
+                                    "if (layer.typeMarker === 'car'){\n" +
+                                    "if (layer.speed > 0){\n" +
+                                    "layer.arrow.bindPopup(layer.popup);\n" +
+                                    "map.addLayer(layer.arrow);\n" +
                                     "} else {\n" +
-                                        "map.removeLayer(cluster);\n" +
-                                        "for (var i = 0; i < markers.length; i++){\n" +
-                                            "markers[i].addTo(map);\n" +
-                                            "arrows[i].addTo(map);\n" +
-                                        "}\n" +
+                                    "map.removeLayer(layer.arrow)\n" +
                                     "}\n" +
-                                "}\n");
+                                    "} else {\n" +
+                                    "var array = layer.getAllChildMarkers();\n" +
+                                    "for (var i = 0; i < array.length; i++) {\n" +
+                                    "map.removeLayer(array[i].arrow);\n" +
+                                    "array[i].closeTooltip();\n" +
+                                    "}\n" +
+                                    "};\n" +
+                                    "});\n" +
+                                    "var groupLayers = cluster._map._layers;\n" +
+                                    "$.each(groupLayers, function (index, layer) {\n" +
+                                    "if (layer.typeMarker === 'car') {\n" +
+                                    "if (layer.speed > 0) {\n" +
+                                    "layer.arrow.bindPopup(layer.popup);\n" +
+                                    "map.addLayer(layer.arrow);\n" +
+                                    "} else {\n" +
+                                    "map.removeLayer(layer.arrow);\n" +
+                                    "}\n" +
+                                    "}\n" +
+                                    "});\n" +
+                                    "});\n" +
+                                    "} else {\n" +
+                                    "if (typeof(cluster) === 'undefined'){\n" +
+                                    "for (var i = 0; i < markers.length; i++){\n" +
+                                    "markers[i].addTo(map);\n" +
+                                    "arrows[i].addTo(map);\n" +
+                                    "}\n" +
+                                    "} else {\n" +
+                                    "map.removeLayer(cluster);\n" +
+                                    "for (var i = 0; i < markers.length; i++){\n" +
+                                    "markers[i].addTo(map);\n" +
+                                    "arrows[i].addTo(map);\n" +
+                                    "}\n" +
+                                    "}\n" +
+                                    "}\n");
+                        }
                     }
 
                 }

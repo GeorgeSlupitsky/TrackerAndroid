@@ -4,7 +4,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by postp on 24.02.2018.
@@ -119,6 +118,10 @@ public class Device {
     @SerializedName("sensors")
     @Expose
     private List<Sensor> sensors;
+
+    @SerializedName("geozone")
+    @Expose
+    private List<GeoZone> geoZones;
 
     public String getCode() {
         return code;
@@ -334,5 +337,13 @@ public class Device {
 
     public void setSensors(List<Sensor> sensors) {
         this.sensors = sensors;
+    }
+
+    public List<GeoZone> getGeoZones() {
+        return geoZones;
+    }
+
+    public void setGeoZones(List<GeoZone> geoZones) {
+        this.geoZones = geoZones;
     }
 }

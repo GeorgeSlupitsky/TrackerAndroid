@@ -16,13 +16,18 @@ import com.google.gson.Gson;
 import com.micro_gis.microgistracker.R;
 import com.micro_gis.microgistracker.WebAppInterface;
 import com.micro_gis.microgistracker.models.rest.Device;
+import com.micro_gis.microgistracker.models.rest.GeoZone;
 import com.micro_gis.microgistracker.models.rest.RequestObjectMoving;
 import com.micro_gis.microgistracker.models.rest.ResponseObjectMoving;
 import com.micro_gis.microgistracker.retrofit.API;
 import com.micro_gis.microgistracker.retrofit.APIController;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -110,7 +115,7 @@ public class MapObjectFragment extends Fragment {
                     lat = device.getLat();
                     lng = device.getLng();
 
-                    String descriptionStr = getContext().getString(R.string.descriptionObj);
+                    String descriptionStr = getString(R.string.descriptionObj);
                     String brandStr = getString(R.string.brand);
                     String companyStr = getString(R.string.company);
                     String lastDataStr = getString(R.string.lastData);
@@ -211,6 +216,36 @@ public class MapObjectFragment extends Fragment {
                             "}\n" +
                             "bus" + id + ".addTo(map);\n" +
                             "arrow" + id + ".addTo(map);");
+
+                    List<GeoZone> geoZones = device.getGeoZones();
+
+                    if (geoZones != null){
+
+                        Collections.sort(geoZones, (GeoZone g1, GeoZone g2) -> g1.getPriority() - g2.getPriority());
+                        Collections.reverse(geoZones);
+
+                        GeoZone geoZone = geoZones.get(0);
+
+                        webView.loadUrl("javascript: " +
+                        "map.eachLayer(function(layer) {\n" +
+                                "if (layer.typeMarker == 'geozone'){\n" +
+                                    "map.removeLayer(layer);\n" +
+                                "}\n" +
+                            "});\n" +
+                        "var geozone = geomToWkt('" + geoZone.getGeom() + "').toObject({\n" +
+                                "color: '" + geoZone.getColor() + "'\n" +
+                                "});\n" +
+                        "geozone.bindPopup('" + geoZone.getName() + "');\n" +
+                        "geozone.typeMarker = 'geozone';\n" +
+                        "map.addLayer(geozone);");
+                    } else {
+                        webView.loadUrl("javascript: " +
+                        "map.eachLayer(function(layer) {\n" +
+                            "if (layer.typeMarker == 'geozone'){\n" +
+                                "map.removeLayer(layer);\n" +
+                            "}\n" +
+                        "});\n");
+                    }
                 }
 
                 @Override

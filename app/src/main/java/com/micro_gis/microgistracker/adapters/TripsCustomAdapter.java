@@ -108,7 +108,7 @@ public class TripsCustomAdapter extends ArrayAdapter<Map<String, Object>> {
         holder.imageViewFinish.setVisibility(View.INVISIBLE);
 
         String finishAddress = (String) data.get(position).get(mFrom[6]);
-        if (startAddress != null){
+        if (finishAddress != null){
             holder.addressFinishTrip.setText(finishAddress);
             holder.imageViewFinish.setVisibility(View.VISIBLE);
         } else {

@@ -60,7 +60,7 @@ public class ObjectsCustomAdapter extends ArrayAdapter<Map<String, Object>> {
         holder.imageViewTrailer = (ImageView) row.findViewById(R.id.imageViewTrailer);
         holder.imageViewWiFi = (ImageView) row.findViewById(R.id.imageViewWiFi);
         holder.imageViewLowFlor = (ImageView) row.findViewById(R.id.imageViewLowFlor);
-        holder.geozone = (TextView) row.findViewById(R.id.geozone);
+        holder.geozone = (TextView) row.findViewById(R.id.geoZone);
 
         Integer id = (Integer) data.get(position).get(mFrom[0]);
         final String text = (String) data.get(position).get(mFrom[1]);

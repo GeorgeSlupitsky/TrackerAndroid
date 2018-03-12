@@ -15,6 +15,9 @@ import com.micro_gis.microgistracker.adapters.SensorsCustomAdapter;
 import com.micro_gis.microgistracker.models.rest.Device;
 import com.micro_gis.microgistracker.models.rest.Sensor;
 
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.math3.util.Precision;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,14 +54,20 @@ public class SensorsObjectFragment extends Fragment {
 
         List <Sensor> sensors = device.getSensors();
 
-        for (Sensor sensor: sensors){
-            Map<String, String> m = new HashMap<>();
+        if (sensors != null){
+            for (Sensor sensor: sensors){
+                Map<String, String> m = new HashMap<>();
 
-            m.put(ATTRIBUTE_NAME_KEY, sensor.getDescription());
-            m.put(ATTRIBUTE_NAME_VALUE, sensor.getValue());
-            m.put(ATTRIBUTE_NAME_MEASURE, sensor.getUnitMeasure());
+                m.put(ATTRIBUTE_NAME_KEY, sensor.getDescription());
+                if (NumberUtils.isParsable(sensor.getValue())){
+                    m.put(ATTRIBUTE_NAME_VALUE, String.valueOf(Precision.round(Double.parseDouble(sensor.getValue()), 2)));
+                } else {
+                    m.put(ATTRIBUTE_NAME_VALUE, sensor.getValue());
+                }
+                m.put(ATTRIBUTE_NAME_MEASURE, sensor.getUnitMeasure());
 
-            data.add(m);
+                data.add(m);
+            }
         }
 
         ListView listView = rootView.findViewById(R.id.listViewSensorsObject);
