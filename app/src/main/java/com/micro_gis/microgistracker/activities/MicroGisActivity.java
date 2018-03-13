@@ -49,6 +49,10 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.micro_gis.microgistracker.MicroGisApplication;
+import com.micro_gis.microgistracker.WebAppInterface;
+import com.micro_gis.microgistracker.components.DaggerMicroGisActivityComponent;
+import com.micro_gis.microgistracker.components.MicroGisActivityComponent;
 import com.micro_gis.microgistracker.models.database.AVLData;
 import com.micro_gis.microgistracker.DBHelper;
 import com.micro_gis.microgistracker.HttpSendPost;
@@ -57,14 +61,13 @@ import com.micro_gis.microgistracker.models.database.Points;
 import com.micro_gis.microgistracker.models.database.PressedSensor;
 import com.micro_gis.microgistracker.R;
 import com.micro_gis.microgistracker.models.database.Track;
-import com.micro_gis.microgistracker.WebAppInterface;
 import com.micro_gis.microgistracker.models.rest.Account;
 import com.micro_gis.microgistracker.models.rest.Device;
 import com.micro_gis.microgistracker.models.rest.RequestGroupsMoving;
 import com.micro_gis.microgistracker.models.rest.ResponseGroupsMoving;
 import com.micro_gis.microgistracker.models.rest.ResponseStatuses;
+import com.micro_gis.microgistracker.modules.MicroGisActivityModule;
 import com.micro_gis.microgistracker.retrofit.API;
-import com.micro_gis.microgistracker.retrofit.APIController;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -81,6 +84,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -89,7 +94,8 @@ public class MicroGisActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LocationListener {
     HttpSendPost httpPost;
     public static Location mLastLocation;
-    private static API api;
+
+    private MicroGisActivityComponent microGisActivityComponent;
 
     Double lat, lon;
     LocationManager mLocationManager;
@@ -98,9 +104,7 @@ public class MicroGisActivity extends AppCompatActivity
     String hronTime, timeStart, timeStop;
     ArrayList<AVLData> lisAvldata = new ArrayList<>();
     Handler handler = new Handler();
-    DBHelper dbHelper;
     Chronometer mChronometer;
-    SharedPreferences sharedpreferences;
     static int addddd;
     public static ArrayList<PressedSensor> sensors;
     static Vibrator vibrator;
@@ -123,6 +127,22 @@ public class MicroGisActivity extends AppCompatActivity
     NavigationView navigationView;
     boolean isLabelEnabled, isClusterEnabled, isGeocoderEnabled, isNavigationEnabled;
     List<Device> devices;
+
+    @Inject
+    Gson gson;
+
+    @Inject
+    API api;
+
+    @Inject
+    DBHelper dbHelper;
+
+    @Inject
+    SharedPreferences sharedpreferences;
+
+    @Inject
+    WebAppInterface webAppInterface;
+
 
     Runnable runnable = new Runnable() {
         public void run() {
@@ -215,7 +235,7 @@ public class MicroGisActivity extends AppCompatActivity
 //                "key": "6FD653E1C66232E2C78C983BFA624"
 //            }
 
-            api = APIController.getApi(url);
+            microGisActivityComponent.injectMicroGisActivity(MicroGisActivity.this);
 
             final RequestGroupsMoving requestGroupsMoving = new RequestGroupsMoving();
             requestGroupsMoving.setKey(key);
@@ -236,7 +256,6 @@ public class MicroGisActivity extends AppCompatActivity
                 public void onResponse(Call<ResponseGroupsMoving> call, Response<ResponseGroupsMoving> response) {
                     ResponseGroupsMoving responseGroupsMoving = response.body();
 
-                    Gson gson = new Gson();
                     String json = gson.toJson(responseGroupsMoving);
 
                     if (responseGroupsMoving != null){
@@ -677,12 +696,17 @@ public class MicroGisActivity extends AppCompatActivity
             }
         }
 
+        microGisActivityComponent = DaggerMicroGisActivityComponent.builder()
+                .microGisActivityModule(new MicroGisActivityModule(this))
+                .microGisComponent(MicroGisApplication.get(this).getMicroGisComponent())
+                .build();
+        microGisActivityComponent.injectMicroGisActivity(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setVisibility(View.GONE);
         Button menu = (Button) findViewById(R.id.menuBtn);
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        dbHelper = new DBHelper(this);
         signalGps = (TextView) findViewById(R.id.gpsSignal);
         speedOnTrack = (TextView) findViewById(R.id.speedOnTrack);
         lenghtTrack = (TextView) findViewById(R.id.lenghtTrack);
@@ -694,7 +718,6 @@ public class MicroGisActivity extends AppCompatActivity
         }
         addddd = 0;
         sensors = new ArrayList<>();
-        sharedpreferences = getSharedPreferences("mypref", Context.MODE_PRIVATE);
         server = sharedpreferences.getString("serverKey", "");
         port = sharedpreferences.getString("portKey", "");
         time = Integer.parseInt(sharedpreferences.getString("periodKey", "1"));
@@ -747,7 +770,7 @@ public class MicroGisActivity extends AppCompatActivity
         });
 
 
-        myWebView.addJavascriptInterface(new WebAppInterface(this), "Android");
+        myWebView.addJavascriptInterface(webAppInterface, "Android");
 
         myWebView.loadUrl("javascript: " +
                 "var cluster;");
@@ -1079,7 +1102,6 @@ public class MicroGisActivity extends AppCompatActivity
                     byte[] blob = cursor.getBlob(cursor.getColumnIndex("data"));
 //                WebView webView = (WebView) findViewById(R.id.webview);
                     String json = new String(blob);
-                    Gson gson = new Gson();
                     Marker marker = gson.fromJson(json, new TypeToken<Marker>() {
                     }.getType());
                     myWebView.loadUrl("javascript: \n" +
@@ -1133,7 +1155,6 @@ public class MicroGisActivity extends AppCompatActivity
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             String name = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
             cv.put("name", name);
-            Gson gson = new Gson();
             Track track = new Track();
             track.setTime(hronTime);
             track.setName(name);
@@ -1442,6 +1463,7 @@ public class MicroGisActivity extends AppCompatActivity
         if (isRun){
             handler.post(requst);
         }
+
     }
 
     @Override

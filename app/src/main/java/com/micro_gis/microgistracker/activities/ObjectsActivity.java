@@ -12,10 +12,19 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.micro_gis.microgistracker.MicroGisApplication;
 import com.micro_gis.microgistracker.adapters.ObjectsCustomAdapter;
 import com.micro_gis.microgistracker.R;
+import com.micro_gis.microgistracker.components.DaggerMicroGisActivityComponent;
+import com.micro_gis.microgistracker.components.DaggerMicroGisComponent;
+import com.micro_gis.microgistracker.components.DaggerObjectsActivityComponent;
+import com.micro_gis.microgistracker.components.MicroGisComponent;
+import com.micro_gis.microgistracker.components.ObjectsActivityComponent;
 import com.micro_gis.microgistracker.models.rest.Device;
 import com.micro_gis.microgistracker.models.rest.ResponseGroupsMoving;
+import com.micro_gis.microgistracker.modules.ContextModule;
+import com.micro_gis.microgistracker.modules.MicroGisActivityModule;
+import com.micro_gis.microgistracker.modules.ObjectsActivityModule;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,6 +35,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 /**
  * Created by User3 on 15.02.2018.
@@ -45,15 +56,25 @@ public class ObjectsActivity extends AppCompatActivity {
     private final String ATTRIBUTE_NAME_LOW_FLOR = "lowFlor";
     private final String ATTRIBUTE_NAME_ADDRESS = "address";
 
-    private ObjectsCustomAdapter objectsCustomAdapter;
-    private SharedPreferences sharedPreferences;
-    private ArrayList<Map<String, Object>> data;
+    private String[] from = { ATTRIBUTE_NAME_ID, ATTRIBUTE_NAME_TEXT, ATTRIBUTE_NAME_STATUS, ATTRIBUTE_NAME_IMAGE, ATTRIBUTE_NAME_COLOR, ATTRIBUTE_NAME_DATE,
+            ATTRIBUTE_NAME_DRIVER, ATTRIBUTE_NAME_TRAILER, ATTRIBUTE_NAME_WIFI, ATTRIBUTE_NAME_LOW_FLOR, ATTRIBUTE_NAME_ADDRESS};
+
+    private ArrayList<Map<String, Object>> data = new ArrayList<>();
     private String objects;
     private TextView noObjects;
     private ListView listView;
     private Button clearSearch;
     private int objectsCount;
-    private  EditText search;
+    private EditText search;
+
+    @Inject
+    ObjectsCustomAdapter objectsCustomAdapter;
+
+    @Inject
+    SharedPreferences sharedPreferences;
+
+    @Inject
+    Gson gson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,12 +89,22 @@ public class ObjectsActivity extends AppCompatActivity {
             }
         });
 
+        MicroGisComponent microGisComponent = DaggerMicroGisComponent.builder()
+                .contextModule(new ContextModule(this))
+                .build();
+
+        sharedPreferences = microGisComponent.getSharedPreferences();
+        gson = microGisComponent.getGson();
+
         search = (EditText) findViewById(R.id.inputSearch);
         noObjects = (TextView) findViewById(R.id.tvNoObjects);
         clearSearch = (Button) findViewById(R.id.clearSearch);
 
-        sharedPreferences = getSharedPreferences("mypref", MODE_PRIVATE);
+        objects = sharedPreferences.getString("groupObjects", "empty");
+        objectsCount = sharedPreferences.getInt("objectsCount", 0);
 
+        TextView title = findViewById(R.id.toolbar_title);
+        title.setText(getString(R.string.objectsGroup) + " (" + objectsCount + ")");
 
         clearSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,14 +118,6 @@ public class ObjectsActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        Gson gson = new Gson();
-
-        objects = sharedPreferences.getString("groupObjects", "empty");
-        objectsCount = sharedPreferences.getInt("objectsCount", 0);
-
-        TextView title = findViewById(R.id.toolbar_title);
-        title.setText(getString(R.string.objectsGroup) + " (" + objectsCount + ")");
 
         if(objects.equals("empty")){
             noObjects.setText(getString(R.string.empty_object_list));
@@ -181,11 +204,11 @@ public class ObjectsActivity extends AppCompatActivity {
 
             Collections.sort(data, mapComparator);
 
+            ObjectsActivityComponent objectsActivityComponent = DaggerObjectsActivityComponent.builder()
+                    .objectsActivityModule(new ObjectsActivityModule(this, R.layout.custom_adapter_object, data, from))
+                    .microGisComponent(MicroGisApplication.get(this).getMicroGisComponent()).build();
 
-            String[] from = { ATTRIBUTE_NAME_ID, ATTRIBUTE_NAME_TEXT, ATTRIBUTE_NAME_STATUS, ATTRIBUTE_NAME_IMAGE, ATTRIBUTE_NAME_COLOR, ATTRIBUTE_NAME_DATE,
-                    ATTRIBUTE_NAME_DRIVER, ATTRIBUTE_NAME_TRAILER, ATTRIBUTE_NAME_WIFI, ATTRIBUTE_NAME_LOW_FLOR, ATTRIBUTE_NAME_ADDRESS};
-
-            objectsCustomAdapter = new ObjectsCustomAdapter(this, R.layout.custom_adapter_object, data, from);
+            objectsActivityComponent.injectObjectsActivity(this);
 
             listView = (ListView) findViewById(R.id.lvObjects);
 
