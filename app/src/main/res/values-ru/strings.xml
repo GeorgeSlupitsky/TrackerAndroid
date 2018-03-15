@@ -139,4 +139,32 @@
     <string name="rpm">р/мин</string>
     <string name="volts">В</string>
     <string name="acceleration">G</string>
+
+    <!--status codes-->
+    <string name="fuellingManual">Заправка (ручная)</string>
+    <string name="drainManual">Слив (ручной)</string>
+    <string name="fuellingAuto">Заправка (автоматическая)</string>
+    <string name="drainAuto">Слив (автоматический)</string>
+    <string name="worksessionEndManual">Конец рабочей смены (ручной)</string>
+    <string name="worksessionStartManual">Начало рабочей смены (ручной)</string>
+    <string name="worksessionEndVoyage">Конец рабочей смены (рейс)</string>
+    <string name="worksessionStartVoyage">Начало рабочей смены (рейс)</string>
+    <string name="worksessionEndRfid">Конец рабочей смены (RFID)</string>
+    <string name="worksessionStartRfid">Начало рабочей смены (RFID)</string>
+    <string name="temperatureInNorm">Вход в температурную норму</string>
+    <string name="temperatureOutNorm">Выход из температурной нормы</string>
+    <string name="arrivalZone">Вход в геозону</string>
+    <string name="departureZone">Выход из геозоны</string>
+    <string name="speedZone">Превышение скорости в геозоне</string>
+    <string name="serviceDayApproximation">Мейл о приближении ТО</string>
+    <string name="serviceDayOverdue">Мейл о просрочке ТО</string>
+    <string name="speedOutOfRange">Мейл по скорости за пределами диапазона</string>
+    <string name="speedInTheRange">Мейл по скорости в пределах диапазона</string>
+    <string name="maxSpeed">Мейл по максимальной скорости</string>
+    <string name="loseCommunication">Мейл о потере связи</string>
+    <string name="loseCoordinates">Мейл о потере координат</string>
+    <string name="sensorChangeOn">Мейл об изменении значения датчика на вкл</string>
+    <string name="sensorChangeOff">Мейл об изменении значения датчика на выкл</string>
+    <string name="sensorValueInTheRange">Мейл о значении датчика в пределах диапазона</string>
+    <string name="sensorValueOutOfRange">Мейл о значении датчика за пределами диапазона</string>
 </resources>

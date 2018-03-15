@@ -24,6 +24,7 @@ public class ContentObjectFragment extends Fragment {
     private InfoObjectFragment infoObjectFragment;
     private SensorsObjectFragment sensorsObjectFragment;
     private TripObjectFragment tripObjectFragment;
+    private StatusCodeFragment statusCodeFragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,8 +33,10 @@ public class ContentObjectFragment extends Fragment {
         infoObjectFragment = new InfoObjectFragment();
         sensorsObjectFragment = new SensorsObjectFragment();
         tripObjectFragment = new TripObjectFragment();
+        statusCodeFragment = new StatusCodeFragment();
 
         tripObjectFragment.setArguments(getArguments());
+        statusCodeFragment.setArguments(getArguments());
 
         ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -50,7 +53,7 @@ public class ContentObjectFragment extends Fragment {
         adapter.addFragment(infoObjectFragment, getString(R.string.Info));
         adapter.addFragment(sensorsObjectFragment, getString(R.string.Sensors));
         adapter.addFragment(tripObjectFragment, getString(R.string.Trips));
-        adapter.addFragment(new Fragment(), getString(R.string.Events));
+        adapter.addFragment(statusCodeFragment, getString(R.string.Events));
         adapter.addFragment(new Fragment(), getString(R.string.Control));
         viewPager.setAdapter(adapter);
 

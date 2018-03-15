@@ -6,19 +6,25 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 
 import com.google.gson.Gson;
 import com.micro_gis.microgistracker.R;
 import com.micro_gis.microgistracker.WebAppInterface;
 import com.micro_gis.microgistracker.models.rest.Device;
 import com.micro_gis.microgistracker.models.rest.GeoZone;
+import com.micro_gis.microgistracker.models.rest.PointInMap;
+import com.micro_gis.microgistracker.models.rest.RequestDetailTrip;
 import com.micro_gis.microgistracker.models.rest.RequestObjectMoving;
+import com.micro_gis.microgistracker.models.rest.ResponseDetailTrip;
 import com.micro_gis.microgistracker.models.rest.ResponseObjectMoving;
+import com.micro_gis.microgistracker.models.rest.ResponseStatuses;
 import com.micro_gis.microgistracker.retrofit.API;
 import com.micro_gis.microgistracker.retrofit.APIController;
 
@@ -27,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -43,6 +50,7 @@ public class MapObjectFragment extends Fragment {
 
     private static API api;
     private WebView webView;
+    private Button cleanLayer;
 
     private Boolean isLabelEnabled;
 
@@ -73,11 +81,11 @@ public class MapObjectFragment extends Fragment {
 
     private Handler handler = new Handler();
 
+    private boolean trackInMap = false;
+
     Runnable requst = new Runnable() {
         @Override
         public void run() {
-            api = APIController.getApi(url);
-
             final RequestObjectMoving requestObjectMoving = new RequestObjectMoving();
             requestObjectMoving.setAccount(account);
             requestObjectMoving.setKey(key);
@@ -115,7 +123,7 @@ public class MapObjectFragment extends Fragment {
                     lat = device.getLat();
                     lng = device.getLng();
 
-                    String descriptionStr = getString(R.string.descriptionObj);
+                    String descriptionStr = getContext().getString(R.string.descriptionObj);
                     String brandStr = getString(R.string.brand);
                     String companyStr = getString(R.string.company);
                     String lastDataStr = getString(R.string.lastData);
@@ -147,104 +155,108 @@ public class MapObjectFragment extends Fragment {
                     int ancX = ANCOR_X[dirNdx];
                     int ancY = ANCOR_Y[dirNdx];
 
-                    webView.loadUrl("javascript: " +
-                            "map.panTo(new L.LatLng(" + lat + ", " + lng +"));\n" +
-                            "var isLabelEnabled = " + isLabelEnabled + ";\n" +
-                            "var speed = " + speed + ";\n" +
-                            "var busIcon = L.Icon.Default.extend({options: \n" +
+                    if (!trackInMap){
+                        webView.loadUrl("javascript: " +
+                                "map.panTo(new L.LatLng(" + lat + ", " + lng +"));\n" +
+                                "var isLabelEnabled = " + isLabelEnabled + ";\n" +
+                                "var speed = " + speed + ";\n" +
+                                "var busIcon = L.Icon.Default.extend({options: \n" +
                                 "{iconUrl: 'file:///android_asset/images/deviceIcons/" + icon + "_" + color + ".png',\n" +
                                 "iconSize: [32, 32],\n" +
                                 "iconAnchor: [16, 16],\n" +
                                 "shadowSize: [0, 0],\n" +
                                 "popupAnchor: [0, -10],\n" +
                                 "tooltipAnchor: [16, 0]} });\n" +
-                            "var arrow" + id + ";\n" +
-                            "if (speed > 0){\n" +
+                                "var arrow" + id + ";\n" +
+                                "if (speed > 0){\n" +
                                 "var arrowIcon = new L.icon({\n" +
-                                    "iconUrl: 'file:///android_asset/images/" + dirIconName + ".png',\n" +
-                                    "iconSize: [44,44],\n" +
-                                    "shadowUrl: null,\n" +
-                                    "shadowSize: null,\n" +
-                                    "iconAnchor: [" + ancX + ", " + ancY + "],\n" +
-                                    "popupAnchor: [0, -10]\n" +
+                                "iconUrl: 'file:///android_asset/images/" + dirIconName + ".png',\n" +
+                                "iconSize: [44,44],\n" +
+                                "shadowUrl: null,\n" +
+                                "shadowSize: null,\n" +
+                                "iconAnchor: [" + ancX + ", " + ancY + "],\n" +
+                                "popupAnchor: [0, -10]\n" +
                                 "});\n" +
                                 "if (typeof(arrow" + id + ") === 'undefined'){\n" +
-                                    "arrow" + id + " = new L.marker([" + lat + ", " + lng + "], {icon: arrowIcon});\n" +
-                                    "arrow" + id + ".bindPopup(\"" + html + "\");"+
+                                "arrow" + id + " = new L.marker([" + lat + ", " + lng + "], {icon: arrowIcon});\n" +
+                                "arrow" + id + ".bindPopup(\"" + html + "\");"+
                                 "} else {\n" +
-                                    "arrow" + id + ".setIcon(arrowIcon);\n" +
-                                    "arrow" + id + ".bindPopup(\"" + html + "\");"+
-                                    "arrow" + id + ".setLatLng([" + lat + ", " + lng + "]);\n" +
+                                "arrow" + id + ".setIcon(arrowIcon);\n" +
+                                "arrow" + id + ".bindPopup(\"" + html + "\");"+
+                                "arrow" + id + ".setLatLng([" + lat + ", " + lng + "]);\n" +
                                 "}\n" +
-                            "} else {\n" +
+                                "} else {\n" +
                                 "var arrowIcon = new L.icon({\n" +
-                                    "iconUrl: 'file:///android_asset/images/empty.png',\n" +
-                                    "iconSize: [44, 44],\n" +
-                                    "shadowUrl: null,\n" +
-                                    "shadowSize: null,\n" +
-                                    "iconAnchor: [" + ancX + ", " + ancY + "],\n" +
-                                    "popupAnchor: [0, 0]\n" +
+                                "iconUrl: 'file:///android_asset/images/empty.png',\n" +
+                                "iconSize: [44, 44],\n" +
+                                "shadowUrl: null,\n" +
+                                "shadowSize: null,\n" +
+                                "iconAnchor: [" + ancX + ", " + ancY + "],\n" +
+                                "popupAnchor: [0, 0]\n" +
                                 "});\n"+
                                 "if (typeof(arrow" + id + ")==='undefined'){\n" +
-                                    "arrow" +  id + " = new L.marker([" + lat + ", " + lng + "], {icon: arrowIcon});\n" +
-                                    "arrow" + id + ".bindPopup(\"" + html + "\");"+
-                                    "arrow" + id + ".typeMarker = 'arrow';\n" +
+                                "arrow" +  id + " = new L.marker([" + lat + ", " + lng + "], {icon: arrowIcon});\n" +
+                                "arrow" + id + ".bindPopup(\"" + html + "\");"+
+                                "arrow" + id + ".typeMarker = 'arrow';\n" +
                                 "} else {\n" +
-                                    "arrow" + id + ".setIcon(arrowIcon);"+
-                                    "arrow" + id + ".bindPopup(\"" + html + "\");"+
-                                    "arrow" + id + ".setLatLng([" + lat + ", " + lng + "]);\n" +
+                                "arrow" + id + ".setIcon(arrowIcon);"+
+                                "arrow" + id + ".bindPopup(\"" + html + "\");"+
+                                "arrow" + id + ".setLatLng([" + lat + ", " + lng + "]);\n" +
                                 "}\n" +
-                            "}\n" +
-                            "var icon = new busIcon();\n" +
-                            "if (typeof(bus" + id + ") === 'undefined'){\n" +
+                                "}\n" +
+                                "var icon = new busIcon();\n" +
+                                "if (typeof(bus" + id + ") === 'undefined'){\n" +
                                 "if (isLabelEnabled){\n" +
-                                    "bus" + id + " = new L.marker([" + lat + ", " + lng + "], {icon: icon})" +
-                                        ".bindTooltip(\"" + description + "\", {permanent: true})" +
-                                        ".bindPopup(\"" + html + "\");\n" +
+                                "bus" + id + " = new L.marker([" + lat + ", " + lng + "], {icon: icon})" +
+                                ".bindTooltip(\"" + description + "\", {permanent: true})" +
+                                ".bindPopup(\"" + html + "\");\n" +
+                                "bus" + id + ".typeMarker = 'car';\n" +
                                 "} else {\n" +
-                                    "bus" + id + " = new L.marker([" + lat + ", " + lng + "], {icon: icon})" +
-                                        ".bindPopup(\"" + html + "\");\n" +
+                                "bus" + id + " = new L.marker([" + lat + ", " + lng + "], {icon: icon})" +
+                                ".bindPopup(\"" + html + "\");\n" +
+                                "bus" + id + ".typeMarker = 'car';\n" +
                                 "}\n" +
-                            "} else {\n" +
+                                "} else {\n" +
                                 "bus" + id + ".setIcon(icon);\n" +
                                 "bus" + id + ".setLatLng([" + lat + ", " + lng + "]);\n" +
                                 "bus" + id + ".unbindTooltip();\n" +
-                                    "if (isLabelEnabled){\n" +
-                                        "bus" + id + ".bindTooltip(\"" + description + "\", {permanent: true});" +
-                                    "}\n" +
-                                "bus" + id + ".bindPopup(\"" + html + "\");\n" +
-                            "}\n" +
-                            "bus" + id + ".addTo(map);\n" +
-                            "arrow" + id + ".addTo(map);");
-
-                    List<GeoZone> geoZones = device.getGeoZones();
-
-                    if (geoZones != null){
-
-                        Collections.sort(geoZones, (GeoZone g1, GeoZone g2) -> g1.getPriority() - g2.getPriority());
-                        Collections.reverse(geoZones);
-
-                        GeoZone geoZone = geoZones.get(0);
-
-                        webView.loadUrl("javascript: " +
-                        "map.eachLayer(function(layer) {\n" +
-                                "if (layer.typeMarker == 'geozone'){\n" +
-                                    "map.removeLayer(layer);\n" +
+                                "if (isLabelEnabled){\n" +
+                                "bus" + id + ".bindTooltip(\"" + description + "\", {permanent: true});" +
                                 "}\n" +
-                            "});\n" +
-                        "var geozone = geomToWkt('" + geoZone.getGeom() + "').toObject({\n" +
-                                "color: '" + geoZone.getColor() + "'\n" +
-                                "});\n" +
-                        "geozone.bindPopup('" + geoZone.getName() + "');\n" +
-                        "geozone.typeMarker = 'geozone';\n" +
-                        "map.addLayer(geozone);");
-                    } else {
-                        webView.loadUrl("javascript: " +
-                        "map.eachLayer(function(layer) {\n" +
-                            "if (layer.typeMarker == 'geozone'){\n" +
-                                "map.removeLayer(layer);\n" +
-                            "}\n" +
-                        "});\n");
+                                "bus" + id + ".bindPopup(\"" + html + "\");\n" +
+                                "}\n" +
+                                "bus" + id + ".addTo(map);\n" +
+                                "arrow" + id + ".addTo(map);");
+
+                        List<GeoZone> geoZones = device.getGeoZones();
+
+                        if (geoZones != null){
+
+                            Collections.sort(geoZones, (GeoZone g1, GeoZone g2) -> g1.getPriority() - g2.getPriority());
+                            Collections.reverse(geoZones);
+
+                            GeoZone geoZone = geoZones.get(0);
+
+                            webView.loadUrl("javascript: " +
+                                    "map.eachLayer(function(layer) {\n" +
+                                    "if (layer.typeMarker == 'geozone'){\n" +
+                                    "map.removeLayer(layer);\n" +
+                                    "}\n" +
+                                    "});\n" +
+                                    "var geozone = geomToWkt('" + geoZone.getGeom() + "').toObject({\n" +
+                                    "color: '" + geoZone.getColor() + "'\n" +
+                                    "});\n" +
+                                    "geozone.bindPopup('" + geoZone.getName() + "');\n" +
+                                    "geozone.typeMarker = 'geozone';\n" +
+                                    "map.addLayer(geozone);");
+                        } else {
+                            webView.loadUrl("javascript: " +
+                                    "map.eachLayer(function(layer) {\n" +
+                                    "if (layer.typeMarker == 'geozone'){\n" +
+                                    "map.removeLayer(layer);\n" +
+                                    "}\n" +
+                                    "});\n");
+                        }
                     }
                 }
 
@@ -261,6 +273,8 @@ public class MapObjectFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
 
         final View rootView = inflater.inflate(R.layout.fragment_map_object, container, false);
+
+        cleanLayer = (Button) rootView.findViewById(R.id.cleanLayersObject);
 
         webView = (WebView) rootView.findViewById(R.id.webviewMapOdject);
         runOnUiThread(new Runnable() {
@@ -307,7 +321,37 @@ public class MapObjectFragment extends Fragment {
         isLabelEnabled = getArguments().getBoolean("label");
         interval = getArguments().getString("interval");
 
+        api = APIController.getApi(url);
+
         handler.post(requst);
+
+        cleanLayer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                trackInMap = false;
+                webView.loadUrl("javascript:map.removeLayer(polyline);");
+                webView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
+                        "if (layer instanceof L.Marker) {\n" +
+                        "if (layer.typeMarker === 'flag' || layer.typeMarker === 'parking'){\n" +
+                        "map.removeLayer(layer);\n" +
+                        "}\n" +
+                        "}" +
+                        "});");
+                webView.loadUrl("javascript:map.panTo(new L.LatLng(" + lat + ", " + lng + "));\n");
+            }
+        });
+
+        cleanLayer.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    cleanLayer.setBackgroundResource(R.drawable.clean);
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    cleanLayer.setBackgroundResource(R.drawable.clean_a);
+                }
+                return false;
+            }
+        });
 
         return rootView;
     }
@@ -316,6 +360,98 @@ public class MapObjectFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         handler.removeCallbacks(requst);
+    }
+
+    public void drawTrack(String account, String key, String id, Long dateFrom, Long dateTo){
+
+        RequestDetailTrip requestDetailTrip = new RequestDetailTrip();
+
+        requestDetailTrip.setKey(key);
+        requestDetailTrip.setAccount(account);
+        requestDetailTrip.setId(id);
+        requestDetailTrip.setDateFrom(dateFrom);
+        requestDetailTrip.setDateTo(dateTo);
+
+        api.responseDetailTrip(requestDetailTrip).enqueue(new Callback<ResponseDetailTrip>() {
+            @Override
+            public void onResponse(Call<ResponseDetailTrip> call, Response<ResponseDetailTrip> response) {
+                ResponseDetailTrip responseDetailTrip = response.body();
+
+                if (responseDetailTrip != null){
+                    if (responseDetailTrip.getStatus().equals(ResponseStatuses.SUCCESS.toString())){
+                        List <PointInMap> points = responseDetailTrip.getPoints();
+
+                        if (points != null && !points.isEmpty()){
+
+                            trackInMap = true;
+
+                            webView.loadUrl("javascript:map.removeLayer(polyline);");
+                            webView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
+                                    "if (layer instanceof L.Marker) {\n" +
+                                    "if (layer.typeMarker === 'flag' || layer.typeMarker === 'parking'){\n" +
+                                        "map.removeLayer(layer);\n" +
+                                    "}\n" +
+                                    "}" +
+                                    "});");
+
+                            if (points.get(0).getStatus() == 62144){
+
+                                webView.loadUrl("javascript: " +
+                                    "var parking = new L.Marker ([" + points.get(0).getLat() + ", " + points.get(0).getLng() +"]);\n" +
+                                        "parking.typeMarker = 'parking';\n" +
+                                        "parking.addTo(map);\n" +
+                                        "map.panTo(new L.LatLng(" + points.get(0).getLat() + ", " + points.get(0).getLng() +"));\n"
+                                );
+
+                            } else {
+
+                                String start = "[";
+                                String end = "]";
+                                String tempCoordinate = "";
+
+                                PointInMap pointInMapFirst = points.get(0);
+
+                                String startCoordinate = "[" + pointInMapFirst.getLat() + ", " + pointInMapFirst.getLng() + "]";
+                                String endCoordinate = "";
+
+                                Iterator iterator = points.iterator();
+
+                                while (iterator.hasNext()){
+                                    PointInMap pointInMap = (PointInMap) iterator.next();
+                                    String point = "[" + pointInMap.getLat() + ", " + pointInMap.getLng() + "]";
+                                    tempCoordinate = tempCoordinate + point;
+                                    if (iterator.hasNext()){
+                                        tempCoordinate = tempCoordinate + ", ";
+                                    } else {
+                                        endCoordinate = "[" + pointInMap.getLat() + ", " + pointInMap.getLng() + "]";
+                                    }
+                                }
+
+                                String coordinates = start + tempCoordinate + end;
+
+                                String hexColor = String.format("#%06X", (0xFFFFFF & sharedPreferences.getInt("trackcolor", 0xffff0000)));
+
+                                webView.loadUrl("javascript: " +
+                                    "lineTrack(" + coordinates + "," + startCoordinate + "," + endCoordinate + ");\n" +
+                                        "map.fitBounds([" + startCoordinate + ", " + endCoordinate + "]);\n"
+
+                                );
+
+                                webView.loadUrl("javascript:polyline.setStyle({\n" +
+                                            "color: '" + hexColor +
+                                        "'\n});");
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseDetailTrip> call, Throwable t) {
+
+            }
+        });
+
     }
 
 }

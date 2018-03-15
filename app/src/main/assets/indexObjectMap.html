@@ -46,7 +46,7 @@ var osmAttr = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 });
 
 var trav = new L.tileLayer('http://maps.micro-gis.com/geoserver/gwc/service/tms/1.0.0/global:world@EPSG%3A900913@png/{z}/{x}/{y}.png', {
-    maxZoom: 19,
+    maxZoom: 20,
     tms: true,
     attribution: '2016 MicroGIS'
 });
@@ -76,6 +76,40 @@ function geomToWkt(geom){
 	wkt = new Wkt.Wkt();
 	wkt.read(geom);
 	return wkt;
+}
+
+var startIcon = L.icon({
+    iconUrl: 'file:///android_res/drawable/q_4.png',
+    iconSize: [38, 40],
+    iconAnchor: [6, 36],
+    popupAnchor: [-3, -30]
+});
+
+var finishIcon = L.icon({
+    iconUrl: 'file:///android_res/drawable/q_8.png',
+    iconSize: [38, 40],
+    iconAnchor: [6, 36],
+    popupAnchor: [-3, -30]
+});
+
+function lineTrack(trackIntent, begin, end) {
+
+    polyline = new L.Polyline(trackIntent, {
+        opacity: 0.5,
+        smoothFactor: 1
+    });
+    polyline.addTo(map);
+
+    beginMarker = new L.marker(begin, {icon: startIcon});
+    beginMarker.addTo(map).addTo(map);
+    beginMarker.typeMarker = 'flag';
+
+    endMarker = new L.marker(end, {icon: finishIcon});
+    endMarker.addTo(map);
+    endMarker.typeMarker = 'flag';
+
+    beginMarker.bindPopup("Start").bindPopup();
+    endMarker.bindPopup("Finish").bindPopup();
 }
 
 </script>

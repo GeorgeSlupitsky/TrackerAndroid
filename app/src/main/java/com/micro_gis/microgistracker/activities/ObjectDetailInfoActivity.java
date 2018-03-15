@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.micro_gis.microgistracker.Communicator;
 import com.micro_gis.microgistracker.R;
 import com.micro_gis.microgistracker.fragments.ContentObjectFragment;
 import com.micro_gis.microgistracker.fragments.InfoObjectFragment;
@@ -41,7 +42,7 @@ import retrofit2.Response;
  * Created by User3 on 19.02.2018.
  */
 
-public class ObjectDetailInfoActivity extends FragmentActivity {
+public class ObjectDetailInfoActivity extends FragmentActivity implements Communicator{
 
     private static API api;
 
@@ -265,5 +266,10 @@ public class ObjectDetailInfoActivity extends FragmentActivity {
         });
 
 
+    }
+
+    @Override
+    public void event(String account, String key, String id, Long dateFrom, Long dateTo) {
+        mapObjectFragment.drawTrack(account, key, id, dateFrom, dateTo);
     }
 }

@@ -138,5 +138,33 @@
     <string name="volts">V</string>
     <string name="acceleration">G</string>
 
+    <!--status codes-->
+    <string name="fuellingManual">Fuelling (manual)</string>
+    <string name="drainManual">Drain (manual)</string>
+    <string name="fuellingAuto">Fuelling (auto)</string>
+    <string name="drainAuto">Drain (manual)</string>
+    <string name="worksessionEndManual">End of work session (manual)</string>
+    <string name="worksessionStartManual">Start of work session (manual)</string>
+    <string name="worksessionEndVoyage">End of work session (voyage)</string>
+    <string name="worksessionStartVoyage">Start of work session (voyage)</string>
+    <string name="worksessionEndRfid">End of work session (RFID)</string>
+    <string name="worksessionStartRfid">Start of work session (RFID)</string>
+    <string name="temperatureInNorm">Enter temperature rate</string>
+    <string name="temperatureOutNorm">Exit temperature limits</string>
+    <string name="arrivalZone">Entrance to the geofence</string>
+    <string name="departureZone">Exit geofence</string>
+    <string name="speedZone">Speeding in geofence</string>
+    <string name="serviceDayApproximation">Notifications have been sent about the near-term maintenance</string>
+    <string name="serviceDayOverdue">Notifications have been sent about the prolongation of maintenance</string>
+    <string name="speedOutOfRange">Notifications are sent for speed outside the range</string>
+    <string name="speedInTheRange">A speed limit message has been sent within the range</string>
+    <string name="maxSpeed">Notifications are sent at the maximum speed</string>
+    <string name="loseCommunication">Sent notifications about loss of connection</string>
+    <string name="loseCoordinates">Sent notifications about loss of coordinates</string>
+    <string name="sensorChangeOn">A notification has been sent about changing the sensor value to on</string>
+    <string name="sensorChangeOff">A notification has been sent about changing the value of the sensor to the off</string>
+    <string name="sensorValueInTheRange">A notification has been sent about the value of the sensor within the range</string>
+    <string name="sensorValueOutOfRange">An alert has been sent about the sensor value outside the range</string>
+
 
 </resources>

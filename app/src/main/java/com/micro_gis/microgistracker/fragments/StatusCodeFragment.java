@@ -12,10 +12,14 @@ import android.widget.TextView;
 
 import com.micro_gis.microgistracker.Communicator;
 import com.micro_gis.microgistracker.R;
+import com.micro_gis.microgistracker.adapters.StatusCodeCustomAdapter;
 import com.micro_gis.microgistracker.adapters.TripsCustomAdapter;
 import com.micro_gis.microgistracker.models.rest.RequestObjectTrip;
+import com.micro_gis.microgistracker.models.rest.RequestStatusCode;
 import com.micro_gis.microgistracker.models.rest.ResponseObjectTrip;
+import com.micro_gis.microgistracker.models.rest.ResponseStatusCode;
 import com.micro_gis.microgistracker.models.rest.ResponseStatuses;
+import com.micro_gis.microgistracker.models.rest.StatusCode;
 import com.micro_gis.microgistracker.models.rest.Trip;
 import com.micro_gis.microgistracker.retrofit.API;
 import com.micro_gis.microgistracker.retrofit.APIController;
@@ -32,27 +36,23 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Created by User9 on 06.03.2018.
+ * Created by User9 on 15.03.2018.
  */
 
-public class TripObjectFragment extends Fragment {
+public class StatusCodeFragment extends Fragment {
 
     final String ATTRIBUTE_NAME_TIME = "time";
     final String ATTRIBUTE_NAME_STATUS = "status";
-    final String ATTRIBUTE_NAME_DURATION = "duration";
-    final String ATTRIBUTE_NAME_DISTANCE = "distance";
-    final String ATTRIBUTE_NAME_SPEED = "speed";
-    final String ATTRIBUTE_NAME_START_ADDRESS = "start address";
-    final String ATTRIBUTE_NAME_FINISH_ADDRESS = "finish address";
-    final String ATTRIBUTE_NAME_START_LONG = "start long";
-    final String ATTRIBUTE_NAME_END_LONG = "end long";
+    final String ATTRIBUTE_NAME_LAT = "lat";
+    final String ATTRIBUTE_NAME_LNG = "lng";
+    final String ATTRIBUTE_NAME_TEXT = "text";
 
     private static API api;
 
-    private TripsCustomAdapter tripsCustomAdapter;
+    private StatusCodeCustomAdapter statusCodeCustomAdapter;
 
     private TextView currentDay;
-    private TextView noTrips;
+    private TextView noStatusCodes;
     private ListView listView;
 
     private Button prevDay;
@@ -69,36 +69,29 @@ public class TripObjectFragment extends Fragment {
     private String account;
     private String idDevice;
     private String key;
-    private boolean geocoder;
 
     private ArrayList<Map<String, Object>> data;
 
-    private String [] mFrom = {ATTRIBUTE_NAME_TIME, ATTRIBUTE_NAME_STATUS, ATTRIBUTE_NAME_DURATION, ATTRIBUTE_NAME_DISTANCE, ATTRIBUTE_NAME_SPEED,
-            ATTRIBUTE_NAME_START_ADDRESS, ATTRIBUTE_NAME_FINISH_ADDRESS, ATTRIBUTE_NAME_START_LONG, ATTRIBUTE_NAME_END_LONG};
-
-    private Communicator communicator;
+    private String [] mFrom = {ATTRIBUTE_NAME_TIME, ATTRIBUTE_NAME_STATUS, ATTRIBUTE_NAME_LAT, ATTRIBUTE_NAME_LNG, ATTRIBUTE_NAME_TEXT};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_trip_object, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_status_code_object, container, false);
 
         if (getArguments() != null){
             url = getArguments().getString("url");
             account = getArguments().getString("account");
             idDevice = getArguments().getString("id");
             key = getArguments().getString("key");
-            geocoder = getArguments().getBoolean("geocoder");
         }
 
         api = APIController.getApi(url);
 
-        communicator = (Communicator) getActivity();
+        prevDay = (Button) rootView.findViewById(R.id.status_code_back);
+        nextDay = (Button) rootView.findViewById(R.id.status_code_forward);
 
-        prevDay = (Button) rootView.findViewById(R.id.trip_back);
-        nextDay = (Button) rootView.findViewById(R.id.trip_forward);
-
-        currentDay = (TextView) rootView.findViewById(R.id.trip_date);
-        noTrips = (TextView) rootView.findViewById(R.id.tvNoTrips);
+        currentDay = (TextView) rootView.findViewById(R.id.status_code_date);
+        noStatusCodes = (TextView) rootView.findViewById(R.id.tvNoStatusCodes);
 
         currentDate = Calendar.getInstance();
 
@@ -144,7 +137,7 @@ public class TripObjectFragment extends Fragment {
 
                 String formattedDate = df.format(anotherDate.getTime());
 
-                tripRequest(from, till);
+                statusCodeRequest(from, till);
 
                 currentDay.setText(formattedDate);
 
@@ -166,7 +159,7 @@ public class TripObjectFragment extends Fragment {
 
                 currentDay.setText(formattedDate);
 
-                tripRequest(from, till);
+                statusCodeRequest(from, till);
 
                 if (anotherDate.equals(currentDate)){
                     nextDay.setVisibility(View.INVISIBLE);
@@ -176,75 +169,60 @@ public class TripObjectFragment extends Fragment {
 
         nextDay.setVisibility(View.INVISIBLE);
 
-        listView = (ListView) rootView.findViewById(R.id.listViewTripsObject);
+        listView = (ListView) rootView.findViewById(R.id.listViewStatusCodesObject);
 
-        tripRequest(from, till);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Long startLong = (Long) data.get(position).get(ATTRIBUTE_NAME_START_LONG);
-                Long endLong = (Long) data.get(position).get(ATTRIBUTE_NAME_END_LONG);
-                communicator.event(account, key, idDevice, startLong, endLong);
-            }
-        });
+        statusCodeRequest(from, till);
 
         return rootView;
     }
 
-    private void tripRequest (long from, long till){
-        RequestObjectTrip requestObjectTrip = new RequestObjectTrip();
+    private void statusCodeRequest (long from, long till){
+        RequestStatusCode requestStatusCode = new RequestStatusCode();
 
-        requestObjectTrip.setId(idDevice);
-        requestObjectTrip.setAccount(account);
-        requestObjectTrip.setKey(key);
-        requestObjectTrip.setUseGeocoder(geocoder);
-        requestObjectTrip.setDateFrom(from);
-        requestObjectTrip.setDateTo(till);
+        requestStatusCode.setId(idDevice);
+        requestStatusCode.setAccount(account);
+        requestStatusCode.setKey(key);
+        requestStatusCode.setDateFrom(from);
+        requestStatusCode.setDateTo(till);
 
-        api.responseObjectsTrip(requestObjectTrip).enqueue(new Callback<ResponseObjectTrip>() {
-
+        api.responseStatusCode(requestStatusCode).enqueue(new Callback<ResponseStatusCode>() {
             @Override
-            public void onResponse(Call<ResponseObjectTrip> call, Response<ResponseObjectTrip> response) {
-                ResponseObjectTrip responseObjectTrip = response.body();
+            public void onResponse(Call<ResponseStatusCode> call, Response<ResponseStatusCode> response) {
+                ResponseStatusCode responseStatusCode = response.body();
 
-                if (responseObjectTrip != null){
-                    if (responseObjectTrip.getStatus().equals(ResponseStatuses.SUCCESS.toString())){
-                        noTrips.setText("");
+                if (responseStatusCode != null){
+                    if (responseStatusCode.getStatus().equals(ResponseStatuses.SUCCESS.toString())){
+                        noStatusCodes.setText("");
 
                         data = new ArrayList<>();
 
-                        List <Trip> trips = responseObjectTrip.getTrips();
+                        List<StatusCode> statusCodes = responseStatusCode.getStatusCodes();
 
-                        for (Trip trip: trips){
+                        for (StatusCode statusCode: statusCodes){
                             Map<String, Object> m = new HashMap<>();
 
-                            m.put(ATTRIBUTE_NAME_TIME, trip.getStartDate());
-                            m.put(ATTRIBUTE_NAME_STATUS, trip.getStatus());
-                            m.put(ATTRIBUTE_NAME_DURATION, trip.getDuration());
-                            m.put(ATTRIBUTE_NAME_DISTANCE, trip.getDistance());
-                            m.put(ATTRIBUTE_NAME_SPEED, trip.getSpeed());
-                            m.put(ATTRIBUTE_NAME_START_ADDRESS, trip.getStartAddress());
-                            m.put(ATTRIBUTE_NAME_FINISH_ADDRESS, trip.getEndAddress());
-                            m.put(ATTRIBUTE_NAME_START_LONG, trip.getStartLong());
-                            m.put(ATTRIBUTE_NAME_END_LONG, trip.getEndLong());
+                            m.put(ATTRIBUTE_NAME_TIME, statusCode.getTimestamp());
+                            m.put(ATTRIBUTE_NAME_STATUS, statusCode.getStatusCode());
+                            m.put(ATTRIBUTE_NAME_LAT, statusCode.getLat());
+                            m.put(ATTRIBUTE_NAME_LNG, statusCode.getLng());
+                            m.put(ATTRIBUTE_NAME_TEXT, statusCode.getText());
 
                             data.add(m);
                         }
 
-                        tripsCustomAdapter = new TripsCustomAdapter(getContext(), R.layout.custom_adapter_trips, data, mFrom);
+                        statusCodeCustomAdapter = new StatusCodeCustomAdapter(getContext(), R.layout.custom_adapter_status_code, data, mFrom);
 
-                        listView.setAdapter(tripsCustomAdapter);
+                        listView.setAdapter(statusCodeCustomAdapter);
+
                     }
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseObjectTrip> call, Throwable t) {
+            public void onFailure(Call<ResponseStatusCode> call, Throwable t) {
 
             }
         });
     }
-
 
 }

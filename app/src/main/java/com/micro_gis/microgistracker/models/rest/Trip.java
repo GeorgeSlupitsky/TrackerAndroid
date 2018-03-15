@@ -53,6 +53,14 @@ public class Trip {
     @Expose
     private String endAddress;
 
+    @SerializedName("startLong")
+    @Expose
+    private long startLong;
+
+    @SerializedName("endLong")
+    @Expose
+    private long endLong;
+
     public Integer getStatus() {
         return status;
     }
@@ -139,5 +147,21 @@ public class Trip {
 
     public void setDistance(Double distance) {
         this.distance = distance;
+    }
+
+    public long getStartLong() {
+        return startLong;
+    }
+
+    public void setStartLong(long startLong) {
+        this.startLong = startLong;
+    }
+
+    public long getEndLong() {
+        return endLong;
+    }
+
+    public void setEndLong(long endLong) {
+        this.endLong = endLong;
     }
 }
