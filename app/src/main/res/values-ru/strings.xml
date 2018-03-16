@@ -167,4 +167,9 @@
     <string name="sensorChangeOff">Мейл об изменении значения датчика на выкл</string>
     <string name="sensorValueInTheRange">Мейл о значении датчика в пределах диапазона</string>
     <string name="sensorValueOutOfRange">Мейл о значении датчика за пределами диапазона</string>
+
+    <string name="chooseStatus">Пожалуйста, выберите статус</string>
+    <string name="statusChanged">Статус изменен успешно</string>
+    <string name="statusError">Ошибка изменения статуса</string>
+    <string name="noStatuses">Нет доступных статусов для выбора</string>
 </resources>

@@ -166,5 +166,8 @@
     <string name="sensorValueInTheRange">A notification has been sent about the value of the sensor within the range</string>
     <string name="sensorValueOutOfRange">An alert has been sent about the sensor value outside the range</string>
 
-
+    <string name="chooseStatus">Please choose status</string>
+    <string name="statusChanged">Status changed successfully</string>
+    <string name="statusError">Status change error</string>
+    <string name="noStatuses">There are no statuses for choosing</string>
 </resources>
