@@ -224,5 +224,4 @@ public class StatusCodeFragment extends Fragment {
             }
         });
     }
-
 }

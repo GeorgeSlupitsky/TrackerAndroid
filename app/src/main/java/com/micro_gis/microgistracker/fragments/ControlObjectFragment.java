@@ -49,8 +49,6 @@ public class ControlObjectFragment extends Fragment{
 
     private Integer statusId;
 
-    private Integer selectedStatus;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -73,10 +71,6 @@ public class ControlObjectFragment extends Fragment{
         spinner = (AppCompatSpinner) rootView.findViewById(R.id.spinnerControl);
         saveStatus = (Button) rootView.findViewById(R.id.buttonSaveControl);
         noControl = (TextView) rootView.findViewById(R.id.noControl);
-
-        if (selectedStatus != null){
-            spinner.setSelection(selectedStatus);
-        }
 
         saveStatus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,21 +129,20 @@ public class ControlObjectFragment extends Fragment{
 
                         String [] data = new String[dataList.size()];
 
+                        Integer selectedStatus = null;
+
                         for (DeviceStatus deviceStatus: dataList){
                             data[dataList.indexOf(deviceStatus)] = deviceStatus.getStatus();
 
                             if (deviceStatus.isEnabled()){
                                 selectedStatus = dataList.indexOf(deviceStatus);
                             }
-
                         }
 
                         ArrayAdapter<String> adapter = new ArrayAdapter<>(rootView.getContext(), android.R.layout.simple_spinner_item, data);
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
                         spinner.setAdapter(adapter);
-
-                        spinner.setPrompt("Оберіть статус");
 
                         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                             @Override
@@ -162,6 +155,11 @@ public class ControlObjectFragment extends Fragment{
 
                             }
                         });
+
+                        if (selectedStatus != null){
+                            spinner.setSelection(selectedStatus);
+                        }
+
                     } else {
                         noControl.setText(getContext().getString(R.string.noStatuses));
                         spinner.setVisibility(View.GONE);
