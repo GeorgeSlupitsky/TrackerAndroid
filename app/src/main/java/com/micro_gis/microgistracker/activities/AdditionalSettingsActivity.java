@@ -21,6 +21,7 @@ public class AdditionalSettingsActivity extends AppCompatActivity {
     CheckBox clusterParamsCheckBox;
     CheckBox geocoderParamsCheckBox;
     CheckBox navigationParamsCheckBox;
+    CheckBox changeLabelsCheckBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,11 +34,13 @@ public class AdditionalSettingsActivity extends AppCompatActivity {
         clusterParamsCheckBox = (CheckBox) findViewById(R.id.clusterParamsCheckBox);
         geocoderParamsCheckBox = (CheckBox) findViewById(R.id.geocoderParamsCheckBox);
         navigationParamsCheckBox = (CheckBox) findViewById(R.id.navigationParamsCheckBox);
+        changeLabelsCheckBox = (CheckBox) findViewById(R.id.changeLabels);
 
         labelParamsCheckBox.setChecked(sharedpreferences.getBoolean("label", true));
         clusterParamsCheckBox.setChecked(sharedpreferences.getBoolean("cluster", true));
         geocoderParamsCheckBox.setChecked(sharedpreferences.getBoolean("geocoder", false));
         navigationParamsCheckBox.setChecked(sharedpreferences.getBoolean("navigation", true));
+        changeLabelsCheckBox.setChecked(sharedpreferences.getBoolean("changeLabels", false));
 
         labelParamsCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,6 +82,17 @@ public class AdditionalSettingsActivity extends AppCompatActivity {
                     sharedpreferences.edit().putBoolean("navigation", true).apply();
                 } else {
                     sharedpreferences.edit().putBoolean("navigation", false).apply();
+                }
+            }
+        });
+
+        changeLabelsCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (changeLabelsCheckBox.isChecked()){
+                    sharedpreferences.edit().putBoolean("changeLabels", true).apply();
+                } else {
+                    sharedpreferences.edit().putBoolean("changeLabels", false).apply();
                 }
             }
         });

@@ -87,6 +87,25 @@
 
             </TableRow>
 
+            <TableRow
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent">
+                <CheckBox
+                    android:id="@+id/changeLabels"
+                    android:checked="false"
+                    android:layout_gravity="center_horizontal" />
+
+                <TextView
+                    android:id="@+id/changeLabelsParams"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/changeLabelParams"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/black"
+                    android:layout_marginLeft="25dp"/>
+
+            </TableRow>
+
         </TableLayout>
     </ScrollView>
 </RelativeLayout>

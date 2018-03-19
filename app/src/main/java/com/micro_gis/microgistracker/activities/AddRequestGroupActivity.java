@@ -11,9 +11,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.micro_gis.microgistracker.DBHelper;
 import com.micro_gis.microgistracker.R;
+
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;
 
@@ -138,17 +141,30 @@ public class AddRequestGroupActivity extends AppCompatActivity {
                 cv.put("groups", groupStr);
                 cv.put("timeZone", timeZone);
 
-                Intent intent = getIntent();
-                String id = intent.getStringExtra("id");
+                if (NumberUtils.isParsable(interval.getText().toString())){
+                    if (Integer.parseInt(interval.getText().toString()) >= 10){
+                        Intent intent = getIntent();
+                        String id = intent.getStringExtra("id");
 
-                if (id != null){
-                    db.update("requestgroup", cv, "id = ?", new String[] { id });
+                        if (id != null){
+                            db.update("requestgroup", cv, "id = ?", new String[] { id });
+                        } else {
+                            db.insert("requestgroup", null, cv);
+                        }
+
+                        dbHelper.close();
+                        finish();
+
+                    } else {
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                getString(R.string.no_less_interval), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
                 } else {
-                    db.insert("requestgroup", null, cv);
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            getString(R.string.incorrect_data), Toast.LENGTH_LONG);
+                    toast.show();
                 }
-
-                dbHelper.close();
-                finish();
             }
         });
     }

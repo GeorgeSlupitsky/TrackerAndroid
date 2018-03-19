@@ -3,18 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
 
     <LinearLayout
         android:id="@+id/webViewLL"
         android:layout_width="match_parent"
-        android:layout_height="225dp">
+        android:layout_height="@dimen/web_view_height">
 
         <FrameLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <WebView
                 android:id="@+id/webviewMapOdject"

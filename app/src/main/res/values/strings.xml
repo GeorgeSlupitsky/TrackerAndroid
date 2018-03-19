@@ -82,6 +82,8 @@
     <string name="please_add_server_settings">Please, add server settings!</string>
     <string name="please_add_server_monitoring_settings">Please, add settings of the group!</string>
     <string name="edit">Edit</string>
+    <string name="no_less_interval">Interval shouldn`t be less then 10 sec</string>
+    <string name="incorrect_data">Interval field should consist of number</string>
 
     <string name="rlace_turn_oo_gps">Please, TURN ON GPS!</string>
     <string name="choose_group">Choose group of objects</string>
@@ -118,6 +120,7 @@
     <string name="clusterParams">Enable clusters</string>
     <string name="geocoderParams">Enable geocoder</string>
     <string name="navigationParams">Enable navigation</string>
+    <string name="changeLabelParams">Change labels on names</string>
     <string name="address">Address: </string>
     <string name="addressObjInfo">Address</string>
 

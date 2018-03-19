@@ -125,7 +125,7 @@ public class MicroGisActivity extends AppCompatActivity
     private int groupId;
     private int objectsCount, groupsCount, markersCount, tracksCount;
     NavigationView navigationView;
-    boolean isLabelEnabled, isClusterEnabled, isGeocoderEnabled, isNavigationEnabled;
+    boolean isLabelEnabled, isClusterEnabled, isGeocoderEnabled, isNavigationEnabled, changeLabelsOnDriversName;
     List<Device> devices;
 
     @Inject
@@ -314,6 +314,7 @@ public class MicroGisActivity extends AppCompatActivity
                             myWebView.loadUrl("javascript: " +
                                     "var isClusterEnabled = " + isClusterEnabled + ";\n" +
                                     "var isLabelEnabled = " + isLabelEnabled + ";\n" +
+                                    "var changeLabels = " + changeLabelsOnDriversName + ";\n" +
                                     "if (isClusterEnabled){\n" +
                                     "if (typeof(cluster) === 'undefined'){\n" +
                                     "cluster = L.markerClusterGroup({maxClusterRadius: 50});\n" +
@@ -359,6 +360,14 @@ public class MicroGisActivity extends AppCompatActivity
                                 String fuelLevelStr = getString(R.string.fuelLevel);
                                 String fuelExpenseStr = getString(R.string.fuelExpense);
 
+                                String driverName = null;
+                                boolean hasName = false;
+
+                                if (device.getDriverName() != null){
+                                    driverName = device.getDriverName();
+                                    hasName = true;
+                                }
+
                                 String html = descriptionStr + ": " + description +
                                         " <br/>" + brandStr + ": " + brand +
                                         " <br/>" + companyStr + ": " + organization +
@@ -381,6 +390,7 @@ public class MicroGisActivity extends AppCompatActivity
                                 int ancY = ANCOR_Y[dirNdx];
 
                                 myWebView.loadUrl("javascript: " +
+                                        "var hasName = " + hasName + ";\n" +
                                         "var speed = " + speed + ";\n" +
                                         "var busIcon = L.Icon.Default.extend({options: \n" +
                                         "{iconUrl: 'file:///android_asset/images/deviceIcons/" + icon + "_" + color + ".png',\n" +
@@ -431,8 +441,12 @@ public class MicroGisActivity extends AppCompatActivity
                                         "if (typeof(bus" + i + ") === 'undefined'){\n" +
                                         "if (isLabelEnabled){\n" +
                                         "bus" + i + " = new L.marker([" + lat + ", " + lng + "], {icon: icon})" +
-                                        ".bindTooltip(\"" + description + "\", {permanent: true})" +
                                         ".bindPopup(\"" + html + "\");\n" +
+                                        "if (changeLabels && hasName){\n" +
+                                        "bus" + i + ".bindTooltip(\"" + driverName + "\", {permanent: true})\n" +
+                                        "} else {\n" +
+                                        "bus" + i + ".bindTooltip(\"" + description + "\", {permanent: true})\n" +
+                                        "}\n" +
                                         "bus" + i + ".typeMarker = 'car';\n" +
                                         "bus" + i + ".speed = speed;\n" +
                                         "bus" + i + ".arrow = arrow" + i + ";\n" +
@@ -451,7 +465,11 @@ public class MicroGisActivity extends AppCompatActivity
                                         "bus" + i + ".setLatLng([" + lat + ", " + lng + "]);\n" +
                                         "bus" + i + ".unbindTooltip();\n" +
                                         "if (isLabelEnabled){\n" +
-                                        "bus" + i + ".bindTooltip(\"" + description + "\", {permanent: true});" +
+                                        "if (changeLabels && hasName){\n" +
+                                        "bus" + i + ".bindTooltip(\"" + driverName + "\", {permanent: true})\n" +
+                                        "} else {\n" +
+                                        "bus" + i + ".bindTooltip(\"" + description + "\", {permanent: true});\n" +
+                                        "}\n" +
                                         "}\n" +
                                         "bus" + i + ".bindPopup(\"" + html + "\");\n" +
                                         "bus" + i + ".typeMarker = 'car';\n" +
@@ -1346,6 +1364,7 @@ public class MicroGisActivity extends AppCompatActivity
         isClusterEnabled = sharedpreferences.getBoolean("cluster", true);
         isGeocoderEnabled = sharedpreferences.getBoolean("geocoder", false);
         isNavigationEnabled = sharedpreferences.getBoolean("navigation", true);
+        changeLabelsOnDriversName = sharedpreferences.getBoolean("changeLabels", false);
 
         if (!isNavigationEnabled){
             clearMap();

@@ -53,6 +53,7 @@ public class MapObjectFragment extends Fragment {
     private Button cleanLayer;
 
     private Boolean isLabelEnabled;
+    private Boolean changeLabelsOnDriversName;
 
     private String description;
     private String organization;
@@ -134,6 +135,14 @@ public class MapObjectFragment extends Fragment {
                     String fuelLevelStr = getString(R.string.fuelLevel);
                     String fuelExpenseStr = getString(R.string.fuelExpense);
 
+                    String driverName = null;
+                    boolean hasName = false;
+
+                    if (device.getDriverName() != null){
+                        driverName = device.getDriverName();
+                        hasName = true;
+                    }
+
                     String html = descriptionStr + ": " + description +
                             " <br/>" + brandStr + ": " + brand +
                             " <br/>" + companyStr + ": " + organization +
@@ -157,6 +166,8 @@ public class MapObjectFragment extends Fragment {
 
                     if (!trackInMap){
                         webView.loadUrl("javascript: " +
+                                "var hasName = " + hasName + ";\n" +
+                                "var changeLabels = " + changeLabelsOnDriversName + ";\n" +
                                 "map.panTo(new L.LatLng(" + lat + ", " + lng +"));\n" +
                                 "var isLabelEnabled = " + isLabelEnabled + ";\n" +
                                 "var speed = " + speed + ";\n" +
@@ -208,8 +219,12 @@ public class MapObjectFragment extends Fragment {
                                 "if (typeof(bus" + id + ") === 'undefined'){\n" +
                                 "if (isLabelEnabled){\n" +
                                 "bus" + id + " = new L.marker([" + lat + ", " + lng + "], {icon: icon})" +
-                                ".bindTooltip(\"" + description + "\", {permanent: true})" +
                                 ".bindPopup(\"" + html + "\");\n" +
+                                "if (changeLabels && hasName){\n" +
+                                "bus" + id + ".bindTooltip(\"" + driverName + "\", {permanent: true})\n" +
+                                "} else {\n" +
+                                "bus" + id + ".bindTooltip(\"" + description + "\", {permanent: true})\n" +
+                                "}\n" +
                                 "bus" + id + ".typeMarker = 'car';\n" +
                                 "} else {\n" +
                                 "bus" + id + " = new L.marker([" + lat + ", " + lng + "], {icon: icon})" +
@@ -221,7 +236,11 @@ public class MapObjectFragment extends Fragment {
                                 "bus" + id + ".setLatLng([" + lat + ", " + lng + "]);\n" +
                                 "bus" + id + ".unbindTooltip();\n" +
                                 "if (isLabelEnabled){\n" +
-                                "bus" + id + ".bindTooltip(\"" + description + "\", {permanent: true});" +
+                                "if (changeLabels && hasName){\n" +
+                                "bus" + id + ".bindTooltip(\"" + driverName + "\", {permanent: true})\n" +
+                                "} else {\n" +
+                                "bus" + id + ".bindTooltip(\"" + description + "\", {permanent: true});\n" +
+                                "}\n" +
                                 "}\n" +
                                 "bus" + id + ".bindPopup(\"" + html + "\");\n" +
                                 "}\n" +
@@ -319,6 +338,7 @@ public class MapObjectFragment extends Fragment {
         url = getArguments().getString("url");
         geocoder = getArguments().getBoolean("geocoder");
         isLabelEnabled = getArguments().getBoolean("label");
+        changeLabelsOnDriversName = getArguments().getBoolean("changeLabels");
         interval = getArguments().getString("interval");
 
         api = APIController.getApi(url);
@@ -362,7 +382,7 @@ public class MapObjectFragment extends Fragment {
         handler.removeCallbacks(requst);
     }
 
-    public void drawTrack(String account, String key, String id, Long dateFrom, Long dateTo){
+    public void drawTrack(String account, String key, String id, Long dateFrom, Long dateTo, String duration){
 
         RequestDetailTrip requestDetailTrip = new RequestDetailTrip();
 
@@ -396,9 +416,31 @@ public class MapObjectFragment extends Fragment {
 
                             if (points.get(0).getStatus() == 62144){
 
+                                String[] split = duration.split(":");
+
+                                String textDuration;
+
+                                if (!split[0].equals("0")){
+                                    textDuration = split[0] + " " + getString(R.string.Hour) + " " + split [1] + " " + getString(R.string.Min);
+                                } else {
+                                    if (split[1].startsWith("0")){
+                                        split[1] = split[1].replaceFirst("0", "");
+                                    }
+
+                                    textDuration = split[1] + " " + getString(R.string.Min);
+                                }
+
                                 webView.loadUrl("javascript: " +
-                                    "var parking = new L.Marker ([" + points.get(0).getLat() + ", " + points.get(0).getLng() +"]);\n" +
+                                    "var icon = new L.icon({\n" +
+                                        "iconUrl: 'file:///android_asset/images/device_parking.png',\n" +
+                                        "iconSize: [40, 40],\n" +
+                                        "shadowUrl: null,\n" +
+                                        "shadowSize: null,\n" +
+                                        "popupAnchor: [0, 0]\n" +
+                                        "});\n"+
+                                    "var parking = new L.Marker ([" + points.get(0).getLat() + ", " + points.get(0).getLng() +"], {icon: icon});\n" +
                                         "parking.typeMarker = 'parking';\n" +
+                                        "parking.bindPopup('" + textDuration + "');\n" +
                                         "parking.addTo(map);\n" +
                                         "map.panTo(new L.LatLng(" + points.get(0).getLat() + ", " + points.get(0).getLng() +"));\n"
                                 );

@@ -185,7 +185,8 @@ public class TripObjectFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Long startLong = (Long) data.get(position).get(ATTRIBUTE_NAME_START_LONG);
                 Long endLong = (Long) data.get(position).get(ATTRIBUTE_NAME_END_LONG);
-                communicator.event(account, key, idDevice, startLong, endLong);
+                String duration = (String) data.get(position).get(ATTRIBUTE_NAME_DURATION);
+                communicator.event(account, key, idDevice, startLong, endLong, duration);
             }
         });
 

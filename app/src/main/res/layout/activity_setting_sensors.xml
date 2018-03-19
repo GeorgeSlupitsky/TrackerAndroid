@@ -28,7 +28,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/sensor_0"
             android:singleLine="true"
-            android:imeOptions="actionDone"/>
+            android:imeOptions="actionDone"
+            android:inputType="textCapSentences"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -42,7 +43,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/sensor_1"
             android:singleLine="true"
-            android:imeOptions="actionDone"/>
+            android:imeOptions="actionDone"
+            android:inputType="textCapSentences"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -60,7 +62,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/sensor_2"
             android:singleLine="true"
-            android:imeOptions="actionDone"/>
+            android:imeOptions="actionDone"
+            android:inputType="textCapSentences"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -75,7 +78,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/sensor_3"
             android:singleLine="true"
-            android:imeOptions="actionDone"/>
+            android:imeOptions="actionDone"
+            android:inputType="textCapSentences"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -90,7 +94,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/sensor_4"
             android:singleLine="true"
-            android:imeOptions="actionDone"/>
+            android:imeOptions="actionDone"
+            android:inputType="textCapSentences"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -105,7 +110,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/sensor_5"
             android:singleLine="true"
-            android:imeOptions="actionDone"/>
+            android:imeOptions="actionDone"
+            android:inputType="textCapSentences"/>
 
         <Button
             android:layout_width="wrap_content"

@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -56,6 +57,7 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
     private String group;
     private boolean isGeocoderEnabled;
     private boolean isLabelEnabled;
+    private boolean changeLabelsOnDriversName;
 
     private MapObjectFragment mapObjectFragment;
     private ContentObjectFragment contentObjectFragment;
@@ -64,6 +66,8 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
     private ImageView upArrow;
 
     private boolean isNormal;
+
+    private float layoutHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +124,7 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
         interval = sharedPreferences.getString("interval", "");
         isGeocoderEnabled = sharedPreferences.getBoolean("geocoder", false);
         isLabelEnabled = sharedPreferences.getBoolean("label", true);
+        changeLabelsOnDriversName = sharedPreferences.getBoolean("changeLabels", false);
         group = sharedPreferences.getString("group", "");
 
         String description = intent.getStringExtra("description");
@@ -139,74 +144,80 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
             public void onResponse(Call<ResponseObjectMoving> call, Response<ResponseObjectMoving> response) {
                 ResponseObjectMoving responseObjectMoving = response.body();
 
-                assert responseObjectMoving != null;
-
-                if (responseObjectMoving.getStatus().equalsIgnoreCase(ResponseStatuses.WARNING.toString())){
-                    List<String> warnings = responseObjectMoving.getWarnings();
-                    if (warnings.get(0).contains(ResponseStatuses.WARNING_DOES_NOT_HAVE_ACCESS_TO_THE_DEVICE.toString())) {
+                if (responseObjectMoving != null){
+                    if (responseObjectMoving.getStatus().equalsIgnoreCase(ResponseStatuses.WARNING.toString())){
+                        List<String> warnings = responseObjectMoving.getWarnings();
+                        if (warnings.get(0).contains(ResponseStatuses.WARNING_DOES_NOT_HAVE_ACCESS_TO_THE_DEVICE.toString())) {
+                            Toast toast = Toast.makeText(getApplicationContext(),
+                                    getString(R.string.warning_does_not_have_acces_to_device), Toast.LENGTH_LONG);
+                            toast.show();
+                            finish();
+                        }
+                    } else if (responseObjectMoving.getStatus().equalsIgnoreCase(ResponseStatuses.DEVICE_ID_IS_NOT_VALID.toString())){
                         Toast toast = Toast.makeText(getApplicationContext(),
-                                getString(R.string.warning_does_not_have_acces_to_device), Toast.LENGTH_LONG);
+                                getString(R.string.device_id_is_not_valid), Toast.LENGTH_LONG);
                         toast.show();
                         finish();
+                    } else if (responseObjectMoving.getStatus().equalsIgnoreCase(ResponseStatuses.SUCCESS.toString())){
+                        mapObjectFragment = new MapObjectFragment();
+                        contentObjectFragment = new ContentObjectFragment();
+
+                        Device device = responseObjectMoving.getDevice();
+                        Bundle bundleMap = new Bundle();
+                        bundleMap.putString("description", device.getDescription());
+                        bundleMap.putString("organization", device.getOrganization());
+                        bundleMap.putDouble("lat", device.getLat());
+                        bundleMap.putDouble("lng", device.getLng());
+                        bundleMap.putDouble("speed", device.getSpeed());
+                        bundleMap.putLong("event", device.getEvent());
+                        bundleMap.putInt("heading", device.getHeading());
+                        bundleMap.putString("brand", device.getBrand());
+                        bundleMap.putString("color", device.getColor());
+                        bundleMap.putString("icon", device.getIcon());
+                        bundleMap.putString("id", id);
+                        bundleMap.putInt("altitude", device.getAltitude());
+                        bundleMap.putInt("satCount", device.getSatCount());
+                        bundleMap.putDouble("hdop", device.getHdop());
+                        bundleMap.putDouble("fuelExpense", device.getFuelExpense());
+                        bundleMap.putDouble("fuelLevel", device.getFuelLevel());
+                        bundleMap.putString("account", accaunt);
+                        bundleMap.putString("key", key);
+                        bundleMap.putString("url", url);
+                        bundleMap.putString("interval", interval);
+                        bundleMap.putBoolean("geocoder", isGeocoderEnabled);
+                        bundleMap.putBoolean("label", isLabelEnabled);
+                        bundleMap.putBoolean("changeLabels", changeLabelsOnDriversName);
+
+                        mapObjectFragment.setArguments(bundleMap);
+
+                        Bundle bundleContent = new Bundle();
+                        bundleContent.putString("id", id);
+                        bundleContent.putString("account", accaunt);
+                        bundleContent.putString("key", key);
+                        bundleContent.putString("url", url);
+                        bundleContent.putBoolean("geocoder", isGeocoderEnabled);
+
+                        contentObjectFragment.setArguments(bundleContent);
+
+                        Gson gson = new Gson();
+
+                        String deviceJSON = gson.toJson(device);
+
+                        sharedPreferences.edit().putString("deviceJSON", deviceJSON).apply();
+
+                        FragmentTransaction transaction =
+                                getSupportFragmentManager().beginTransaction();
+
+                        transaction.add(R.id.objectMap, mapObjectFragment);
+                        transaction.add(R.id.objectContent, contentObjectFragment);
+
+                        transaction.commitAllowingStateLoss();
                     }
-                } else if (responseObjectMoving.getStatus().equalsIgnoreCase(ResponseStatuses.DEVICE_ID_IS_NOT_VALID.toString())){
+                } else {
                     Toast toast = Toast.makeText(getApplicationContext(),
-                            getString(R.string.device_id_is_not_valid), Toast.LENGTH_LONG);
+                            getString(R.string.status_error), Toast.LENGTH_LONG);
                     toast.show();
                     finish();
-                } else if (responseObjectMoving.getStatus().equalsIgnoreCase(ResponseStatuses.SUCCESS.toString())){
-                    mapObjectFragment = new MapObjectFragment();
-                    contentObjectFragment = new ContentObjectFragment();
-
-                    Device device = responseObjectMoving.getDevice();
-                    Bundle bundleMap = new Bundle();
-                    bundleMap.putString("description", device.getDescription());
-                    bundleMap.putString("organization", device.getOrganization());
-                    bundleMap.putDouble("lat", device.getLat());
-                    bundleMap.putDouble("lng", device.getLng());
-                    bundleMap.putDouble("speed", device.getSpeed());
-                    bundleMap.putLong("event", device.getEvent());
-                    bundleMap.putInt("heading", device.getHeading());
-                    bundleMap.putString("brand", device.getBrand());
-                    bundleMap.putString("color", device.getColor());
-                    bundleMap.putString("icon", device.getIcon());
-                    bundleMap.putString("id", id);
-                    bundleMap.putInt("altitude", device.getAltitude());
-                    bundleMap.putInt("satCount", device.getSatCount());
-                    bundleMap.putDouble("hdop", device.getHdop());
-                    bundleMap.putDouble("fuelExpense", device.getFuelExpense());
-                    bundleMap.putDouble("fuelLevel", device.getFuelLevel());
-                    bundleMap.putString("account", accaunt);
-                    bundleMap.putString("key", key);
-                    bundleMap.putString("url", url);
-                    bundleMap.putString("interval", interval);
-                    bundleMap.putBoolean("geocoder", isGeocoderEnabled);
-                    bundleMap.putBoolean("label", isLabelEnabled);
-
-                    mapObjectFragment.setArguments(bundleMap);
-
-                    Bundle bundleContent = new Bundle();
-                    bundleContent.putString("id", id);
-                    bundleContent.putString("account", accaunt);
-                    bundleContent.putString("key", key);
-                    bundleContent.putString("url", url);
-                    bundleContent.putBoolean("geocoder", isGeocoderEnabled);
-
-                    contentObjectFragment.setArguments(bundleContent);
-
-                    Gson gson = new Gson();
-
-                    String deviceJSON = gson.toJson(device);
-
-                    sharedPreferences.edit().putString("deviceJSON", deviceJSON).apply();
-
-                    FragmentTransaction transaction =
-                            getSupportFragmentManager().beginTransaction();
-
-                    transaction.add(R.id.objectMap, mapObjectFragment);
-                    transaction.add(R.id.objectContent, contentObjectFragment);
-
-                    transaction.commitAllowingStateLoss();
                 }
             }
 
@@ -226,9 +237,13 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
             public void onClick(View v) {
                 if (isNormal){
                     DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-                    int height = displayMetrics.heightPixels;
+                    float density = getResources().getDisplayMetrics().density;
+                    int height = displayMetrics.heightPixels + 100;
                     LinearLayout linearLayout = mapObjectFragment.getView().findViewById(R.id.webViewLL);
-                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, height - 155);
+
+                    layoutHeight = linearLayout.getHeight() / density;
+
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, height);
                     linearLayout.setLayoutParams(lp);
                     isNormal = false;
                     v.setVisibility(View.INVISIBLE);
@@ -248,8 +263,10 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
             public void onClick(View v) {
                 if (!isNormal){
                     float density = getResources().getDisplayMetrics().density;
-                    float height = 225 * density;
+                    float height = layoutHeight * density;
+
                     LinearLayout linearLayout = mapObjectFragment.getView().findViewById(R.id.webViewLL);
+
                     LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int)height);
                     linearLayout.setLayoutParams(lp);
                     isNormal = true;
@@ -269,7 +286,7 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
     }
 
     @Override
-    public void event(String account, String key, String id, Long dateFrom, Long dateTo) {
-        mapObjectFragment.drawTrack(account, key, id, dateFrom, dateTo);
+    public void event(String account, String key, String id, Long dateFrom, Long dateTo, String duration) {
+        mapObjectFragment.drawTrack(account, key, id, dateFrom, dateTo, duration);
     }
 }

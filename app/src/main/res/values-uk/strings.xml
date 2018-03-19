@@ -80,6 +80,9 @@
     <string name="device_id_is_not_valid">Не коректні дані объекту.</string>
     <string name="status_error">Відсутні дані по об`єктам.</string>
     <string name="edit">Редагувати</string>
+    <string name="no_less_interval">Інтервал повинен бути не менше 10 сек</string>
+    <string name="incorrect_data">Поле "інтервал" повино складатись з цифр</string>
+
     <string name="choose_group">Оберіть группу об`єктів</string>
     <string name="confirm">Прийняти</string>
     <string name="off">Вимкнути</string>
@@ -114,6 +117,7 @@
     <string name="clusterParams">Вкл. кластерізацію</string>
     <string name="geocoderParams">Вкл. геокодування</string>
     <string name="navigationParams">Вкл. навігацію</string>
+    <string name="changeLabelParams">Замінювати лейбли іменами</string>
     <string name="address">Адреса: </string>
     <string name="addressObjInfo">Адреса</string>
     <string name="action_settings">Налаштування</string>

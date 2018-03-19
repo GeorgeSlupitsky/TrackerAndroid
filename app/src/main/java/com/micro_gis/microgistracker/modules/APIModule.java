@@ -40,7 +40,7 @@ public class APIModule {
 
     @Provides
     public URL url(@Named("urlServer") String urlServer) {
-        if (urlServer == null){
+        if (urlServer == null || urlServer.equals("")){
             urlServer = "null";
         }
 

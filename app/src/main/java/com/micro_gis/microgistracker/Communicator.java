@@ -6,6 +6,6 @@ package com.micro_gis.microgistracker;
 
 public interface Communicator {
 
-    void event (String account, String key, String id, Long dateFrom, Long dateTo);
+    void event (String account, String key, String id, Long dateFrom, Long dateTo, String duration);
 
 }
