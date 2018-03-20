@@ -125,6 +125,7 @@ public class MicroGisActivity extends AppCompatActivity
     private int groupId;
     private int objectsCount, groupsCount, markersCount, tracksCount;
     NavigationView navigationView;
+    String isSendingToServer;
     boolean isLabelEnabled, isClusterEnabled, isGeocoderEnabled, isNavigationEnabled, changeLabelsOnDriversName;
     List<Device> devices;
 
@@ -598,7 +599,6 @@ public class MicroGisActivity extends AppCompatActivity
         public void run() {
 
             try {
-                timerCount++;
                 AVLData avlData = parse(gprmc, gpgga);
                 if (gpgga ==null & Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     mLastLocation = getLastKnownLocation();
@@ -615,7 +615,28 @@ public class MicroGisActivity extends AppCompatActivity
                     signalGps.setText("  GPS good");
                     signalGps.setTextColor(Color.GREEN);
                 }
-                int sat = Integer.parseInt(sharedpreferences.getString("minSatelites", "3"));
+            } catch (Exception x) {
+                Log.i("run Exeption", x.getMessage());
+            }
+            fullLenght = lenght;
+            handler.postDelayed(this, 1000);
+            onResume();
+        }
+    };
+
+    Runnable trackWriting = new Runnable() {
+        public void run() {
+
+            try {
+                timerCount++;
+                AVLData avlData = parse(gprmc, gpgga);
+                if (gpgga ==null & Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    mLastLocation = getLastKnownLocation();
+                    if (mLastLocation != null) {
+                        avlData = parseAvl(mLastLocation);
+                    }
+                }
+
                 int minspeed = Integer.parseInt(sharedpreferences.getString("minSpeed", "3"));
                 int maxspeed = Integer.parseInt(sharedpreferences.getString("maxSpeed", "160"));
 
@@ -735,7 +756,6 @@ public class MicroGisActivity extends AppCompatActivity
 
         }
         addddd = 0;
-        sensors = new ArrayList<>();
         server = sharedpreferences.getString("serverKey", "");
         port = sharedpreferences.getString("portKey", "");
         time = Integer.parseInt(sharedpreferences.getString("periodKey", "1"));
@@ -960,6 +980,8 @@ public class MicroGisActivity extends AppCompatActivity
             }
         });
 
+        handler.post(r);
+
 
         final Button start = (Button) findViewById(R.id.start);
         assert start != null;
@@ -973,36 +995,77 @@ public class MicroGisActivity extends AppCompatActivity
                             getString(R.string.enable_gps), Toast.LENGTH_LONG);
                     toast.show();
                     startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                    return;
-                }
-                if (sharedpreferences.getString("serverKey", "").equals("") || sharedpreferences.getString("portKey", "").equals("")) {
-                    Toast toast = Toast.makeText(getApplicationContext(),
-                            getString(R.string.please_add_server_settings), Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                    toast.show();
-                    return;
-                }
-                try {
-                    if (!isEnabl) {
+                } else {
+                    if (!isEnabl){
+                        lisAvldata = new ArrayList<AVLData>();
+                        timeStart = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+                        mChronometer.setBase(SystemClock.elapsedRealtime());
+                        mChronometer.start();
+                        pointsList = new ArrayList<>();
+                        chartPoits = new ArrayList<>();
+                        altitudeChart = new ArrayList<>();
+                        sensors = new ArrayList<>();
 
-                        if (time != 0) {
-                            handler.post(changingTime);
-                        }
-                        handler.post(runnable);
+                        handler.post(trackWriting);
                         start.setBackgroundResource(R.drawable.resive);
                         isEnabl = true;
-
-
                     } else {
-                        handler.removeCallbacks(changingTime);
-                        handler.removeCallbacks(runnable);
+                        mChronometer.stop();
+                        myWebView.loadUrl("javascript:map.removeLayer(polylineOnline);");
+                        myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
+                                "if (layer instanceof L.Marker) {\n" +
+                                "if (layer.typeMarker == 'flag'){\n" +
+                                "map.closePopup()\n"+
+                                "map.removeLayer(layer)\n" +
+                                "}\n" +
+                                "});");
+                        if (pointsList.size() >= 2) {
+                            hronTime = mChronometer.getText().toString();
+                            timeStop = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+                            ContentValues cv = new ContentValues();
+                            SQLiteDatabase db = dbHelper.getWritableDatabase();
+                            String name = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
+                            cv.put("name", name);
+                            Track track = new Track();
+                            track.setTime(hronTime);
+                            track.setName(name);
+                            track.setTimeStart(timeStart);
+                            track.setTimeStop(timeStop);
+                            track.setPoints(pointsList);
+                            track.setChartPoits(chartPoits);
+                            track.setAltitudeChart(altitudeChart);
+                            ArrayList<Integer> speedList = new ArrayList<>();
+                            ArrayList<Integer> altitudeList = new ArrayList<>();
+                            int speed = 0, altitude = 0;
+                            for (AVLData avlData : lisAvldata) {
+                                speedList.add(avlData.getSpeed());
+                                altitudeList.add(avlData.getAltitude());
+                                speed += avlData.getSpeed();
+                                altitude += avlData.getAltitude();
+                            }
+                            Collections.sort(speedList);
+                            Collections.sort(altitudeList);
+                            if (altitudeList.size() != 0) {
+                                track.setMaxAltitude(String.valueOf(altitudeList.get(altitudeList.size() - 1)) + " m");
+                                track.setAverageSpeed(String.valueOf(speed / speedList.size()) + " km/h");
+                            }
+                            if (speedList.size() != 0) {
+                                track.setMaxSpeed(String.valueOf(speedList.get(speedList.size() - 1)) + " km/h");
+                                track.setAverageAltitude(String.valueOf(altitude / altitudeList.size()) + " m");
+                            }
+
+                            track.setAvlDataList(lisAvldata);
+                            track.setSensors(sensors);
+                            track.setPointsOnTrack(pointsOnTrack);
+                            track.setTrackLenght(String.valueOf(fullLenght));
+                            cv.put("track", gson.toJson(track).getBytes());
+                            db.insert("trackdata", null, cv);
+                        }
+                        mChronometer.refreshDrawableState();
+                        handler.removeCallbacks(trackWriting);
                         start.setBackgroundResource(R.drawable.stop);
                         isEnabl = false;
-
                     }
-
-                } catch (Exception e) {
-
                 }
 
             }
@@ -1056,13 +1119,6 @@ public class MicroGisActivity extends AppCompatActivity
                 return false;
             }
         });
-
-        lisAvldata = new ArrayList<AVLData>();
-        handler.post(r);
-        timeStart = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        mChronometer.setBase(SystemClock.elapsedRealtime());
-        mChronometer.start();
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             myWebView.evaluateJavascript("(function() { return onMapClick(e); })();", new ValueCallback<String>() {
@@ -1165,52 +1221,6 @@ public class MicroGisActivity extends AppCompatActivity
     @Override
     public void onDestroy() {
         addddd = 0;
-        mChronometer.stop();
-        if (pointsList.size() >= 2) {
-            hronTime = mChronometer.getText().toString();
-            timeStop = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-            ContentValues cv = new ContentValues();
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
-            String name = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
-            cv.put("name", name);
-            Track track = new Track();
-            track.setTime(hronTime);
-            track.setName(name);
-            track.setTimeStart(timeStart);
-            track.setTimeStop(timeStop);
-            track.setPoints(pointsList);
-            track.setChartPoits(chartPoits);
-            track.setAltitudeChart(altitudeChart);
-            ArrayList<Integer> speedList = new ArrayList<>();
-            ArrayList<Integer> altitudeList = new ArrayList<>();
-            String length;
-            int speed = 0, altitude = 0;
-            for (AVLData avlData : lisAvldata) {
-                speedList.add(avlData.getSpeed());
-                altitudeList.add(avlData.getAltitude());
-                speed += avlData.getSpeed();
-                altitude += avlData.getAltitude();
-            }
-            Collections.sort(speedList);
-            Collections.sort(altitudeList);
-            if (altitudeList.size() != 0) {
-                track.setMaxAltitude(String.valueOf(altitudeList.get(altitudeList.size() - 1)) + " m");
-                track.setAverageSpeed(String.valueOf(speed / speedList.size()) + " km/h");
-            }
-            if (speedList.size() != 0) {
-                track.setMaxSpeed(String.valueOf(speedList.get(speedList.size() - 1)) + " km/h");
-                track.setAverageAltitude(String.valueOf(altitude / altitudeList.size()) + " m");
-            }
-
-            track.setAvlDataList(lisAvldata);
-            track.setSensors(sensors);
-            track.setPointsOnTrack(pointsOnTrack);
-            track.setTrackLenght(String.valueOf(fullLenght));
-            cv.put("track", gson.toJson(track).getBytes());
-            db.insert("trackdata", null, cv);
-        }
-        handler.removeCallbacks(r);
-//        mGoogleApiClient.disconnect();
         super.onDestroy();
     }
 
@@ -1365,6 +1375,24 @@ public class MicroGisActivity extends AppCompatActivity
         isGeocoderEnabled = sharedpreferences.getBoolean("geocoder", false);
         isNavigationEnabled = sharedpreferences.getBoolean("navigation", true);
         changeLabelsOnDriversName = sharedpreferences.getBoolean("changeLabels", false);
+        isSendingToServer = sharedpreferences.getString("switchKey", "false");
+
+        if (isSendingToServer.equals("true")){
+            if (server.equals("") || port.equals("")){
+                handler.removeCallbacks(changingTime);
+                handler.removeCallbacks(runnable);
+                isSendingToServer = "false";
+                sharedpreferences.edit().putString("switchKey", "false").apply();
+            } else {
+                if (time != 0) {
+                    handler.post(changingTime);
+                }
+                handler.post(runnable);
+            }
+        } else {
+            handler.removeCallbacks(changingTime);
+            handler.removeCallbacks(runnable);
+        }
 
         if (!isNavigationEnabled){
             clearMap();
@@ -1741,7 +1769,7 @@ public class MicroGisActivity extends AppCompatActivity
         if (_lat < 99999.0) {
             double lat = (double) (_lat.longValue() / 100L); // _lat is always positive here
             lat += (_lat - (lat * 100.0)) / 60.0;
-            return d.equals("S") ? -lat : lat;
+            return d.equals("s") ? -lat : lat;
         } else {
             return 90.0; // invalid latitude
         }
@@ -1784,7 +1812,11 @@ public class MicroGisActivity extends AppCompatActivity
 
     private void clearMap(){
         myWebView.loadUrl("javascript:console.log(markers);");
-        myWebView.loadUrl("javascript:map.removeLayer(polyline);");
+        myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
+                "if (layer.type == 'trackPolyline'){\n" +
+                "map.removeLayer(layer)\n" +
+                "}\n" +
+                "});");
         myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
                 "if (layer instanceof L.Marker) {\n" +
                     "if (layer.typeMarker == 'car'){\n" +
@@ -1799,7 +1831,7 @@ public class MicroGisActivity extends AppCompatActivity
     public static String getNMEAGGA(final Location loc) {
         StringBuilder sbGPGGA = new StringBuilder();
 
-        char cNorthSouth = loc.getLatitude() >= 0 ? 'N' : 'S';
+        char cNorthSouth = loc.getLatitude() >= 0 ? 'N' : 's';
         char cEastWest = loc.getLongitude() >= 0 ? 'E' : 'W';
 
         Date curDate = new Date();
@@ -1885,7 +1917,7 @@ public class MicroGisActivity extends AppCompatActivity
         // $GPRMC,053117.000,V,4812.7084,N,01619.3522,E,0.14,237.29,070311,,,N*76
         StringBuilder sbGPRMC = new StringBuilder();
 
-        char cNorthSouth = loc.getLatitude() >= 0 ? 'N' : 'S';
+        char cNorthSouth = loc.getLatitude() >= 0 ? 'N' : 's';
         char cEastWest = loc.getLongitude() >= 0 ? 'E' : 'W';
 
         Date curDate = new Date();

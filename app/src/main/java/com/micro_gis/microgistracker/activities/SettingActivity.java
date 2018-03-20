@@ -29,7 +29,7 @@ public class SettingActivity extends AppCompatActivity {
     Button ok;
     Switch switchOn;
     EditText server,time,port,angle,distance;
-    TextView sensorName;
+
     public static final String APP_PREFERENCES = "mypref";
     public static final String APP_PREFERENCES_SERVER = "serverKey";
     public static final String APP_PREFERENCES_PORT = "portKey";
@@ -71,7 +71,7 @@ public class SettingActivity extends AppCompatActivity {
                 editor.putString(APP_PREFERENCES_ANGLE, angle.getText().toString());
                 editor.putString(APP_PREFERENCES_DISTANCE, distance.getText().toString());
                 editor.putString(APP_PREFERENCES_PERIOD, time.getText().toString());
-                editor.commit();
+                editor.apply();
                 finish();
             }
         });
@@ -93,16 +93,28 @@ public class SettingActivity extends AppCompatActivity {
                         View child = linearLayout.getChildAt(i);
                         child.setEnabled(false);
                     }
-
+                    sharedpreferences.edit().putString(APP_PREFERENCES_SWITCH, "false").apply();
                 }
                 else {
-                    for (int i = 0; i < linearLayout.getChildCount(); i++) {
-                        View child = linearLayout.getChildAt(i);
-                        child.setEnabled(true);
+                    if (server.getText().toString().equals("") || port.getText().toString().equals("")){
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                getString(R.string.please_add_server_monitoring_settings), Toast.LENGTH_LONG);
+                        toast.show();
+                        switchOn.setChecked(false);
+                        for (int i = 0; i < linearLayout.getChildCount(); i++) {
+                            View child = linearLayout.getChildAt(i);
+                            child.setEnabled(true);
+                        }
+                        sharedpreferences.edit().putString(APP_PREFERENCES_SWITCH, "false").apply();
+                    } else {
+                        for (int i = 0; i < linearLayout.getChildCount(); i++) {
+                            View child = linearLayout.getChildAt(i);
+                            child.setEnabled(true);
+                        }
+                        sharedpreferences.edit().putString(APP_PREFERENCES_SWITCH, "true").apply();
                     }
 
                 }
-                sharedpreferences.edit().putString(APP_PREFERENCES_SWITCH, String.valueOf(switchOn.isChecked())).commit();
 
             }
         });
@@ -120,14 +132,6 @@ public class SettingActivity extends AppCompatActivity {
         }
         switchOn.setChecked(Boolean.parseBoolean(sharedpreferences.getString(APP_PREFERENCES_SWITCH, "false")));
 
-//        linearLayout  = (LinearLayout) findViewById(R.id.serverSettingLayout);
-//        if(!sharedpreferences.getBoolean(APP_PREFERENCES_SWITCH, false)){
-//            for (int j = 0; j < linearLayout.getChildCount(); j++) {
-//                View child = linearLayout.getChildAt(j);
-//                child.setEnabled(false);
-//            }
-//        }
-//        switchOn.setChecked(sharedpreferences.getBoolean(APP_PREFERENCES_SWITCH, false));
     }
     @Override
     public void onBackPressed() {
@@ -137,7 +141,7 @@ public class SettingActivity extends AppCompatActivity {
         editor.putString(APP_PREFERENCES_ANGLE, angle.getText().toString());
         editor.putString(APP_PREFERENCES_DISTANCE, distance.getText().toString());
         editor.putString(APP_PREFERENCES_PERIOD, time.getText().toString());
-        editor.commit();
+        editor.apply();
         finish();
     }
 

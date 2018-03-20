@@ -3,20 +3,46 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.AppCompatSpinner
-        android:id="@+id/spinnerControl"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
         android:layout_marginTop="10dp">
+        <TextView
+            android:id="@+id/tvStatusStr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/status"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:textColor="@color/black"
+            android:paddingRight="5dp"/>
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Status"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:layout_marginRight="50dp"
+            android:textColor="@color/black"/>
+    </LinearLayout>
 
-    </android.support.v7.widget.AppCompatSpinner>
+    <ListView
+        android:layout_marginTop="15dp"
+        android:id="@+id/lvControl"
+        android:layout_width="match_parent"
+        android:layout_height="150dp">
+
+    </ListView>
 
     <Button
         android:id="@+id/buttonSaveControl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="5dp"
         android:layout_gravity="center_horizontal"
         android:text="@string/save"/>
 

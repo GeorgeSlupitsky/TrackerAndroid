@@ -62,6 +62,7 @@
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="server_monitoring_message_corect">Please complete all fields in the "Settings/Groups" correctly.</string>
+    <string name="server_message_corect">Please complete fields "Server" and "Port" correctly.</string>
     <string name="warning_temporarily_suspended">Account has been temporarily suspended due to debts.</string>
     <string name="warning_key_has_not_access">This key have not access permission to account.</string>
     <string name="warning_have_not_group">Account have not group or this group have not devices.</string>
@@ -120,7 +121,7 @@
     <string name="clusterParams">Enable clusters</string>
     <string name="geocoderParams">Enable geocoder</string>
     <string name="navigationParams">Enable navigation</string>
-    <string name="changeLabelParams">Change labels on names</string>
+    <string name="changeLabelParams">Substitute names</string>
     <string name="address">Address: </string>
     <string name="addressObjInfo">Address</string>
 
@@ -173,4 +174,7 @@
     <string name="statusChanged">Status changed successfully</string>
     <string name="statusError">Status change error</string>
     <string name="noStatuses">There are no statuses for choosing</string>
+
+    <string name="parking">Parking</string>
+    <string name="status">Status:</string>
 </resources>

@@ -204,25 +204,19 @@ function lineTrack(trackIntent, begin, end) {
         opacity: 0.5,
         smoothFactor: 1
     });
+    polyline.type = 'trackPolyline';
     polyline.addTo(map);
 
-    if (typeof(beginMarker) === 'undefined') {
-        beginMarker = new L.marker(begin, {icon: startIcon});
-        beginMarker.addTo(map).addTo(map);
-    }
-    else {
-        beginMarker.setLatLng(begin);
-    }
-    if (typeof(endMarker) === 'undefined') {
-        endMarker = new L.marker(end, {icon: finishIcon});
-        endMarker.addTo(map);
-    }
-    else {
-        endMarker.setLatLng(end).addTo(map);
-    }
+    beginMarker = new L.marker(begin, {icon: startIcon});
+    beginMarker.addTo(map).addTo(map);
+    beginMarker.typeMarker = 'flag';
 
-    beginMarker.bindPopup("  start").openPopup();
-    endMarker.bindPopup("  finish").openPopup();
+    endMarker = new L.marker(end, {icon: finishIcon});
+    endMarker.addTo(map);
+    endMarker.typeMarker = 'flag';
+
+    beginMarker.bindPopup("Start").bindPopup();
+    endMarker.bindPopup("Finish").bindPopup();
 }
 
 
@@ -242,6 +236,7 @@ function onlineTrack(trackIntent, begin, end) {
         startMarker = new L.marker(begin, {icon: startIcon});
         startMarker.addTo(map);
         startMarker.bindPopup("  start").openPopup();
+        startMarker.typeMarker = 'flag';
     }
 
 }

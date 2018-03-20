@@ -196,6 +196,8 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
                         bundleContent.putString("key", key);
                         bundleContent.putString("url", url);
                         bundleContent.putBoolean("geocoder", isGeocoderEnabled);
+                        bundleContent.putString("color", device.getColor());
+                        bundleContent.putString("icon", device.getIcon());
 
                         contentObjectFragment.setArguments(bundleContent);
 

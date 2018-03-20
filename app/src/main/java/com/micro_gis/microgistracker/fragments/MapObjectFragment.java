@@ -430,17 +430,19 @@ public class MapObjectFragment extends Fragment {
                                     textDuration = split[1] + " " + getString(R.string.Min);
                                 }
 
+                                String parkingStr = getString(R.string.parking);
+
                                 webView.loadUrl("javascript: " +
                                     "var icon = new L.icon({\n" +
                                         "iconUrl: 'file:///android_asset/images/device_parking.png',\n" +
-                                        "iconSize: [40, 40],\n" +
+                                        "iconSize: [25, 25],\n" +
                                         "shadowUrl: null,\n" +
                                         "shadowSize: null,\n" +
                                         "popupAnchor: [0, 0]\n" +
                                         "});\n"+
                                     "var parking = new L.Marker ([" + points.get(0).getLat() + ", " + points.get(0).getLng() +"], {icon: icon});\n" +
                                         "parking.typeMarker = 'parking';\n" +
-                                        "parking.bindPopup('" + textDuration + "');\n" +
+                                        "parking.bindPopup('" + parkingStr + ": " + textDuration + "');\n" +
                                         "parking.addTo(map);\n" +
                                         "map.panTo(new L.LatLng(" + points.get(0).getLat() + ", " + points.get(0).getLng() +"));\n"
                                 );

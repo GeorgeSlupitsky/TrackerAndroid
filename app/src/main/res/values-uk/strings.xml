@@ -69,6 +69,7 @@
     <string name="spisok_pust">Список пустий</string>
     <string name="rlace_turn_oo_gps">Будь ласка, включіть GPS!</string>
     <string name="please_add_server_settings">Будь ласка, додайте налаштування сервера!</string>
+    <string name="server_message_corect">Будь ласка, заповніть поля "Сервер" і "Порт" коректно.</string>
     <string name="please_add_server_monitoring_settings">Будь ласка, додайте налаштування груп!</string>
     <string name="warning_temporarily_suspended">Аккаунт тимчасово недоступний через борг.</string>
     <string name="warning_key_has_not_access">Ключ не має доступу до аккаунту.</string>
@@ -101,7 +102,7 @@
     <string name="altitude">Висота</string>
     <string name="satCount">Кількість супутників</string>
     <string name="fuelLevel">Рівень палива</string>
-    <string name="fuelExpense">Використання палива</string>
+    <string name="fuelExpense">Палива використано</string>
     <string name="not_connected">Для того щоб переглянути лист об`єктів, будь ласка, підключіться до сервера</string>
     <string name="empty_object_list">Лист об`єктів пустий</string>
     <string name="empty_trips_list">Лист поїздок пустий</string>
@@ -117,7 +118,7 @@
     <string name="clusterParams">Вкл. кластерізацію</string>
     <string name="geocoderParams">Вкл. геокодування</string>
     <string name="navigationParams">Вкл. навігацію</string>
-    <string name="changeLabelParams">Замінювати лейбли іменами</string>
+    <string name="changeLabelParams">Підмінювати імена</string>
     <string name="address">Адреса: </string>
     <string name="addressObjInfo">Адреса</string>
     <string name="action_settings">Налаштування</string>
@@ -171,4 +172,7 @@
     <string name="statusChanged">Статус змінено успішно</string>
     <string name="statusError">Помилка зміни статуса</string>
     <string name="noStatuses">Нe має доступних статусів для вибору</string>
+
+    <string name="parking">Стоянка</string>
+    <string name="status">Статус:</string>
 </resources>

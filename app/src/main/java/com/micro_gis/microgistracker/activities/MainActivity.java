@@ -377,7 +377,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         if (_lat < 99999.0) {
             double lat = (double) (_lat.longValue() / 100L); // _lat is always positive here
             lat += (_lat - (lat * 100.0)) / 60.0;
-            return d.equals("S") ? -lat : lat;
+            return d.equals("s") ? -lat : lat;
         } else {
             return 90.0; // invalid latitude
         }
@@ -422,7 +422,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public static String getNMEAGGA(final Location loc) {
         StringBuilder sbGPGGA = new StringBuilder();
 
-        char cNorthSouth = loc.getLatitude() >= 0 ? 'N' : 'S';
+        char cNorthSouth = loc.getLatitude() >= 0 ? 'N' : 's';
         char cEastWest = loc.getLongitude() >= 0 ? 'E' : 'W';
 
         Date curDate = new Date();
@@ -476,7 +476,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         // $GPRMC,053117.000,V,4812.7084,N,01619.3522,E,0.14,237.29,070311,,,N*76
         StringBuilder sbGPRMC = new StringBuilder();
 
-        char cNorthSouth = loc.getLatitude() >= 0 ? 'N' : 'S';
+        char cNorthSouth = loc.getLatitude() >= 0 ? 'N' : 's';
         char cEastWest = loc.getLongitude() >= 0 ? 'E' : 'W';
 
         Date curDate = new Date();

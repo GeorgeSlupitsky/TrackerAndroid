@@ -2,6 +2,7 @@ package com.micro_gis.microgistracker.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatSpinner;
@@ -11,10 +12,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.micro_gis.microgistracker.R;
+import com.micro_gis.microgistracker.adapters.ControlCustomAdapter;
 import com.micro_gis.microgistracker.models.rest.DeviceStatus;
 import com.micro_gis.microgistracker.models.rest.RequestDeviceStatus;
 import com.micro_gis.microgistracker.models.rest.RequestSaveStatus;
@@ -24,7 +27,10 @@ import com.micro_gis.microgistracker.models.rest.ResponseStatuses;
 import com.micro_gis.microgistracker.retrofit.API;
 import com.micro_gis.microgistracker.retrofit.APIController;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,18 +42,36 @@ import retrofit2.Response;
 
 public class ControlObjectFragment extends Fragment{
 
-    private static API api;
+    final String ATTRIBUTE_NAME_ID = "time";
+    final String ATTRIBUTE_NAME_STATUS = "status";
+    final String ATTRIBUTE_NAME_COLOR = "color";
+    final String ATTRIBUTE_NAME_COLOR_HEX = "color hex";
+    final String ATTRIBUTE_NAME_ICON = "icon";
 
-    private AppCompatSpinner spinner;
+    private static API api;
     private Button saveStatus;
     private TextView noControl;
+    private ListView listView;
+    private TextView status;
+    private TextView statusStr;
 
     private String url;
     private String account;
     private String idDevice;
     private String key;
 
+    private String icon;
+
     private Integer statusId;
+
+    private ArrayList<Map<String, Object>> data;
+
+    private ControlCustomAdapter controlCustomAdapter;
+
+    private String [] mFrom = {ATTRIBUTE_NAME_ID, ATTRIBUTE_NAME_STATUS, ATTRIBUTE_NAME_COLOR, ATTRIBUTE_NAME_COLOR_HEX, ATTRIBUTE_NAME_ICON};
+
+    private String colorHex;
+    private String textStatus;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,6 +83,7 @@ public class ControlObjectFragment extends Fragment{
             account = getArguments().getString("account");
             idDevice = getArguments().getString("id");
             key = getArguments().getString("key");
+            icon = getArguments().getString("icon");
         }
 
         api = APIController.getApi(url);
@@ -68,9 +93,73 @@ public class ControlObjectFragment extends Fragment{
         requestDeviceStatus.setId(Integer.valueOf(idDevice));
         requestDeviceStatus.setKey(key);
 
-        spinner = (AppCompatSpinner) rootView.findViewById(R.id.spinnerControl);
         saveStatus = (Button) rootView.findViewById(R.id.buttonSaveControl);
         noControl = (TextView) rootView.findViewById(R.id.noControl);
+        listView = (ListView) rootView.findViewById(R.id.lvControl) ;
+        status = (TextView) rootView.findViewById(R.id.tvStatus);
+        statusStr = (TextView) rootView.findViewById(R.id.tvStatusStr);
+
+        api.responseDeviceStatus(requestDeviceStatus).enqueue(new Callback<ResponseDeviceStatus>() {
+            @Override
+            public void onResponse(Call<ResponseDeviceStatus> call, Response<ResponseDeviceStatus> response) {
+                ResponseDeviceStatus responseDeviceStatus = response.body();
+
+                if (responseDeviceStatus != null){
+                    List<DeviceStatus> dataList = responseDeviceStatus.getDeviceStatuses();
+
+                    if (dataList != null){
+
+                        noControl.setVisibility(View.GONE);
+
+                        data = new ArrayList<>();
+
+                        for (DeviceStatus deviceStatus: dataList){
+
+                            Map<String, Object> m = new HashMap<>();
+
+                            m.put(ATTRIBUTE_NAME_ID, deviceStatus.getId());
+                            m.put(ATTRIBUTE_NAME_STATUS, deviceStatus.getStatus());
+                            m.put(ATTRIBUTE_NAME_COLOR, deviceStatus.getColor());
+                            m.put(ATTRIBUTE_NAME_COLOR_HEX, deviceStatus.getColorHEX());
+                            m.put(ATTRIBUTE_NAME_ICON, icon);
+
+                            data.add(m);
+
+                            if (deviceStatus.isEnabled()){
+                                status.setBackgroundColor(Color.parseColor(deviceStatus.getColorHEX()));
+                                status.setText(deviceStatus.getStatus());
+                            }
+
+                            controlCustomAdapter = new ControlCustomAdapter(getContext(), R.layout.custom_adapter_control, data, mFrom);
+
+                            listView.setAdapter(controlCustomAdapter);
+
+                        }
+
+                    } else {
+                        noControl.setText(getContext().getString(R.string.noStatuses));
+                        saveStatus.setVisibility(View.GONE);
+                        listView.setVisibility(View.GONE);
+                        status.setVisibility(View.GONE);
+                        statusStr.setVisibility(View.GONE);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseDeviceStatus> call, Throwable t) {
+
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                statusId = (Integer) data.get(position).get(ATTRIBUTE_NAME_ID);
+                colorHex = (String) data.get(position).get(ATTRIBUTE_NAME_COLOR_HEX);
+                textStatus = (String) data.get(position).get(ATTRIBUTE_NAME_STATUS);
+            }
+        });
 
         saveStatus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,6 +182,9 @@ public class ControlObjectFragment extends Fragment{
                                     Toast toast = Toast.makeText(rootView.getContext(),
                                             getString(R.string.statusChanged), Toast.LENGTH_LONG);
                                     toast.show();
+
+                                    status.setBackgroundColor(Color.parseColor(colorHex));
+                                    status.setText(textStatus);
                                 } else {
                                     Toast toast = Toast.makeText(rootView.getContext(),
                                             getString(R.string.statusError), Toast.LENGTH_LONG);
@@ -112,65 +204,6 @@ public class ControlObjectFragment extends Fragment{
                             getString(R.string.chooseStatus), Toast.LENGTH_LONG);
                     toast.show();
                 }
-            }
-        });
-
-        api.responseDeviceStatus(requestDeviceStatus).enqueue(new Callback<ResponseDeviceStatus>() {
-            @Override
-            public void onResponse(Call<ResponseDeviceStatus> call, Response<ResponseDeviceStatus> response) {
-                ResponseDeviceStatus responseDeviceStatus = response.body();
-
-                if (responseDeviceStatus != null){
-                    List<DeviceStatus> dataList = responseDeviceStatus.getDeviceStatuses();
-
-                    if (dataList != null){
-
-                        noControl.setVisibility(View.GONE);
-
-                        String [] data = new String[dataList.size()];
-
-                        Integer selectedStatus = null;
-
-                        for (DeviceStatus deviceStatus: dataList){
-                            data[dataList.indexOf(deviceStatus)] = deviceStatus.getStatus();
-
-                            if (deviceStatus.isEnabled()){
-                                selectedStatus = dataList.indexOf(deviceStatus);
-                            }
-                        }
-
-                        ArrayAdapter<String> adapter = new ArrayAdapter<>(rootView.getContext(), android.R.layout.simple_spinner_item, data);
-                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-                        spinner.setAdapter(adapter);
-
-                        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                            @Override
-                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                statusId = dataList.get(position).getId();
-                            }
-
-                            @Override
-                            public void onNothingSelected(AdapterView<?> parent) {
-
-                            }
-                        });
-
-                        if (selectedStatus != null){
-                            spinner.setSelection(selectedStatus);
-                        }
-
-                    } else {
-                        noControl.setText(getContext().getString(R.string.noStatuses));
-                        spinner.setVisibility(View.GONE);
-                        saveStatus.setVisibility(View.GONE);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseDeviceStatus> call, Throwable t) {
-
             }
         });
 

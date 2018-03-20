@@ -72,6 +72,7 @@
     <string name="addGroup">Добавить группу</string>
     <string name="rlace_turn_oo_gps">Пожалуйста, включите GPS!</string>
     <string name="please_add_server_settings">Пожалуйста, добавьте настройки сервера!</string>
+    <string name="server_message_corect">Пожалуйста заполните поля "Сервер" и "Порт" корректно.</string>
     <string name="please_add_server_monitoring_settings">Пожалуйста, добавьте настройки групп!</string>
     <string name="warning_temporarily_suspended">Аккаунт временно недоступен из-за долга.</string>
     <string name="warning_key_has_not_access">Данный ключ не имеет доступа к аккаунту.</string>
@@ -106,7 +107,7 @@
     <string name="altitude">Высота</string>
     <string name="satCount">Количество спутников</string>
     <string name="fuelLevel">Уровень топлива</string>
-    <string name="fuelExpense">Использование топлива</string>
+    <string name="fuelExpense">Топливо израсходовано</string>
     <string name="not_connected">Чтобы просмотреть лист объектов, пожалуйста, подключитесь к серверу</string>
     <string name="empty_object_list">Лист объектов пустой</string>
     <string name="empty_trips_list">Лист поездок пустой</string>
@@ -122,7 +123,7 @@
     <string name="clusterParams">Вкл. кластеризацию</string>
     <string name="geocoderParams">Вкл. геокодирование</string>
     <string name="navigationParams">Вкл. навигацию</string>
-    <string name="changeLabelParams">Заменять лейблы именами</string>
+    <string name="changeLabelParams">Подменять имена</string>
     <string name="address">Адресс: </string>
     <string name="addressObjInfo">Адресс</string>
 
@@ -175,4 +176,7 @@
     <string name="statusChanged">Статус изменен успешно</string>
     <string name="statusError">Ошибка изменения статуса</string>
     <string name="noStatuses">Нет доступных статусов для выбора</string>
+
+    <string name="parking">Стоянка</string>
+    <string name="status">Статус:</string>
 </resources>

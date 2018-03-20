@@ -17,6 +17,14 @@ public class DeviceStatus {
     @Expose
     private String status;
 
+    @SerializedName("color")
+    @Expose
+    private String color;
+
+    @SerializedName("colorHex")
+    @Expose
+    private String colorHEX;
+
     @SerializedName("enabled")
     @Expose
     private boolean enabled;
@@ -35,6 +43,22 @@ public class DeviceStatus {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getColorHEX() {
+        return colorHEX;
+    }
+
+    public void setColorHEX(String colorHEX) {
+        this.colorHEX = colorHEX;
     }
 
     public boolean isEnabled() {
