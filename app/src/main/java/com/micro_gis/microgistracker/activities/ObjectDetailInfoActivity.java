@@ -29,6 +29,7 @@ import com.micro_gis.microgistracker.models.rest.RequestObjectMoving;
 import com.micro_gis.microgistracker.models.rest.ResponseGroupsMoving;
 import com.micro_gis.microgistracker.models.rest.ResponseObjectMoving;
 import com.micro_gis.microgistracker.models.rest.ResponseStatuses;
+import com.micro_gis.microgistracker.models.rest.TrailTrack;
 import com.micro_gis.microgistracker.retrofit.API;
 import com.micro_gis.microgistracker.retrofit.APIController;
 
@@ -58,6 +59,7 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
     private boolean isGeocoderEnabled;
     private boolean isLabelEnabled;
     private boolean changeLabelsOnDriversName;
+    private boolean drawLine;
 
     private MapObjectFragment mapObjectFragment;
     private ContentObjectFragment contentObjectFragment;
@@ -125,6 +127,7 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
         isGeocoderEnabled = sharedPreferences.getBoolean("geocoder", false);
         isLabelEnabled = sharedPreferences.getBoolean("label", true);
         changeLabelsOnDriversName = sharedPreferences.getBoolean("changeLabels", false);
+        drawLine = sharedPreferences.getBoolean("drawLine", true);
         group = sharedPreferences.getString("group", "");
 
         String description = intent.getStringExtra("description");
@@ -187,6 +190,9 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
                         bundleMap.putBoolean("geocoder", isGeocoderEnabled);
                         bundleMap.putBoolean("label", isLabelEnabled);
                         bundleMap.putBoolean("changeLabels", changeLabelsOnDriversName);
+                        bundleMap.putBoolean("drawLine", drawLine);
+
+                        Gson gson = new Gson();
 
                         mapObjectFragment.setArguments(bundleMap);
 
@@ -200,8 +206,6 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
                         bundleContent.putString("icon", device.getIcon());
 
                         contentObjectFragment.setArguments(bundleContent);
-
-                        Gson gson = new Gson();
 
                         String deviceJSON = gson.toJson(device);
 

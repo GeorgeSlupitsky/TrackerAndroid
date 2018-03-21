@@ -123,6 +123,10 @@ public class Device {
     @Expose
     private List<GeoZone> geoZones;
 
+    @SerializedName("trailTrack")
+    @Expose
+    private List<TrailTrack> trailTracks;
+
     public String getCode() {
         return code;
     }
@@ -345,5 +349,13 @@ public class Device {
 
     public void setGeoZones(List<GeoZone> geoZones) {
         this.geoZones = geoZones;
+    }
+
+    public List<TrailTrack> getTrailTracks() {
+        return trailTracks;
+    }
+
+    public void setTrailTracks(List<TrailTrack> trailTracks) {
+        this.trailTracks = trailTracks;
     }
 }

@@ -152,12 +152,15 @@ public class ControlObjectFragment extends Fragment{
             }
         });
 
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 statusId = (Integer) data.get(position).get(ATTRIBUTE_NAME_ID);
                 colorHex = (String) data.get(position).get(ATTRIBUTE_NAME_COLOR_HEX);
                 textStatus = (String) data.get(position).get(ATTRIBUTE_NAME_STATUS);
+                listView.setItemChecked(position, true);
             }
         });
 

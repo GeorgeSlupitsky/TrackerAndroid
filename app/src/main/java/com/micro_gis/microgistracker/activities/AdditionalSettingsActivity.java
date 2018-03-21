@@ -22,6 +22,7 @@ public class AdditionalSettingsActivity extends AppCompatActivity {
     CheckBox geocoderParamsCheckBox;
     CheckBox navigationParamsCheckBox;
     CheckBox changeLabelsCheckBox;
+    CheckBox drawLineCheckBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +36,14 @@ public class AdditionalSettingsActivity extends AppCompatActivity {
         geocoderParamsCheckBox = (CheckBox) findViewById(R.id.geocoderParamsCheckBox);
         navigationParamsCheckBox = (CheckBox) findViewById(R.id.navigationParamsCheckBox);
         changeLabelsCheckBox = (CheckBox) findViewById(R.id.changeLabels);
+        drawLineCheckBox = (CheckBox) findViewById(R.id.drawLine);
 
         labelParamsCheckBox.setChecked(sharedpreferences.getBoolean("label", true));
         clusterParamsCheckBox.setChecked(sharedpreferences.getBoolean("cluster", true));
         geocoderParamsCheckBox.setChecked(sharedpreferences.getBoolean("geocoder", false));
         navigationParamsCheckBox.setChecked(sharedpreferences.getBoolean("navigation", true));
         changeLabelsCheckBox.setChecked(sharedpreferences.getBoolean("changeLabels", false));
+        drawLineCheckBox.setChecked(sharedpreferences.getBoolean("drawLine", true));
 
         labelParamsCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,6 +96,17 @@ public class AdditionalSettingsActivity extends AppCompatActivity {
                     sharedpreferences.edit().putBoolean("changeLabels", true).apply();
                 } else {
                     sharedpreferences.edit().putBoolean("changeLabels", false).apply();
+                }
+            }
+        });
+
+        drawLineCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (drawLineCheckBox.isChecked()){
+                    sharedpreferences.edit().putBoolean("drawLine", true).apply();
+                } else {
+                    sharedpreferences.edit().putBoolean("drawLine", false).apply();
                 }
             }
         });

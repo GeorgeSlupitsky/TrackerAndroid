@@ -122,6 +122,7 @@
     <string name="geocoderParams">Enable geocoder</string>
     <string name="navigationParams">Enable navigation</string>
     <string name="changeLabelParams">Substitute names</string>
+    <string name="drawLineParams">Draw line</string>
     <string name="address">Address: </string>
     <string name="addressObjInfo">Address</string>
 

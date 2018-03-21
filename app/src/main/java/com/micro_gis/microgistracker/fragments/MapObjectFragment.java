@@ -25,6 +25,7 @@ import com.micro_gis.microgistracker.models.rest.RequestObjectMoving;
 import com.micro_gis.microgistracker.models.rest.ResponseDetailTrip;
 import com.micro_gis.microgistracker.models.rest.ResponseObjectMoving;
 import com.micro_gis.microgistracker.models.rest.ResponseStatuses;
+import com.micro_gis.microgistracker.models.rest.TrailTrack;
 import com.micro_gis.microgistracker.retrofit.API;
 import com.micro_gis.microgistracker.retrofit.APIController;
 
@@ -54,6 +55,7 @@ public class MapObjectFragment extends Fragment {
 
     private Boolean isLabelEnabled;
     private Boolean changeLabelsOnDriversName;
+    private Boolean drawLine;
 
     private String description;
     private String organization;
@@ -276,6 +278,45 @@ public class MapObjectFragment extends Fragment {
                                     "}\n" +
                                     "});\n");
                         }
+
+                        if (drawLine){
+                            List <TrailTrack> trailTracks = device.getTrailTracks();
+
+                            String start = "[";
+                            String end = "]";
+                            String tempCoordinate = "";
+
+                            Iterator iterator = trailTracks.iterator();
+
+                            while (iterator.hasNext()){
+                                TrailTrack trailTrack = (TrailTrack) iterator.next();
+                                String point = "[" + trailTrack.getLat() + ", " + trailTrack.getLng() + "]";
+                                tempCoordinate = tempCoordinate + point;
+                                if (iterator.hasNext()){
+                                    tempCoordinate = tempCoordinate + ", ";
+                                }
+                            }
+
+                            String coordinates = start + tempCoordinate + end;
+
+                            String hexColor = String.format("#%06X", (0xFFFFFF & sharedPreferences.getInt("trackcolor", 0xffff0000)));
+
+                            webView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
+                                    "if (layer.type == 'drawLine'){\n" +
+                                    "map.removeLayer(layer)\n" +
+                                    "}\n" +
+                                    "});");
+
+                            webView.loadUrl("javascript: " +
+                                    "drawLineTrack(" + coordinates + ");\n"
+                            );
+
+                            webView.loadUrl("javascript:drawLine.setStyle({\n" +
+                                    "color: '" + hexColor +
+                                    "'\n});");
+
+                        }
+
                     }
                 }
 
@@ -307,6 +348,7 @@ public class MapObjectFragment extends Fragment {
             }
         });
 
+
         sharedPreferences = getActivity().getSharedPreferences("mypref", Context.MODE_PRIVATE);
 
         webView.addJavascriptInterface(new WebAppInterface(rootView.getContext()), "Android");
@@ -322,6 +364,7 @@ public class MapObjectFragment extends Fragment {
         brand = getArguments().getString("brand");
         color = getArguments().getString("color");
         icon = getArguments().getString("icon");
+        drawLine = getArguments().getBoolean("drawLine");
 
         if (icon == null){
             icon = "car_sedan";

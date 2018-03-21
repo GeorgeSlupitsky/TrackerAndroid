@@ -124,6 +124,7 @@
     <string name="geocoderParams">Вкл. геокодирование</string>
     <string name="navigationParams">Вкл. навигацию</string>
     <string name="changeLabelParams">Подменять имена</string>
+    <string name="drawLineParams">Рисовать шлейф</string>
     <string name="address">Адресс: </string>
     <string name="addressObjInfo">Адресс</string>
 

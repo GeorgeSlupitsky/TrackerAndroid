@@ -126,7 +126,7 @@ public class MicroGisActivity extends AppCompatActivity
     private int objectsCount, groupsCount, markersCount, tracksCount;
     NavigationView navigationView;
     String isSendingToServer;
-    boolean isLabelEnabled, isClusterEnabled, isGeocoderEnabled, isNavigationEnabled, changeLabelsOnDriversName;
+    boolean isLabelEnabled, isClusterEnabled, isGeocoderEnabled, isNavigationEnabled, changeLabelsOnDriversName, drawLine;
     List<Device> devices;
 
     @Inject
@@ -699,7 +699,9 @@ public class MicroGisActivity extends AppCompatActivity
                         }
                     }
                     speedOnTrack.setText(avlData.getSpeed() + " km/h");
-                    trackInMap(lisAvldata, bearing);
+                    if (drawLine){
+                        trackInMap(lisAvldata, bearing);
+                    }
                 } else {
                     isStart = false;
                     timerCount = 0;
@@ -1221,6 +1223,52 @@ public class MicroGisActivity extends AppCompatActivity
     @Override
     public void onDestroy() {
         addddd = 0;
+
+        if (isEnabl){
+            if (pointsList.size() >= 2) {
+                hronTime = mChronometer.getText().toString();
+                timeStop = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+                ContentValues cv = new ContentValues();
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                String name = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
+                cv.put("name", name);
+                Track track = new Track();
+                track.setTime(hronTime);
+                track.setName(name);
+                track.setTimeStart(timeStart);
+                track.setTimeStop(timeStop);
+                track.setPoints(pointsList);
+                track.setChartPoits(chartPoits);
+                track.setAltitudeChart(altitudeChart);
+                ArrayList<Integer> speedList = new ArrayList<>();
+                ArrayList<Integer> altitudeList = new ArrayList<>();
+                int speed = 0, altitude = 0;
+                for (AVLData avlData : lisAvldata) {
+                    speedList.add(avlData.getSpeed());
+                    altitudeList.add(avlData.getAltitude());
+                    speed += avlData.getSpeed();
+                    altitude += avlData.getAltitude();
+                }
+                Collections.sort(speedList);
+                Collections.sort(altitudeList);
+                if (altitudeList.size() != 0) {
+                    track.setMaxAltitude(String.valueOf(altitudeList.get(altitudeList.size() - 1)) + " m");
+                    track.setAverageSpeed(String.valueOf(speed / speedList.size()) + " km/h");
+                }
+                if (speedList.size() != 0) {
+                    track.setMaxSpeed(String.valueOf(speedList.get(speedList.size() - 1)) + " km/h");
+                    track.setAverageAltitude(String.valueOf(altitude / altitudeList.size()) + " m");
+                }
+
+                track.setAvlDataList(lisAvldata);
+                track.setSensors(sensors);
+                track.setPointsOnTrack(pointsOnTrack);
+                track.setTrackLenght(String.valueOf(fullLenght));
+                cv.put("track", gson.toJson(track).getBytes());
+                db.insert("trackdata", null, cv);
+            }
+        }
+
         super.onDestroy();
     }
 
@@ -1375,6 +1423,7 @@ public class MicroGisActivity extends AppCompatActivity
         isGeocoderEnabled = sharedpreferences.getBoolean("geocoder", false);
         isNavigationEnabled = sharedpreferences.getBoolean("navigation", true);
         changeLabelsOnDriversName = sharedpreferences.getBoolean("changeLabels", false);
+        drawLine = sharedpreferences.getBoolean("drawLine", true);
         isSendingToServer = sharedpreferences.getString("switchKey", "false");
 
         if (isSendingToServer.equals("true")){
@@ -1628,7 +1677,6 @@ public class MicroGisActivity extends AppCompatActivity
         ArrayList<Points> points = new ArrayList<>();
         for (AVLData avldata : list) {
             points.add(new Points("" + avldata.getLatitude(), "" + avldata.getLongitude()));
-
         }
 
         WebView webView = (WebView) findViewById(R.id.webview);
