@@ -68,9 +68,6 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
     private ImageView upArrow;
 
     private boolean isNormal;
-
-    private float layoutHeight;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +111,9 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
         });
 
         TextView toolbarTitleObject = (TextView) findViewById(R.id.toolbar_titleObject);
+        FrameLayout mapObject = (FrameLayout) findViewById(R.id.objectMap);
+        FrameLayout contentObject = (FrameLayout) findViewById(R.id.objectContent);
+
 
         sharedPreferences = getSharedPreferences("mypref", MODE_PRIVATE);
 
@@ -242,24 +242,13 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
             @Override
             public void onClick(View v) {
                 if (isNormal){
-                    DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-                    float density = getResources().getDisplayMetrics().density;
-                    int height = displayMetrics.heightPixels + 100;
-                    LinearLayout linearLayout = mapObjectFragment.getView().findViewById(R.id.webViewLL);
-
-                    layoutHeight = linearLayout.getHeight() / density;
-
-                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, height);
-                    linearLayout.setLayoutParams(lp);
+                    contentObject.setVisibility(View.GONE);
+                    downArrow.setVisibility(View.INVISIBLE);
                     isNormal = false;
-                    v.setVisibility(View.INVISIBLE);
                 } else {
-                    FragmentManager fm = getSupportFragmentManager();
-                    fm.beginTransaction()
-                            .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                            .show(mapObjectFragment).commit();
                     isNormal = true;
                     upArrow.setVisibility(View.VISIBLE);
+                    mapObject.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -268,22 +257,13 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
             @Override
             public void onClick(View v) {
                 if (!isNormal){
-                    float density = getResources().getDisplayMetrics().density;
-                    float height = layoutHeight * density;
-
-                    LinearLayout linearLayout = mapObjectFragment.getView().findViewById(R.id.webViewLL);
-
-                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int)height);
-                    linearLayout.setLayoutParams(lp);
                     isNormal = true;
                     downArrow.setVisibility(View.VISIBLE);
+                    contentObject.setVisibility(View.VISIBLE);
                 } else {
-                    FragmentManager fm = getSupportFragmentManager();
-                    fm.beginTransaction()
-                            .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                            .hide(mapObjectFragment).commit();
+                    mapObject.setVisibility(View.GONE);
+                    upArrow.setVisibility(View.INVISIBLE);
                     isNormal = false;
-                    v.setVisibility(View.INVISIBLE);
                 }
             }
         });

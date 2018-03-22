@@ -965,8 +965,7 @@ public class MicroGisActivity extends AppCompatActivity
                     handler.removeCallbacks(requst);
                     sharedpreferences.edit().putString("groupObjects", "empty").apply();
                     sendToserver.setBackgroundResource(R.drawable.disconnect);
-                    clearMap();
-                    getMarkers();
+                    clearCarsFromMap();
                     if (isNavigationEnabled){
                         if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
                             if (mPreviousLocation != null && mLastLocation != null){
@@ -1401,11 +1400,6 @@ public class MicroGisActivity extends AppCompatActivity
                         webView.loadUrl("javascript:sensorInTrackSos(" + sensor.getPoints().toString() + ",\"" + sensor.getName() + "\");");
                     }
                 }
-//                sensorInTrack(track);
-            }
-            if (resultCode == RESULT_CANCELED) {
-
-
             }
         }
     }
@@ -1487,8 +1481,7 @@ public class MicroGisActivity extends AppCompatActivity
         menuTracks.setTitle(getString(R.string.my_tracks) + " (" + tracksCount + ")");
 
         if (isRun) {
-            clearMap();
-            getMarkers();
+            clearCarsFromMap();
 
             if (isNavigationEnabled){
                 if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
@@ -1859,7 +1852,6 @@ public class MicroGisActivity extends AppCompatActivity
     }
 
     private void clearMap(){
-        myWebView.loadUrl("javascript:console.log(markers);");
         myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
                 "if (layer.type == 'trackPolyline'){\n" +
                 "map.removeLayer(layer)\n" +
@@ -1874,6 +1866,18 @@ public class MicroGisActivity extends AppCompatActivity
                 "}\n" +
                 "map.closePopup()\n"+
                 "});");
+    }
+
+    private void clearCarsFromMap(){
+        myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
+                "if (layer instanceof L.Marker) {\n" +
+                    "if (layer.typeMarker != 'flag'){\n" +
+                        "layer.unbindTooltip();\n" +
+                        "map.removeLayer(layer)\n" +
+                        "}\n" +
+                    "}\n" +
+                "});");
+        getMarkers();
     }
 
     public static String getNMEAGGA(final Location loc) {

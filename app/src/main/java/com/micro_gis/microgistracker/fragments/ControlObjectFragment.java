@@ -73,6 +73,8 @@ public class ControlObjectFragment extends Fragment{
     private String colorHex;
     private String textStatus;
 
+    private static int save = -1;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -157,6 +159,14 @@ public class ControlObjectFragment extends Fragment{
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                parent.getChildAt(position).setBackgroundColor(Color.BLUE);
+//
+//                if (save != -1 && save != position){
+//                    parent.getChildAt(save).setBackgroundColor(Color.WHITE);
+//                }
+//
+//                save = position;
+
                 statusId = (Integer) data.get(position).get(ATTRIBUTE_NAME_ID);
                 colorHex = (String) data.get(position).get(ATTRIBUTE_NAME_COLOR_HEX);
                 textStatus = (String) data.get(position).get(ATTRIBUTE_NAME_STATUS);
