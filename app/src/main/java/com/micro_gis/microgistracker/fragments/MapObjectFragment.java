@@ -25,14 +25,12 @@ import com.micro_gis.microgistracker.models.rest.RequestObjectMoving;
 import com.micro_gis.microgistracker.models.rest.ResponseDetailTrip;
 import com.micro_gis.microgistracker.models.rest.ResponseObjectMoving;
 import com.micro_gis.microgistracker.models.rest.ResponseStatuses;
-import com.micro_gis.microgistracker.models.rest.TrailTrack;
 import com.micro_gis.microgistracker.retrofit.API;
 import com.micro_gis.microgistracker.retrofit.APIController;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -56,6 +54,8 @@ public class MapObjectFragment extends Fragment {
     private Boolean isLabelEnabled;
     private Boolean changeLabelsOnDriversName;
     private Boolean drawLine;
+
+    private List<String> coordinatesForTrackLine = new ArrayList<>();
 
     private String description;
     private String organization;
@@ -251,6 +251,49 @@ public class MapObjectFragment extends Fragment {
 
                         List<GeoZone> geoZones = device.getGeoZones();
 
+                        if (coordinatesForTrackLine.size() != 10){
+                            coordinatesForTrackLine.add("[" + device.getLat() + ", " + device.getLng() + "]");
+                        } else {
+                            coordinatesForTrackLine.remove(0);
+                            coordinatesForTrackLine.add("[" + device.getLat() + ", " + device.getLng() + "]");
+                        }
+
+                        if (drawLine){
+
+                            String start = "[";
+                            String end = "]";
+                            String tempCoordinate = "";
+
+                            Iterator iterator = coordinatesForTrackLine.iterator();
+
+                            while (iterator.hasNext()){
+                                String trailTrack = (String) iterator.next();
+                                tempCoordinate = tempCoordinate + trailTrack;
+                                if (iterator.hasNext()){
+                                    tempCoordinate = tempCoordinate + ", ";
+                                }
+                            }
+
+                            String coordinates = start + tempCoordinate + end;
+
+                            String hexColor = String.format("#%06X", (0xFFFFFF & sharedPreferences.getInt("trackcolor", 0xffff0000)));
+
+                            webView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
+                                    "if (layer.type == 'drawLine'){\n" +
+                                    "map.removeLayer(layer)\n" +
+                                    "}\n" +
+                                    "});");
+
+                            webView.loadUrl("javascript: " +
+                                    "drawLineTrack(" + coordinates + ");\n"
+                            );
+
+                            webView.loadUrl("javascript:drawLine.setStyle({\n" +
+                                    "color: '" + hexColor +
+                                    "'\n});");
+
+                        }
+
                         if (geoZones != null){
 
                             Collections.sort(geoZones, (GeoZone g1, GeoZone g2) -> g1.getPriority() - g2.getPriority());
@@ -277,44 +320,6 @@ public class MapObjectFragment extends Fragment {
                                     "map.removeLayer(layer);\n" +
                                     "}\n" +
                                     "});\n");
-                        }
-
-                        if (drawLine){
-                            List <TrailTrack> trailTracks = device.getTrailTracks();
-
-                            String start = "[";
-                            String end = "]";
-                            String tempCoordinate = "";
-
-                            Iterator iterator = trailTracks.iterator();
-
-                            while (iterator.hasNext()){
-                                TrailTrack trailTrack = (TrailTrack) iterator.next();
-                                String point = "[" + trailTrack.getLat() + ", " + trailTrack.getLng() + "]";
-                                tempCoordinate = tempCoordinate + point;
-                                if (iterator.hasNext()){
-                                    tempCoordinate = tempCoordinate + ", ";
-                                }
-                            }
-
-                            String coordinates = start + tempCoordinate + end;
-
-                            String hexColor = String.format("#%06X", (0xFFFFFF & sharedPreferences.getInt("trackcolor", 0xffff0000)));
-
-                            webView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
-                                    "if (layer.type == 'drawLine'){\n" +
-                                    "map.removeLayer(layer)\n" +
-                                    "}\n" +
-                                    "});");
-
-                            webView.loadUrl("javascript: " +
-                                    "drawLineTrack(" + coordinates + ");\n"
-                            );
-
-                            webView.loadUrl("javascript:drawLine.setStyle({\n" +
-                                    "color: '" + hexColor +
-                                    "'\n});");
-
                         }
 
                     }
@@ -392,7 +397,9 @@ public class MapObjectFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 trackInMap = false;
+                coordinatesForTrackLine = new ArrayList<>();
                 webView.loadUrl("javascript:map.removeLayer(polyline);");
+                webView.loadUrl("javascript:map.removeLayer(drawLine);");
                 webView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
                         "if (layer instanceof L.Marker) {\n" +
                         "if (layer.typeMarker === 'flag' || layer.typeMarker === 'parking'){\n" +

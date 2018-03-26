@@ -119,7 +119,7 @@
     <string name="geocoderParams">Вкл. геокодування</string>
     <string name="navigationParams">Вкл. навігацію</string>
     <string name="changeLabelParams">Підмінювати імена</string>
-    <string name="drawLineParams">Малювати шлейф</string>
+    <string name="drawLineParams">Показувати шлейф</string>
     <string name="address">Адреса: </string>
     <string name="addressObjInfo">Адреса</string>
     <string name="action_settings">Налаштування</string>
@@ -176,4 +176,6 @@
 
     <string name="parking">Стоянка</string>
     <string name="status">Статус:</string>
+
+    <string name="finish_app">Ви хочете вийти з додатку?</string>
 </resources>

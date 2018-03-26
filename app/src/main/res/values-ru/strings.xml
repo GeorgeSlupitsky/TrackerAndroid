@@ -124,7 +124,7 @@
     <string name="geocoderParams">Вкл. геокодирование</string>
     <string name="navigationParams">Вкл. навигацию</string>
     <string name="changeLabelParams">Подменять имена</string>
-    <string name="drawLineParams">Рисовать шлейф</string>
+    <string name="drawLineParams">Показывать шлейф</string>
     <string name="address">Адресс: </string>
     <string name="addressObjInfo">Адресс</string>
 
@@ -180,4 +180,6 @@
 
     <string name="parking">Стоянка</string>
     <string name="status">Статус:</string>
+
+    <string name="finish_app">Вы хотите выйти из приложения?</string>
 </resources>

@@ -122,7 +122,7 @@
     <string name="geocoderParams">Enable geocoder</string>
     <string name="navigationParams">Enable navigation</string>
     <string name="changeLabelParams">Substitute names</string>
-    <string name="drawLineParams">Draw line</string>
+    <string name="drawLineParams">Shaw line</string>
     <string name="address">Address: </string>
     <string name="addressObjInfo">Address</string>
 
@@ -178,4 +178,6 @@
 
     <string name="parking">Parking</string>
     <string name="status">Status:</string>
+
+    <string name="finish_app">Do you want to close application?</string>
 </resources>

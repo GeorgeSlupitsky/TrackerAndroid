@@ -18,6 +18,7 @@ import android.location.Location;
 
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,6 +26,7 @@ import android.os.SystemClock;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
@@ -80,6 +82,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -128,6 +132,8 @@ public class MicroGisActivity extends AppCompatActivity
     String isSendingToServer;
     boolean isLabelEnabled, isClusterEnabled, isGeocoderEnabled, isNavigationEnabled, changeLabelsOnDriversName, drawLine;
     List<Device> devices;
+
+    private HashMap<Integer, List<String>> mapCoordinatesForTrackLine;
 
     @Inject
     Gson gson;
@@ -308,6 +314,16 @@ public class MicroGisActivity extends AppCompatActivity
 
                             devices = responseGroupsMoving.getDevices();
 
+                            if (mapCoordinatesForTrackLine == null){
+                                mapCoordinatesForTrackLine = new HashMap<>();
+
+                                for (int i = 0; i < devices.size(); i++){
+                                    ArrayList <String> coordinatesForTrackLine = new ArrayList<>();
+                                    mapCoordinatesForTrackLine.put(i, coordinatesForTrackLine);
+                                }
+
+                            }
+
                             objectsCount = devices.size();
 
                             int i = 0;
@@ -485,6 +501,51 @@ public class MicroGisActivity extends AppCompatActivity
                                         "arrows.push(arrow" + i + ");\n" +
                                         "}\n"
                                 );
+
+                                if (mapCoordinatesForTrackLine.get(i).size() != 10){
+                                    mapCoordinatesForTrackLine.get(i).add("[" + device.getLat() + ", " + device.getLng() + "]");
+                                } else {
+                                    mapCoordinatesForTrackLine.get(i).remove(0);
+                                    mapCoordinatesForTrackLine.get(i).add("[" + device.getLat() + ", " + device.getLng() + "]");
+                                }
+
+                                if (!isClusterEnabled){
+                                    if (drawLine){
+
+                                        String start = "[";
+                                        String end = "]";
+                                        String tempCoordinate = "";
+
+                                        Iterator iterator = mapCoordinatesForTrackLine.get(i).iterator();
+
+                                        while (iterator.hasNext()){
+                                            String trailTrack = (String) iterator.next();
+                                            tempCoordinate = tempCoordinate + trailTrack;
+                                            if (iterator.hasNext()){
+                                                tempCoordinate = tempCoordinate + ", ";
+                                            }
+                                        }
+
+                                        String coordinates = start + tempCoordinate + end;
+
+                                        String hexColor = String.format("#%06X", (0xFFFFFF & sharedpreferences.getInt("trackcolor", 0xffff0000)));
+
+                                        myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
+                                                "if (layer.type == 'drawLine' && layer.device == " + i + "){\n" +
+                                                "map.removeLayer(layer)\n" +
+                                                "}\n" +
+                                                "});");
+
+                                        myWebView.loadUrl("javascript: " +
+                                                "drawLineTrack(" + coordinates + "," + i +");\n"
+                                        );
+
+                                        myWebView.loadUrl("javascript:drawLine.setStyle({\n" +
+                                                "color: '" + hexColor +
+                                                "'\n});");
+
+                                    }
+                                }
 
                                 i++;
                             }
@@ -1012,14 +1073,7 @@ public class MicroGisActivity extends AppCompatActivity
                         isEnabl = true;
                     } else {
                         mChronometer.stop();
-                        myWebView.loadUrl("javascript:map.removeLayer(polylineOnline);");
-                        myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
-                                "if (layer instanceof L.Marker) {\n" +
-                                "if (layer.typeMarker == 'flag'){\n" +
-                                "map.closePopup()\n"+
-                                "map.removeLayer(layer)\n" +
-                                "}\n" +
-                                "});");
+                        clearMap();
                         if (pointsList.size() >= 2) {
                             hronTime = mChronometer.getText().toString();
                             timeStop = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
@@ -1204,12 +1258,33 @@ public class MicroGisActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            moveTaskToBack(true);
-        }
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle(getString(R.string.finish_app));
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton(getString(R.string.yes),
+                        new DialogInterface.OnClickListener() {
+                            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+                            public void onClick(DialogInterface dialog, int id) {
+                                finishAndRemoveTask();
+                            }
+                        })
+
+                .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        if (drawer.isDrawerOpen(GravityCompat.START)) {
+//            drawer.closeDrawer(GravityCompat.START);
+//        } else {
+//            moveTaskToBack(true);
+//        }
     }
 
 
@@ -1222,7 +1297,11 @@ public class MicroGisActivity extends AppCompatActivity
     @Override
     public void onDestroy() {
         addddd = 0;
-
+        handler.removeCallbacks(r);
+        handler.removeCallbacks(requst);
+        handler.removeCallbacks(runnable);
+        handler.removeCallbacks(changingTime);
+        handler.removeCallbacks(trackWriting);
         if (isEnabl){
             if (pointsList.size() >= 2) {
                 hronTime = mChronometer.getText().toString();
@@ -1438,7 +1517,7 @@ public class MicroGisActivity extends AppCompatActivity
         }
 
         if (!isNavigationEnabled){
-            clearMap();
+            clearCarsFromMap();
         } else {
             if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
                 if (mPreviousLocation != null && mLastLocation != null){
@@ -1852,6 +1931,21 @@ public class MicroGisActivity extends AppCompatActivity
     }
 
     private void clearMap(){
+        if (mapCoordinatesForTrackLine != null){
+            for (int i = 0; i < mapCoordinatesForTrackLine.size(); i++){
+                myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
+                        "if (layer.type == 'drawLine' && layer.device == " + i + "){\n" +
+                        "map.removeLayer(layer)\n" +
+                        "}\n" +
+                        "});");
+            }
+        }
+        mapCoordinatesForTrackLine = null;
+        myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
+                "if (layer.type == 'drawLine'){\n" +
+                "map.removeLayer(layer)\n" +
+                "}\n" +
+                "});");
         myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
                 "if (layer.type == 'trackPolyline'){\n" +
                 "map.removeLayer(layer)\n" +
@@ -1869,6 +1963,16 @@ public class MicroGisActivity extends AppCompatActivity
     }
 
     private void clearCarsFromMap(){
+        if (mapCoordinatesForTrackLine != null){
+            for (int i = 0; i < mapCoordinatesForTrackLine.size(); i++){
+                myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
+                        "if (layer.type == 'drawLine' && layer.device == " + i + "){\n" +
+                        "map.removeLayer(layer)\n" +
+                        "}\n" +
+                        "});");
+            }
+        }
+        mapCoordinatesForTrackLine = null;
         myWebView.loadUrl("javascript:map.eachLayer(function(layer) {\n" +
                 "if (layer instanceof L.Marker) {\n" +
                     "if (layer.typeMarker != 'flag'){\n" +

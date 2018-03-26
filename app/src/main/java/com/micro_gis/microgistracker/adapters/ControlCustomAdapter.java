@@ -26,6 +26,7 @@ public class ControlCustomAdapter extends ArrayAdapter<Map<String, Object>> {
     private ArrayList<Map<String, Object>> data;
     private int layoutResourceId;
     private String[] mFrom;
+    private boolean isColored = false;
 
     public ControlCustomAdapter(Context context, int resource, ArrayList<Map<String, Object>> data, String[] mFrom) {
         super(context, resource, data);
@@ -58,7 +59,6 @@ public class ControlCustomAdapter extends ArrayAdapter<Map<String, Object>> {
         holder.imageView.setImageResource(statusResourceId);
 
         holder.tvStatus.setText((String) data.get(position).get(mFrom[1]));
-        holder.tvStatus.setBackgroundColor(Color.parseColor((String) data.get(position).get(mFrom[3])));
 
         return row;
     }

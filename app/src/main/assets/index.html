@@ -183,6 +183,7 @@ function toYourLoc2(latIntent, lonIntent) {
 
 //lineTrack
 var polyline;
+var drawLine;
 
 var startIcon = L.icon({
     iconUrl: 'file:///android_res/drawable/q_4.png',
@@ -197,6 +198,19 @@ var finishIcon = L.icon({
     iconAnchor: [6, 36],
     popupAnchor: [-3, -30]
 });
+
+function drawLineTrack(trackIntent, i) {
+
+    drawLine = new L.Polyline(trackIntent, {
+        opacity: 0.5,
+        smoothFactor: 1
+    });
+
+    drawLine.type = 'drawLine';
+    drawLine.device = i;
+
+    drawLine.addTo(map);
+}
 
 function lineTrack(trackIntent, begin, end) {
 

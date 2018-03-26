@@ -62,20 +62,22 @@ public class TripsCustomAdapter extends ArrayAdapter<Map<String, Object>> {
 
         String duration = (String) data.get(position).get(mFrom[2]);
 
-        String[] split = duration.split(":");
+        if (duration != null){
+            String[] split = duration.split(":");
 
-        String textDuration;
+            String textDuration;
 
-        if (!split[0].equals("0")){
-            textDuration = split[0] + " " + getContext().getString(R.string.Hour) + " " + split [1] + " " + getContext().getString(R.string.Min);
-        } else {
-            if (split[1].startsWith("0")){
-                split[1] = split[1].replaceFirst("0", "");
+            if (!split[0].equals("0")){
+                textDuration = split[0] + " " + getContext().getString(R.string.Hour) + " " + split [1] + " " + getContext().getString(R.string.Min);
+            } else {
+                if (split[1].startsWith("0")){
+                    split[1] = split[1].replaceFirst("0", "");
+                }
+
+                textDuration = split[1] + " " + getContext().getString(R.string.Min);
             }
-
-            textDuration = split[1] + " " + getContext().getString(R.string.Min);
+            holder.durationTrip.setText(textDuration);
         }
-        holder.durationTrip.setText(textDuration);
 
         Double distance = Precision.round((Double) data.get(position).get(mFrom[3]), 2);
 

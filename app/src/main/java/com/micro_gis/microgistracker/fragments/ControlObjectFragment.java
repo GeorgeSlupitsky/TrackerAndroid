@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatSpinner;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,16 +64,21 @@ public class ControlObjectFragment extends Fragment{
 
     private String icon;
 
-    private Integer statusId;
-
     private ArrayList<Map<String, Object>> data;
 
     private ControlCustomAdapter controlCustomAdapter;
 
     private String [] mFrom = {ATTRIBUTE_NAME_ID, ATTRIBUTE_NAME_STATUS, ATTRIBUTE_NAME_COLOR, ATTRIBUTE_NAME_COLOR_HEX, ATTRIBUTE_NAME_ICON};
 
+    private Integer statusId;
     private String colorHex;
     private String textStatus;
+
+    private Integer statusIdChoose;
+    private String colorHexChoose;
+    private String textStatusChoose;
+
+    private List<DeviceStatus> dataList;
 
     private static int save = -1;
 
@@ -90,10 +97,7 @@ public class ControlObjectFragment extends Fragment{
 
         api = APIController.getApi(url);
 
-        RequestDeviceStatus requestDeviceStatus = new RequestDeviceStatus();
-        requestDeviceStatus.setAccount(account);
-        requestDeviceStatus.setId(Integer.valueOf(idDevice));
-        requestDeviceStatus.setKey(key);
+        createAdapter();
 
         saveStatus = (Button) rootView.findViewById(R.id.buttonSaveControl);
         noControl = (TextView) rootView.findViewById(R.id.noControl);
@@ -101,83 +105,53 @@ public class ControlObjectFragment extends Fragment{
         status = (TextView) rootView.findViewById(R.id.tvStatus);
         statusStr = (TextView) rootView.findViewById(R.id.tvStatusStr);
 
-        api.responseDeviceStatus(requestDeviceStatus).enqueue(new Callback<ResponseDeviceStatus>() {
-            @Override
-            public void onResponse(Call<ResponseDeviceStatus> call, Response<ResponseDeviceStatus> response) {
-                ResponseDeviceStatus responseDeviceStatus = response.body();
-
-                if (responseDeviceStatus != null){
-                    List<DeviceStatus> dataList = responseDeviceStatus.getDeviceStatuses();
-
-                    if (dataList != null){
-
-                        noControl.setVisibility(View.GONE);
-
-                        data = new ArrayList<>();
-
-                        for (DeviceStatus deviceStatus: dataList){
-
-                            Map<String, Object> m = new HashMap<>();
-
-                            m.put(ATTRIBUTE_NAME_ID, deviceStatus.getId());
-                            m.put(ATTRIBUTE_NAME_STATUS, deviceStatus.getStatus());
-                            m.put(ATTRIBUTE_NAME_COLOR, deviceStatus.getColor());
-                            m.put(ATTRIBUTE_NAME_COLOR_HEX, deviceStatus.getColorHEX());
-                            m.put(ATTRIBUTE_NAME_ICON, icon);
-
-                            data.add(m);
-
-                            if (deviceStatus.isEnabled()){
-                                status.setBackgroundColor(Color.parseColor(deviceStatus.getColorHEX()));
-                                status.setText(deviceStatus.getStatus());
-                            }
-
-                            controlCustomAdapter = new ControlCustomAdapter(getContext(), R.layout.custom_adapter_control, data, mFrom);
-
-                            listView.setAdapter(controlCustomAdapter);
-
-                        }
-
-                    } else {
-                        noControl.setText(getContext().getString(R.string.noStatuses));
-                        saveStatus.setVisibility(View.GONE);
-                        listView.setVisibility(View.GONE);
-                        status.setVisibility(View.GONE);
-                        statusStr.setVisibility(View.GONE);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseDeviceStatus> call, Throwable t) {
-
-            }
-        });
-
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                parent.getChildAt(position).setBackgroundColor(Color.BLUE);
-//
-//                if (save != -1 && save != position){
-//                    parent.getChildAt(save).setBackgroundColor(Color.WHITE);
-//                }
-//
-//                save = position;
 
-                statusId = (Integer) data.get(position).get(ATTRIBUTE_NAME_ID);
-                colorHex = (String) data.get(position).get(ATTRIBUTE_NAME_COLOR_HEX);
-                textStatus = (String) data.get(position).get(ATTRIBUTE_NAME_STATUS);
-                listView.setItemChecked(position, true);
+                if (save != -1 && save != position){
+                    parent.getChildAt(save).setBackgroundColor(Color.TRANSPARENT);
+                }
+
+                if (save == -1){
+                    colorHex = (String) data.get(position).get(ATTRIBUTE_NAME_COLOR_HEX);
+                    statusId = (Integer) data.get(position).get(ATTRIBUTE_NAME_ID);
+                    textStatus = (String) data.get(position).get(ATTRIBUTE_NAME_STATUS);
+
+                    parent.getChildAt(position).setBackgroundColor(Color.parseColor(colorHex));
+
+                    save = position;
+
+                    listView.setItemChecked(position, true);
+                } else if (save == position){
+                    parent.getChildAt(save).setBackgroundColor(Color.TRANSPARENT);
+                    save = -1;
+                    listView.setItemChecked(position, false);
+                } else if (save != position){
+                    colorHex = (String) data.get(position).get(ATTRIBUTE_NAME_COLOR_HEX);
+                    statusId = (Integer) data.get(position).get(ATTRIBUTE_NAME_ID);
+                    textStatus = (String) data.get(position).get(ATTRIBUTE_NAME_STATUS);
+
+                    parent.getChildAt(position).setBackgroundColor(Color.parseColor(colorHex));
+
+                    save = position;
+
+                    listView.setItemChecked(position, true);
+                }
+
+
+//                TextView tv = (TextView) ((LinearLayout) view).getChildAt(1);
+//                tv.setBackgroundColor(Color.parseColor(colorHex));
+
             }
         });
 
         saveStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (statusId != null){
+                if (listView.getCheckedItemCount() == 1){
                     RequestSaveStatus requestSaveStatus = new RequestSaveStatus();
 
                     requestSaveStatus.setId(Integer.valueOf(idDevice));
@@ -198,6 +172,10 @@ public class ControlObjectFragment extends Fragment{
 
                                     status.setBackgroundColor(Color.parseColor(colorHex));
                                     status.setText(textStatus);
+
+                                    createAdapter();
+
+                                    save = -1;
                                 } else {
                                     Toast toast = Toast.makeText(rootView.getContext(),
                                             getString(R.string.statusError), Toast.LENGTH_LONG);
@@ -211,7 +189,6 @@ public class ControlObjectFragment extends Fragment{
 
                         }
                     });
-
                 } else {
                     Toast toast = Toast.makeText(rootView.getContext(),
                             getString(R.string.chooseStatus), Toast.LENGTH_LONG);
@@ -221,5 +198,63 @@ public class ControlObjectFragment extends Fragment{
         });
 
         return rootView;
+    }
+
+    private void createAdapter(){
+        RequestDeviceStatus requestDeviceStatus = new RequestDeviceStatus();
+        requestDeviceStatus.setAccount(account);
+        requestDeviceStatus.setId(Integer.valueOf(idDevice));
+        requestDeviceStatus.setKey(key);
+
+        api.responseDeviceStatus(requestDeviceStatus).enqueue(new Callback<ResponseDeviceStatus>() {
+            @Override
+            public void onResponse(Call<ResponseDeviceStatus> call, Response<ResponseDeviceStatus> response) {
+                ResponseDeviceStatus responseDeviceStatus = response.body();
+
+                if (responseDeviceStatus != null){
+                    dataList = responseDeviceStatus.getDeviceStatuses();
+
+                    if (dataList != null){
+
+                        noControl.setVisibility(View.GONE);
+
+                        data = new ArrayList<>();
+
+                        for (DeviceStatus deviceStatus: dataList){
+
+                            if (!deviceStatus.isEnabled()){
+                                Map<String, Object> m = new HashMap<>();
+
+                                m.put(ATTRIBUTE_NAME_ID, deviceStatus.getId());
+                                m.put(ATTRIBUTE_NAME_STATUS, deviceStatus.getStatus());
+                                m.put(ATTRIBUTE_NAME_COLOR, deviceStatus.getColor());
+                                m.put(ATTRIBUTE_NAME_COLOR_HEX, deviceStatus.getColorHEX());
+                                m.put(ATTRIBUTE_NAME_ICON, icon);
+
+                                data.add(m);
+                            } else {
+                                status.setBackgroundColor(Color.parseColor(deviceStatus.getColorHEX()));
+                                status.setText(deviceStatus.getStatus());
+                            }
+                        }
+
+                        controlCustomAdapter = new ControlCustomAdapter(getContext(), R.layout.custom_adapter_control, data, mFrom);
+
+                        listView.setAdapter(controlCustomAdapter);
+
+                    } else {
+                        noControl.setText(getContext().getString(R.string.noStatuses));
+                        saveStatus.setVisibility(View.GONE);
+                        listView.setVisibility(View.GONE);
+                        status.setVisibility(View.GONE);
+                        statusStr.setVisibility(View.GONE);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseDeviceStatus> call, Throwable t) {
+            }
+        });
     }
 }
