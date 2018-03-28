@@ -70,6 +70,9 @@ public class TracksActivity extends AppCompatActivity {
 
         }
 
+        cursor.close();
+        db.close();
+
         Collections.reverse(trackArray);
         if(trackArray.size()>25){
             int delta = trackArray.size()-25;

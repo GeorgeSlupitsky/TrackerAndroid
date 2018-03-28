@@ -123,6 +123,7 @@
     <string name="navigationParams">Enable navigation</string>
     <string name="changeLabelParams">Substitute names</string>
     <string name="drawLineParams">Shaw line</string>
+    <string name="buttonsOfControlParams">Buttons of control</string>
     <string name="address">Address: </string>
     <string name="addressObjInfo">Address</string>
 

@@ -67,9 +67,7 @@ var baseMaps = {
 
 var layerControl = new L.Control.Layers(baseMaps).addTo(map);
 
-new L.Control.GeoSearch({
-    provider: new L.GeoSearch.Provider.Google()
-}).addTo(map);
+var geoSearch;
 
 function geomToWkt(geom){
 	var geom = geom.replace('\n', '').replace('\r', '').replace('\t', '').replace(/!/g, ',').replace('[', '').replace(']', '');

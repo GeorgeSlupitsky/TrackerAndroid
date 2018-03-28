@@ -54,6 +54,7 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
     private boolean isLabelEnabled;
     private boolean changeLabelsOnDriversName;
     private boolean drawLine;
+    private boolean buttonsOfControl;
 
     private MapObjectFragment mapObjectFragment;
     private ContentObjectFragment contentObjectFragment;
@@ -122,6 +123,7 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
         isLabelEnabled = sharedPreferences.getBoolean("label", true);
         changeLabelsOnDriversName = sharedPreferences.getBoolean("changeLabels", false);
         drawLine = sharedPreferences.getBoolean("drawLine", true);
+        buttonsOfControl = sharedPreferences.getBoolean("buttonsOfControl", true);
         group = sharedPreferences.getString("group", "");
 
         String description = intent.getStringExtra("description");
@@ -185,6 +187,7 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
                         bundleMap.putBoolean("label", isLabelEnabled);
                         bundleMap.putBoolean("changeLabels", changeLabelsOnDriversName);
                         bundleMap.putBoolean("drawLine", drawLine);
+                        bundleMap.putBoolean("buttonsOfControl", buttonsOfControl);
 
                         Gson gson = new Gson();
 

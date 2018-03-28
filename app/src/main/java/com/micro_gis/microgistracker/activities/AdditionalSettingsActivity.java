@@ -23,6 +23,7 @@ public class AdditionalSettingsActivity extends AppCompatActivity {
     CheckBox navigationParamsCheckBox;
     CheckBox changeLabelsCheckBox;
     CheckBox drawLineCheckBox;
+    CheckBox buttonsOfControlCheckBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +38,7 @@ public class AdditionalSettingsActivity extends AppCompatActivity {
         navigationParamsCheckBox = (CheckBox) findViewById(R.id.navigationParamsCheckBox);
         changeLabelsCheckBox = (CheckBox) findViewById(R.id.changeLabels);
         drawLineCheckBox = (CheckBox) findViewById(R.id.drawLine);
+        buttonsOfControlCheckBox = (CheckBox) findViewById(R.id.buttonsOfControl);
 
         labelParamsCheckBox.setChecked(sharedpreferences.getBoolean("label", true));
         clusterParamsCheckBox.setChecked(sharedpreferences.getBoolean("cluster", true));
@@ -44,6 +46,7 @@ public class AdditionalSettingsActivity extends AppCompatActivity {
         navigationParamsCheckBox.setChecked(sharedpreferences.getBoolean("navigation", true));
         changeLabelsCheckBox.setChecked(sharedpreferences.getBoolean("changeLabels", false));
         drawLineCheckBox.setChecked(sharedpreferences.getBoolean("drawLine", true));
+        buttonsOfControlCheckBox.setChecked(sharedpreferences.getBoolean("buttonsOfControl", true));
 
         labelParamsCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,6 +110,17 @@ public class AdditionalSettingsActivity extends AppCompatActivity {
                     sharedpreferences.edit().putBoolean("drawLine", true).apply();
                 } else {
                     sharedpreferences.edit().putBoolean("drawLine", false).apply();
+                }
+            }
+        });
+
+        buttonsOfControlCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (buttonsOfControlCheckBox.isChecked()){
+                    sharedpreferences.edit().putBoolean("buttonsOfControl", true).apply();
+                } else {
+                    sharedpreferences.edit().putBoolean("buttonsOfControl", false).apply();
                 }
             }
         });

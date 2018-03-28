@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -54,6 +55,7 @@ public class MapObjectFragment extends Fragment {
     private Boolean isLabelEnabled;
     private Boolean changeLabelsOnDriversName;
     private Boolean drawLine;
+    private Boolean buttonsOfControl;
 
     private List<String> coordinatesForTrackLine = new ArrayList<>();
 
@@ -386,6 +388,7 @@ public class MapObjectFragment extends Fragment {
         url = getArguments().getString("url");
         geocoder = getArguments().getBoolean("geocoder");
         isLabelEnabled = getArguments().getBoolean("label");
+        buttonsOfControl = getArguments().getBoolean("buttonsOfControl");
         changeLabelsOnDriversName = getArguments().getBoolean("changeLabels");
         interval = getArguments().getString("interval");
 
@@ -422,6 +425,25 @@ public class MapObjectFragment extends Fragment {
                 return false;
             }
         });
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (buttonsOfControl){
+                    webView.loadUrl("javascript:" +
+                            "map.addControl(map.zoomControl);\n" +
+                            "geoSearch = new L.Control.GeoSearch({\n" +
+                            "    provider: new L.GeoSearch.Provider.Google()\n" +
+                            "}).addTo(map);"
+                    );
+                } else {
+                    webView.loadUrl("javascript:" +
+                            "map.removeControl(map.zoomControl);\n" +
+                            "map.removeControl(geoSearch);\n"
+                    );
+                }
+            }
+        }, 500);
 
         return rootView;
     }

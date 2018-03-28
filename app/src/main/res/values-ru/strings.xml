@@ -125,6 +125,7 @@
     <string name="navigationParams">Вкл. навигацию</string>
     <string name="changeLabelParams">Подменять имена</string>
     <string name="drawLineParams">Показывать шлейф</string>
+    <string name="buttonsOfControlParams">Кнопки контроля</string>
     <string name="address">Адресс: </string>
     <string name="addressObjInfo">Адресс</string>
 

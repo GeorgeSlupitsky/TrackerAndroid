@@ -130,7 +130,8 @@ public class MicroGisActivity extends AppCompatActivity
     private int objectsCount, groupsCount, markersCount, tracksCount;
     NavigationView navigationView;
     String isSendingToServer;
-    boolean isLabelEnabled, isClusterEnabled, isGeocoderEnabled, isNavigationEnabled, changeLabelsOnDriversName, drawLine;
+    boolean isLabelEnabled, isClusterEnabled, isGeocoderEnabled, isNavigationEnabled, changeLabelsOnDriversName, drawLine, buttonsOfControl;
+    boolean isButtonControl;
     List<Device> devices;
 
     private HashMap<Integer, List<String>> mapCoordinatesForTrackLine;
@@ -870,11 +871,7 @@ public class MicroGisActivity extends AppCompatActivity
             }
         });
 
-
         myWebView.addJavascriptInterface(webAppInterface, "Android");
-
-        myWebView.loadUrl("javascript: " +
-                "var cluster;");
 
         final Button clean = (Button) findViewById(R.id.cleanlayers);
         assert clean != null;
@@ -1220,6 +1217,27 @@ public class MicroGisActivity extends AppCompatActivity
 
             }
         });
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (buttonsOfControl){
+                    myWebView.loadUrl("javascript:" +
+                            "map.addControl(map.zoomControl);\n" +
+                            "geoSearch = new L.Control.GeoSearch({\n" +
+                            "    provider: new L.GeoSearch.Provider.Google()\n" +
+                            "}).addTo(map);"
+                    );
+                    isButtonControl = true;
+                } else {
+                    myWebView.loadUrl("javascript:" +
+                            "map.removeControl(map.zoomControl);\n" +
+                            "map.removeControl(geoSearch);\n"
+                    );
+                    isButtonControl = false;
+                }
+            }
+        }, 1500);
     }
 
     void getMarkers(){
@@ -1498,6 +1516,27 @@ public class MicroGisActivity extends AppCompatActivity
         changeLabelsOnDriversName = sharedpreferences.getBoolean("changeLabels", false);
         drawLine = sharedpreferences.getBoolean("drawLine", true);
         isSendingToServer = sharedpreferences.getString("switchKey", "false");
+        buttonsOfControl = sharedpreferences.getBoolean("buttonsOfControl", true);
+
+        if (buttonsOfControl){
+            if (!isButtonControl){
+                myWebView.loadUrl("javascript:" +
+                        "map.addControl(map.zoomControl);\n" +
+                        "geoSearch = new L.Control.GeoSearch({\n" +
+                        "    provider: new L.GeoSearch.Provider.Google()\n" +
+                        "}).addTo(map);"
+                );
+                isButtonControl = true;
+            }
+        } else {
+            if (isButtonControl){
+                myWebView.loadUrl("javascript:" +
+                        "map.removeControl(map.zoomControl);\n" +
+                        "map.removeControl(geoSearch);\n"
+                );
+                isButtonControl = false;
+            }
+        }
 
         if (isSendingToServer.equals("true")){
             if (server.equals("") || port.equals("")){

@@ -120,6 +120,7 @@
     <string name="navigationParams">Вкл. навігацію</string>
     <string name="changeLabelParams">Підмінювати імена</string>
     <string name="drawLineParams">Показувати шлейф</string>
+    <string name="buttonsOfControlParams">Кнопки контролю</string>
     <string name="address">Адреса: </string>
     <string name="addressObjInfo">Адреса</string>
     <string name="action_settings">Налаштування</string>
