@@ -179,4 +179,35 @@
     <string name="status">Статус:</string>
 
     <string name="finish_app">Ви хочете вийти з додатку?</string>
+
+    <!--add request group-->
+    <string name="group_name">Ім`я групи:</string>
+    <string name="group_account">Аккаунт:</string>
+    <string name="group_key">Ключ:</string>
+    <string name="group_url">Url запита:</string>
+    <string name="group_interval">Інтервал запита:</string>
+    <string name="group_groups">Групи:</string>
+    <string name="group_timezone">Часовий пояс:</string>
+
+    <string name="sensor0">Датчик 0</string>
+    <string name="sensor1">Датчик 1</string>
+    <string name="sensor2">Датчик 2</string>
+    <string name="sensor3">Датчик 3</string>
+    <string name="sensor4">Датчик 4</string>
+    <string name="sensor5">Датчик 5</string>
+
+    <string name="sensor0s">Датчик 0:</string>
+    <string name="sensor1s">Датчик 1:</string>
+    <string name="sensor2s">Датчик 2:</string>
+    <string name="sensor3s">Датчик 3:</string>
+    <string name="sensor4s">Датчик 4:</string>
+    <string name="sensor5s">Датчик 5:</string>
+
+    <string name="application_name">Назва програми:</string>
+    <string name="build_version">Версія:</string>
+    <string name="author_site">Сайт автора:</string>
+    <string name="author_company">Компанія автора:</string>
+    <string name="microgis_site"><u>https://micro-gis.com/</u></string>
+    <string name="support">Підтримка:</string>
+    <string name="support_email"><u>support@micro-gis.com</u></string>
 </resources>

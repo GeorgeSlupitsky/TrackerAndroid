@@ -43,13 +43,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/black"
             android:text="@string/enter_name_of_place"
             android:id="@+id/textView4"
             android:layout_below="@+id/textView3"
             android:layout_centerHorizontal="true"
-            android:layout_gravity="center_horizontal"
-            android:textSize="17dp" />
+            android:layout_gravity="center_horizontal"/>
 
         <EditText
             android:layout_width="match_parent"
@@ -66,11 +66,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/black"
             android:text="@string/description"
             android:id="@+id/textView21"
-            android:layout_gravity="center_horizontal"
-            android:textSize="17dp" />
+            android:layout_gravity="center_horizontal"/>
 
         <EditText
             android:layout_width="match_parent"
@@ -81,11 +81,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/black"
             android:text="@string/chose_marker_ic"
             android:id="@+id/textView20"
-            android:layout_gravity="center_horizontal"
-            android:textSize="17dp" />
+            android:layout_gravity="center_horizontal"/>
 
         <ScrollView
             android:layout_width="match_parent"

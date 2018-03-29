@@ -1395,7 +1395,10 @@ public class MicroGisActivity extends AppCompatActivity
         } else if (id == R.id.tracks) {
             Intent intent = new Intent(this, TracksActivity.class);
             startActivityForResult(intent, 1);
-        }  else if (id == R.id.exit) {
+        } else if (id == R.id.about){
+            Intent intent = new Intent(this, AboutActivity.class);
+            startActivityForResult(intent, 1);
+        } else if (id == R.id.exit) {
 
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
 

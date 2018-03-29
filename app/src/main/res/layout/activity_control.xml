@@ -60,7 +60,7 @@
                 <Button
                     android:layout_width="0dp"
                     android:layout_height="90dp"
-                    android:text="Sensor 0"
+                    android:text="@string/sensor0"
                     android:id="@+id/button0"
                     android:layout_weight="0.50"
                     android:layout_gravity="center" />
@@ -68,7 +68,7 @@
                 <Button
                     android:layout_width="0dp"
                     android:layout_height="90dp"
-                    android:text="SENSOR 1 "
+                    android:text="@string/sensor1"
                     android:id="@+id/button1"
                     android:layout_weight="0.5"
                     android:layout_gravity="center" />
@@ -86,14 +86,14 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="90dp"
-                    android:text="Sensor 2"
+                    android:text="@string/sensor2"
                     android:id="@+id/button2"
                     android:layout_weight="0.50"
                     android:layout_gravity="center" />
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="90dp"
-                    android:text="SENSOR 3"
+                    android:text="@string/sensor3"
                     android:id="@+id/button3"
                     android:layout_weight="0.5"
                     android:layout_gravity="center" />
@@ -107,7 +107,7 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="90dp"
-                    android:text="SENSOR 4"
+                    android:text="@string/sensor4"
                     android:id="@+id/button4"
                     android:layout_weight="0.5"
                     android:layout_gravity="center" />
@@ -115,7 +115,7 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="90dp"
-                    android:text="SENSOR 5"
+                    android:text="@string/sensor5"
                     android:id="@+id/button5"
                     android:layout_weight="0.5"
                     android:layout_gravity="center" />

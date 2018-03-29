@@ -6,14 +6,57 @@ android {
     compileSdkVersion 27
     buildToolsVersion "27.0.2"
     useLibrary 'org.apache.http.legacy'
+
     defaultConfig {
         applicationId "com.micro_gis.microgistracker"
         minSdkVersion 16
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.1"
         multiDexEnabled true
     }
+
+//    def versionPropsFile = file('version.properties')
+//    if (versionPropsFile.canRead()) {
+//        def Properties versionProps = new Properties()
+//
+//        versionProps.load(new FileInputStream(versionPropsFile))
+//
+//        def value = 0
+//
+//        def runTasks = gradle.startParameter.taskNames
+//        if ('assemble' in runTasks || 'assembleRelease' in runTasks || 'aR' in runTasks) {
+//            value = 1
+//        }
+//
+//        def versionMajor = 1
+//        def versionMinor = 0
+//        def versionBuild = versionProps['VERSION_BUILD'].toInteger() + 1
+//
+//        versionProps['VERSION_BUILD'] = versionBuild.toString()
+//
+//        versionProps.store(versionPropsFile.newWriter(), null)
+//
+//        defaultConfig {
+//            applicationId "com.micro_gis.microgistracker"
+//            minSdkVersion 16
+//            targetSdkVersion 27
+//            versionCode 1
+//            versionName "${versionMajor}.${versionMinor}.${versionBuild}"
+//            multiDexEnabled true
+//        }
+//
+//        applicationVariants.all { variant ->
+//            variant.outputs.each { output ->
+//                def fileNaming = "apk/RELEASES"
+//                output.outputFile = new File(getProject().getRootDir(), "${fileNaming}-${versionMajor}.${versionMinor}.${versionBuild}-${outputFile.name}")
+//            }
+//        }
+//
+//    } else {
+//        throw new GradleException("Could not read version.properties!")
+//    }
+
     dexOptions {
         javaMaxHeapSize "4g"
     }

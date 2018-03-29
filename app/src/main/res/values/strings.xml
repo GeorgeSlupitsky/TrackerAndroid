@@ -181,4 +181,35 @@
     <string name="status">Status:</string>
 
     <string name="finish_app">Do you want to close application?</string>
+
+    <!--add request group-->
+    <string name="group_name">Group name:</string>
+    <string name="group_account">Account:</string>
+    <string name="group_key">Key:</string>
+    <string name="group_url">Request url:</string>
+    <string name="group_interval">Request interval:</string>
+    <string name="group_groups">Groups:</string>
+    <string name="group_timezone">Timezone:</string>
+
+    <string name="sensor0">Sensor 0</string>
+    <string name="sensor1">Sensor 1</string>
+    <string name="sensor2">Sensor 2</string>
+    <string name="sensor3">Sensor 3</string>
+    <string name="sensor4">Sensor 4</string>
+    <string name="sensor5">Sensor 5</string>
+
+    <string name="sensor0s">Sensor 0:</string>
+    <string name="sensor1s">Sensor 1:</string>
+    <string name="sensor2s">Sensor 2:</string>
+    <string name="sensor3s">Sensor 3:</string>
+    <string name="sensor4s">Sensor 4:</string>
+    <string name="sensor5s">Sensor 5:</string>
+
+    <string name="application_name">Application name:</string>
+    <string name="build_version">Version:</string>
+    <string name="author_site">Author site:</string>
+    <string name="author_company">Author company:</string>
+    <string name="microgis_site"><u>https://micro-gis.com/</u></string>
+    <string name="support">Support:</string>
+    <string name="support_email"><u>support@micro-gis.com</u></string>
 </resources>

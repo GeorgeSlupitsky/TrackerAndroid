@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
@@ -16,14 +17,23 @@ import com.micro_gis.microgistracker.R;
 
 public class AdditionalSettingsActivity extends AppCompatActivity {
 
-    SharedPreferences sharedpreferences;
-    CheckBox labelParamsCheckBox;
-    CheckBox clusterParamsCheckBox;
-    CheckBox geocoderParamsCheckBox;
-    CheckBox navigationParamsCheckBox;
-    CheckBox changeLabelsCheckBox;
-    CheckBox drawLineCheckBox;
-    CheckBox buttonsOfControlCheckBox;
+    private SharedPreferences sharedpreferences;
+    private CheckBox labelParamsCheckBox;
+    private CheckBox clusterParamsCheckBox;
+    private CheckBox geocoderParamsCheckBox;
+    private CheckBox navigationParamsCheckBox;
+    private CheckBox changeLabelsCheckBox;
+    private CheckBox drawLineCheckBox;
+    private CheckBox buttonsOfControlCheckBox;
+    private Button save;
+
+    private boolean label;
+    private boolean cluster;
+    private boolean geocoder;
+    private boolean navigation;
+    private boolean changeLabels;
+    private boolean drawLine;
+    private boolean buttonsOfControl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +49,7 @@ public class AdditionalSettingsActivity extends AppCompatActivity {
         changeLabelsCheckBox = (CheckBox) findViewById(R.id.changeLabels);
         drawLineCheckBox = (CheckBox) findViewById(R.id.drawLine);
         buttonsOfControlCheckBox = (CheckBox) findViewById(R.id.buttonsOfControl);
+        save = (Button) findViewById(R.id.saveAddSettings);
 
         labelParamsCheckBox.setChecked(sharedpreferences.getBoolean("label", true));
         clusterParamsCheckBox.setChecked(sharedpreferences.getBoolean("cluster", true));
@@ -48,13 +59,27 @@ public class AdditionalSettingsActivity extends AppCompatActivity {
         drawLineCheckBox.setChecked(sharedpreferences.getBoolean("drawLine", true));
         buttonsOfControlCheckBox.setChecked(sharedpreferences.getBoolean("buttonsOfControl", true));
 
+        label = labelParamsCheckBox.isChecked();
+
+        cluster = clusterParamsCheckBox.isChecked();
+
+        geocoder = geocoderParamsCheckBox.isChecked();
+
+        navigation = navigationParamsCheckBox.isChecked();
+
+        changeLabels = changeLabelsCheckBox.isChecked();
+
+        drawLine = drawLineCheckBox.isChecked();
+
+        buttonsOfControl = buttonsOfControlCheckBox.isChecked();
+
         labelParamsCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (labelParamsCheckBox.isChecked()){
-                    sharedpreferences.edit().putBoolean("label", true).apply();
+                    label = true;
                 } else {
-                    sharedpreferences.edit().putBoolean("label", false).apply();
+                    label = false;
                 }
             }
         });
@@ -63,9 +88,9 @@ public class AdditionalSettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (clusterParamsCheckBox.isChecked()){
-                    sharedpreferences.edit().putBoolean("cluster", true).apply();
+                    cluster = true;
                 } else {
-                    sharedpreferences.edit().putBoolean("cluster", false).apply();
+                    cluster = false;
                 }
             }
         });
@@ -74,9 +99,9 @@ public class AdditionalSettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (geocoderParamsCheckBox.isChecked()){
-                    sharedpreferences.edit().putBoolean("geocoder", true).apply();
+                    geocoder = true;
                 } else {
-                    sharedpreferences.edit().putBoolean("geocoder", false).apply();
+                    geocoder = false;
                 }
             }
         });
@@ -85,9 +110,9 @@ public class AdditionalSettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (navigationParamsCheckBox.isChecked()){
-                    sharedpreferences.edit().putBoolean("navigation", true).apply();
+                    navigation = true;
                 } else {
-                    sharedpreferences.edit().putBoolean("navigation", false).apply();
+                    navigation = false;
                 }
             }
         });
@@ -96,9 +121,9 @@ public class AdditionalSettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (changeLabelsCheckBox.isChecked()){
-                    sharedpreferences.edit().putBoolean("changeLabels", true).apply();
+                    changeLabels = true;
                 } else {
-                    sharedpreferences.edit().putBoolean("changeLabels", false).apply();
+                    changeLabels = false;
                 }
             }
         });
@@ -107,9 +132,9 @@ public class AdditionalSettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (drawLineCheckBox.isChecked()){
-                    sharedpreferences.edit().putBoolean("drawLine", true).apply();
+                    drawLine = true;
                 } else {
-                    sharedpreferences.edit().putBoolean("drawLine", false).apply();
+                    drawLine = false;
                 }
             }
         });
@@ -118,12 +143,25 @@ public class AdditionalSettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (buttonsOfControlCheckBox.isChecked()){
-                    sharedpreferences.edit().putBoolean("buttonsOfControl", true).apply();
+                    buttonsOfControl = true;
                 } else {
-                    sharedpreferences.edit().putBoolean("buttonsOfControl", false).apply();
+                    buttonsOfControl = false;
                 }
             }
         });
 
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sharedpreferences.edit().putBoolean("label", label).apply();
+                sharedpreferences.edit().putBoolean("cluster", cluster).apply();
+                sharedpreferences.edit().putBoolean("geocoder", geocoder).apply();
+                sharedpreferences.edit().putBoolean("navigation", navigation).apply();
+                sharedpreferences.edit().putBoolean("changeLabels", changeLabels).apply();
+                sharedpreferences.edit().putBoolean("drawLine", drawLine).apply();
+                sharedpreferences.edit().putBoolean("buttonsOfControl", buttonsOfControl).apply();
+                finish();
+            }
+        });
     }
 }
