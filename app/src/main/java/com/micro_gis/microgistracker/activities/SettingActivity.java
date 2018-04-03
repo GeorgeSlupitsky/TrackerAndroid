@@ -68,11 +68,32 @@ public class SettingActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = sharedpreferences.edit();
                 editor.putString(APP_PREFERENCES_SERVER, server.getText().toString());
                 editor.putString(APP_PREFERENCES_PORT, port.getText().toString());
-                editor.putString(APP_PREFERENCES_ANGLE, angle.getText().toString());
-                editor.putString(APP_PREFERENCES_DISTANCE, distance.getText().toString());
-                editor.putString(APP_PREFERENCES_PERIOD, time.getText().toString());
+                if (Integer.parseInt(angle.getText().toString()) >= 10){
+                    editor.putString(APP_PREFERENCES_ANGLE, angle.getText().toString());
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            getString(R.string.less_angle), Toast.LENGTH_LONG);
+                    toast.show();
+                }
+                if (Integer.parseInt(distance.getText().toString()) >= 100){
+                    editor.putString(APP_PREFERENCES_DISTANCE, distance.getText().toString());
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            getString(R.string.less_distance), Toast.LENGTH_LONG);
+                    toast.show();
+                }
+                if (Integer.parseInt(time.getText().toString()) >= 10){
+                    editor.putString(APP_PREFERENCES_PERIOD, time.getText().toString());
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            getString(R.string.less_time), Toast.LENGTH_LONG);
+                    toast.show();
+                }
                 editor.apply();
-                finish();
+
+                if (Integer.parseInt(angle.getText().toString()) >= 10 && Integer.parseInt(distance.getText().toString()) >= 100 && Integer.parseInt(time.getText().toString()) >= 10){
+                    finish();
+                }
             }
         });
         linearLayout  = (LinearLayout) findViewById(R.id.serverSettingLayout);
@@ -138,11 +159,32 @@ public class SettingActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putString(APP_PREFERENCES_SERVER, server.getText().toString());
         editor.putString(APP_PREFERENCES_PORT, port.getText().toString());
-        editor.putString(APP_PREFERENCES_ANGLE, angle.getText().toString());
-        editor.putString(APP_PREFERENCES_DISTANCE, distance.getText().toString());
-        editor.putString(APP_PREFERENCES_PERIOD, time.getText().toString());
+        if (Integer.parseInt(angle.getText().toString()) >= 10){
+            editor.putString(APP_PREFERENCES_ANGLE, angle.getText().toString());
+        } else {
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    getString(R.string.less_angle), Toast.LENGTH_LONG);
+            toast.show();
+        }
+        if (Integer.parseInt(distance.getText().toString()) >= 100){
+            editor.putString(APP_PREFERENCES_DISTANCE, distance.getText().toString());
+        } else {
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    getString(R.string.less_distance), Toast.LENGTH_LONG);
+            toast.show();
+        }
+        if (Integer.parseInt(time.getText().toString()) >= 10){
+            editor.putString(APP_PREFERENCES_PERIOD, time.getText().toString());
+        } else {
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    getString(R.string.less_time), Toast.LENGTH_LONG);
+            toast.show();
+        }
         editor.apply();
-        finish();
+
+        if (Integer.parseInt(angle.getText().toString()) >= 10 && Integer.parseInt(distance.getText().toString()) >= 100 && Integer.parseInt(time.getText().toString()) >= 10){
+            finish();
+        }
     }
 
 }

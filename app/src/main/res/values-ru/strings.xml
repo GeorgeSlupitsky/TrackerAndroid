@@ -214,4 +214,8 @@
     <string name="microgis_site"><u>https://micro-gis.com/</u></string>
     <string name="support">Поддержка:</string>
     <string name="support_email"><u>support@micro-gis.com</u></string>
+
+    <string name="less_distance">Дистанция не может быть меньше, чем 100 м</string>
+    <string name="less_time">Время не может быть меньше, чем 10 с</string>
+    <string name="less_angle">Угол не может быть меньше, чем 10</string>
 </resources>

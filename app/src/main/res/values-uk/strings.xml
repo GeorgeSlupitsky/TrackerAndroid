@@ -210,4 +210,8 @@
     <string name="microgis_site"><u>https://micro-gis.com/</u></string>
     <string name="support">Підтримка:</string>
     <string name="support_email"><u>support@micro-gis.com</u></string>
+
+    <string name="less_distance">Дистанція не може бути менше, ніж 100 м</string>
+    <string name="less_time">Час не може бути менше, ніж 10 с</string>
+    <string name="less_angle">Кут не може бути менше, нAngle can`t be less then 10</string>
 </resources>
