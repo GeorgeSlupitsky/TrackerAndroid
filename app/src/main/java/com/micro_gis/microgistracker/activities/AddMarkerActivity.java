@@ -1,27 +1,47 @@
 package com.micro_gis.microgistracker.activities;
 
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.google.gson.Gson;
 import com.micro_gis.microgistracker.DBHelper;
+import com.micro_gis.microgistracker.Power;
 import com.micro_gis.microgistracker.models.database.Marker;
 import com.micro_gis.microgistracker.R;
 
 import java.util.ArrayList;
 
 public class AddMarkerActivity extends AppCompatActivity implements View.OnClickListener{
-    DBHelper dbHelper;
-    String name;
-    static String url, shadowUrl;
-    ArrayList<ImageButton> imageButtons = new ArrayList<>();
+    private DBHelper dbHelper;
+    private String name;
+    private static String url, shadowUrl;
+    private ArrayList<ImageButton> imageButtons = new ArrayList<>();
+    private SharedPreferences sharedPreferences;
+    private Handler handler = new Handler();
+
+    Runnable checkCharging = new Runnable() {
+        @Override
+        public void run() {
+            if (Power.isConnected(AddMarkerActivity.this)){
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+            handler.postDelayed(this, 3000);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -36,6 +56,25 @@ public class AddMarkerActivity extends AppCompatActivity implements View.OnClick
         });
         Button button =(Button)findViewById(R.id.add_marker);
         dbHelper = new DBHelper(this);
+
+        sharedPreferences = getSharedPreferences("mypref", Context.MODE_PRIVATE);
+
+        String screenActivity = sharedPreferences.getString("screenActivity", "normal");
+
+        switch (screenActivity) {
+            case "normal":
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "always":
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "while_charging":
+                handler.post(checkCharging);
+                break;
+        }
+
         final SQLiteDatabase db = dbHelper.getWritableDatabase();
         final ContentValues cv = new ContentValues();
         final EditText getname =(EditText)findViewById(R.id.get_name_place);
@@ -394,5 +433,11 @@ public class AddMarkerActivity extends AppCompatActivity implements View.OnClick
         }
 
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(checkCharging);
     }
 }

@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Binder;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -22,13 +24,14 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.micro_gis.microgistracker.Power;
 import com.micro_gis.microgistracker.R;
 
 public class SettingActivity extends AppCompatActivity {
-    SharedPreferences sharedpreferences;
-    Button ok;
-    Switch switchOn;
-    EditText server,time,port,angle,distance;
+    private SharedPreferences sharedpreferences;
+    private Button ok;
+    private Switch switchOn;
+    private EditText server,time,port,angle,distance;
 
     public static final String APP_PREFERENCES = "mypref";
     public static final String APP_PREFERENCES_SERVER = "serverKey";
@@ -38,7 +41,22 @@ public class SettingActivity extends AppCompatActivity {
     public static final String APP_PREFERENCES_DISTANCE = "distanceKey";
     public static final String APP_PREFERENCES_SWITCH = "switchKey";
 
-    LinearLayout linearLayout;
+    private LinearLayout linearLayout;
+
+    private Handler handler = new Handler();
+
+    Runnable checkCharging = new Runnable() {
+        @Override
+        public void run() {
+            if (Power.isConnected(SettingActivity.this)){
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+            handler.postDelayed(this, 3000);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +72,22 @@ public class SettingActivity extends AppCompatActivity {
 
 
         sharedpreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+
+        String screenActivity = sharedpreferences.getString("screenActivity", "normal");
+
+        switch (screenActivity) {
+            case "normal":
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "always":
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "while_charging":
+                handler.post(checkCharging);
+                break;
+        }
 
         server.setText(sharedpreferences.getString(APP_PREFERENCES_SERVER, ""));
         port.setText(sharedpreferences.getString(APP_PREFERENCES_PORT, ""));
@@ -185,6 +219,12 @@ public class SettingActivity extends AppCompatActivity {
         if (Integer.parseInt(angle.getText().toString()) >= 10 && Integer.parseInt(distance.getText().toString()) >= 100 && Integer.parseInt(time.getText().toString()) >= 10){
             finish();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(checkCharging);
     }
 
 }

@@ -21,10 +21,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
 
+import com.micro_gis.microgistracker.Power;
 import com.micro_gis.microgistracker.models.database.AVLData;
 import com.micro_gis.microgistracker.DBHelper;
 import com.micro_gis.microgistracker.HttpSendPost;
@@ -44,19 +46,29 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     private TextView imei, latitude, longitude, satellites, speed, altitude, HDOP, direction, statusSignal, packets, errorPacket, timeSending;
     private boolean isStart;
-    Handler handler = new Handler();
-    static int time, distance, angel;
-    static String gprmc, gpgga, imeis, lastValidGprms, lastValidGpgga, server, port;
-    ArrayList<Double> points;
-    LocationManager LM;
-    HttpSendPost httpPost;
-    DBHelper dbHelper;
-    static Vibrator vibrator;
-    SharedPreferences sharedpreferences;
-    LocationManager mLocationManager;
+    private Handler handler = new Handler();
+    private static int time, distance, angel;
+    private static String gprmc, gpgga, imeis, lastValidGprms, lastValidGpgga, server, port;
+    private ArrayList<Double> points;
+    private LocationManager LM;
+    private HttpSendPost httpPost;
+    private DBHelper dbHelper;
+    private static Vibrator vibrator;
+    private SharedPreferences sharedpreferences;
+    private LocationManager mLocationManager;
     public static Location mLastLocation;
 
-
+    Runnable checkCharging = new Runnable() {
+        @Override
+        public void run() {
+            if (Power.isConnected(MainActivity.this)){
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+            handler.postDelayed(this, 3000);
+        }
+    };
 
     Runnable changingTime = new Runnable() {
         @Override
@@ -164,6 +176,23 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
 
         sharedpreferences = getSharedPreferences("mypref", Context.MODE_PRIVATE);
+
+        String screenActivity = sharedpreferences.getString("screenActivity", "normal");
+
+        switch (screenActivity) {
+            case "normal":
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "always":
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "while_charging":
+                handler.post(checkCharging);
+                break;
+        }
+
         server = sharedpreferences.getString("serverKey", "");
         port = sharedpreferences.getString("portKey", "");
         time = Integer.parseInt(sharedpreferences.getString("periodKey", "0"));
@@ -292,6 +321,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
 
             handler.removeCallbacks(changingTime);
+            handler.removeCallbacks(checkCharging);
 
         super.onDestroy();
     }

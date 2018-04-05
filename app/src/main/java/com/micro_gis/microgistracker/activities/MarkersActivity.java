@@ -4,10 +4,12 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.micro_gis.microgistracker.DBHelper;
+import com.micro_gis.microgistracker.Power;
 import com.micro_gis.microgistracker.adapters.MarkerCustomAdapter;
 import com.micro_gis.microgistracker.models.database.Marker;
 import com.micro_gis.microgistracker.R;
@@ -26,12 +29,25 @@ import java.util.Comparator;
 
 public class MarkersActivity extends AppCompatActivity {
 
-    ListView placeList;
-    MarkerCustomAdapter markersCustomAdapter;
-    ArrayList<Marker> markers = new ArrayList<Marker>();
-    DBHelper dbHelper;
-    SharedPreferences preferences;
+    private ListView placeList;
+    private MarkerCustomAdapter markersCustomAdapter;
+    private ArrayList<Marker> markers = new ArrayList<Marker>();
+    private DBHelper dbHelper;
+    private SharedPreferences preferences;
     private int markersCount;
+    private Handler handler = new Handler();
+
+    Runnable checkCharging = new Runnable() {
+        @Override
+        public void run() {
+            if (Power.isConnected(MarkersActivity.this)){
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+            handler.postDelayed(this, 3000);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +64,22 @@ public class MarkersActivity extends AppCompatActivity {
 
         preferences = getSharedPreferences("mypref", MODE_PRIVATE);
         markersCount = preferences.getInt("markersCount", 0);
+
+        String screenActivity = preferences.getString("screenActivity", "normal");
+
+        switch (screenActivity) {
+            case "normal":
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "always":
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "while_charging":
+                handler.post(checkCharging);
+                break;
+        }
 
         TextView title = findViewById(R.id.toolbar_title);
         title.setText(getString(R.string.markers) + " (" + markersCount + ")");
@@ -138,5 +170,11 @@ public class MarkersActivity extends AppCompatActivity {
             viewGroup.addView(textView, index);
         }
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(checkCharging);
     }
 }

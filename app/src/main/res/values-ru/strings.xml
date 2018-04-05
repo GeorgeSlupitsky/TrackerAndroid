@@ -65,9 +65,9 @@
 
     <string name="track_color">Цвет трека:</string>
     <string name="track_width">Ширина трека(px):</string>
-    <string name="min_satelites">Минумум сателлитов:</string>
-    <string name="min_speed">Минимальная скорость(км/ч):</string>
-    <string name="max_speed">Максимальная скорость(км/ч):</string>
+    <string name="min_satelites">Мин. сателлитов:</string>
+    <string name="min_speed">Мин. скорость(км/ч):</string>
+    <string name="max_speed">Макс. скорость(км/ч):</string>
     <string name="save">Сохранить</string>
     <string name="addGroup">Добавить группу</string>
     <string name="rlace_turn_oo_gps">Пожалуйста, включите GPS!</string>
@@ -169,8 +169,8 @@
     <string name="maxSpeed">Мейл по максимальной скорости</string>
     <string name="loseCommunication">Мейл о потере связи</string>
     <string name="loseCoordinates">Мейл о потере координат</string>
-    <string name="sensorChangeOn">Мейл об изменении значения датчика на вкл</string>
-    <string name="sensorChangeOff">Мейл об изменении значения датчика на выкл</string>
+    <string name="sensorChangeOn">Мейл об изменении значения датчика на вкл.</string>
+    <string name="sensorChangeOff">Мейл об изменении значения датчика на выкл.</string>
     <string name="sensorValueInTheRange">Мейл о значении датчика в пределах диапазона</string>
     <string name="sensorValueOutOfRange">Мейл о значении датчика за пределами диапазона</string>
 
@@ -216,6 +216,11 @@
     <string name="support_email"><u>support@micro-gis.com</u></string>
 
     <string name="less_distance">Дистанция не может быть меньше, чем 100 м</string>
-    <string name="less_time">Время не может быть меньше, чем 10 с</string>
+    <string name="less_time">Период не может быть меньше, чем 10 с</string>
     <string name="less_angle">Угол не может быть меньше, чем 10</string>
+
+    <string name="screen_activity">Screen activity</string>
+    <string name="screen_activity_always">Always</string>
+    <string name="screen_activity_while_charging">While charging</string>
+    <string name="screen_activity_normal">Off</string>
 </resources>

@@ -2,10 +2,12 @@ package com.micro_gis.microgistracker.activities;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.micro_gis.microgistracker.MicroGisApplication;
+import com.micro_gis.microgistracker.Power;
 import com.micro_gis.microgistracker.adapters.ObjectsCustomAdapter;
 import com.micro_gis.microgistracker.R;
 import com.micro_gis.microgistracker.components.DaggerMicroGisActivityComponent;
@@ -76,6 +79,20 @@ public class ObjectsActivity extends AppCompatActivity {
     @Inject
     Gson gson;
 
+    private Handler handler = new Handler();
+
+    Runnable checkCharging = new Runnable() {
+        @Override
+        public void run() {
+            if (Power.isConnected(ObjectsActivity.this)){
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+            handler.postDelayed(this, 3000);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +111,23 @@ public class ObjectsActivity extends AppCompatActivity {
                 .build();
 
         sharedPreferences = microGisComponent.getSharedPreferences();
+
+        String screenActivity = sharedPreferences.getString("screenActivity", "normal");
+
+        switch (screenActivity) {
+            case "normal":
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "always":
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "while_charging":
+                handler.post(checkCharging);
+                break;
+        }
+
         gson = microGisComponent.getGson();
 
         search = (EditText) findViewById(R.id.inputSearch);
@@ -234,5 +268,11 @@ public class ObjectsActivity extends AppCompatActivity {
             });
 
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(checkCharging);
     }
 }

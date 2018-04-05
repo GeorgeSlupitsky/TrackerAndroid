@@ -7,17 +7,20 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.micro_gis.microgistracker.DBHelper;
 import com.micro_gis.microgistracker.HttpSendPost;
+import com.micro_gis.microgistracker.Power;
 import com.micro_gis.microgistracker.models.database.Points;
 import com.micro_gis.microgistracker.models.database.PressedSensor;
 import com.micro_gis.microgistracker.R;
@@ -28,21 +31,37 @@ import java.util.List;
 
 public class ControlActivity extends AppCompatActivity implements View.OnLongClickListener, LocationListener {
 
-    String server, port, imei;
-    HttpSendPost httpSendPost;
-    DBHelper dbHelper;
-    Toast toast;
-    String sensor_0 = "$Sensor=0:1,1:0,2:0,3:0,4:0,5:0,6:0";
-    String sensor_1 = "$Sensor=0:0,1:1,2:0,3:0,4:0,5:0,6:0";
-    String sensor_2 = "$Sensor=0:0,1:0,2:1,3:0,4:0,5:0,6:0";
-    String sensor_3 = "$Sensor=0:0,1:0,2:0,3:1,4:0,5:0,6:0";
-    String sensor_4 = "$Sensor=0:0,1:0,2:0,3:0,4:1,5:0,6:0";
-    String sensor_5 = "$Sensor=0:0,1:0,2:0,3:0,4:0,5:1,6:0";
-    String sensor_sos = "$Sensor=0:0,1:0,2:0,3:0,4:0,5:0,6:1";
-    Location location;
-    Button button0, button1, button2, button3, button4, button5;
-    LocationManager locationManager;
-    boolean isSwitchCheck;
+    private String server, port, imei;
+    private HttpSendPost httpSendPost;
+    private DBHelper dbHelper;
+    private Toast toast;
+    private String sensor_0 = "$Sensor=0:1,1:0,2:0,3:0,4:0,5:0,6:0";
+    private String sensor_1 = "$Sensor=0:0,1:1,2:0,3:0,4:0,5:0,6:0";
+    private String sensor_2 = "$Sensor=0:0,1:0,2:1,3:0,4:0,5:0,6:0";
+    private String sensor_3 = "$Sensor=0:0,1:0,2:0,3:1,4:0,5:0,6:0";
+    private String sensor_4 = "$Sensor=0:0,1:0,2:0,3:0,4:1,5:0,6:0";
+    private String sensor_5 = "$Sensor=0:0,1:0,2:0,3:0,4:0,5:1,6:0";
+    private String sensor_sos = "$Sensor=0:0,1:0,2:0,3:0,4:0,5:0,6:1";
+    private Location location;
+    private Button button0, button1, button2, button3, button4, button5;
+    private LocationManager locationManager;
+    private boolean isSwitchCheck;
+    private SharedPreferences sharedPreferences;
+
+    private Handler handler = new Handler();
+
+    Runnable checkCharging = new Runnable() {
+        @Override
+        public void run() {
+            if (Power.isConnected(ControlActivity.this)){
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+            handler.postDelayed(this, 3000);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +75,23 @@ public class ControlActivity extends AppCompatActivity implements View.OnLongCli
             }
         });
 
+        sharedPreferences = getSharedPreferences("mypref", Context.MODE_PRIVATE);
+
+        String screenActivity = sharedPreferences.getString("screenActivity", "normal");
+
+        switch (screenActivity) {
+            case "normal":
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "always":
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "while_charging":
+                handler.post(checkCharging);
+                break;
+        }
 
         button1 = (Button) findViewById(R.id.button1);
         button2 = (Button) findViewById(R.id.button2);
@@ -330,5 +366,11 @@ public class ControlActivity extends AppCompatActivity implements View.OnLongCli
             }
         }
         return bestLocation;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(checkCharging);
     }
 }

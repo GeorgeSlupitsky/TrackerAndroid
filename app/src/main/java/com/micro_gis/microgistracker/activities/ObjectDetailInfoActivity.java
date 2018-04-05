@@ -3,9 +3,11 @@ package com.micro_gis.microgistracker.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.micro_gis.microgistracker.Communicator;
+import com.micro_gis.microgistracker.Power;
 import com.micro_gis.microgistracker.R;
 import com.micro_gis.microgistracker.fragments.ContentObjectFragment;
 import com.micro_gis.microgistracker.fragments.MapObjectFragment;
@@ -63,6 +66,21 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
     private ImageView upArrow;
 
     private boolean isNormal;
+
+    private Handler handler = new Handler();
+
+    Runnable checkCharging = new Runnable() {
+        @Override
+        public void run() {
+            if (Power.isConnected(ObjectDetailInfoActivity.this)){
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+            handler.postDelayed(this, 3000);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,8 +127,23 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
         FrameLayout mapObject = (FrameLayout) findViewById(R.id.objectMap);
         FrameLayout contentObject = (FrameLayout) findViewById(R.id.objectContent);
 
-
         sharedPreferences = getSharedPreferences("mypref", MODE_PRIVATE);
+
+        String screenActivity = sharedPreferences.getString("screenActivity", "normal");
+
+        switch (screenActivity) {
+            case "normal":
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "always":
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "while_charging":
+                handler.post(checkCharging);
+                break;
+        }
 
         Intent intent = getIntent();
 
@@ -271,5 +304,11 @@ public class ObjectDetailInfoActivity extends FragmentActivity implements Commun
     @Override
     public void event(String account, String key, String id, Long dateFrom, Long dateTo, String duration) {
         mapObjectFragment.drawTrack(account, key, id, dateFrom, dateTo, duration);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(checkCharging);
     }
 }

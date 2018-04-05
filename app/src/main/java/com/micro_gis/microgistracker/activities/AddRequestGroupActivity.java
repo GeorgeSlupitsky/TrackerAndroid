@@ -1,12 +1,16 @@
 package com.micro_gis.microgistracker.activities;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.micro_gis.microgistracker.DBHelper;
+import com.micro_gis.microgistracker.Power;
 import com.micro_gis.microgistracker.R;
 
 import org.apache.commons.lang3.math.NumberUtils;
@@ -26,11 +31,25 @@ import java.util.ArrayList;
 
 public class AddRequestGroupActivity extends AppCompatActivity {
 
-    EditText groupName, accaunt, key, interval, url, group;
-    Spinner TZone;
-    DBHelper dbHelper;
-    SQLiteDatabase db;
-    ContentValues cv = new ContentValues();
+    private EditText groupName, accaunt, key, interval, url, group;
+    private Spinner TZone;
+    private DBHelper dbHelper;
+    private SQLiteDatabase db;
+    private ContentValues cv = new ContentValues();
+    private SharedPreferences sharedPreferences;
+    private Handler handler = new Handler();
+
+    Runnable checkCharging = new Runnable() {
+        @Override
+        public void run() {
+            if (Power.isConnected(AddRequestGroupActivity.this)){
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+            handler.postDelayed(this, 3000);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +66,23 @@ public class AddRequestGroupActivity extends AppCompatActivity {
         Button cancel = (Button) findViewById(R.id.req_cancel);
         assert save != null;
 
+        sharedPreferences = getSharedPreferences("mypref", Context.MODE_PRIVATE);
+
+        String screenActivity = sharedPreferences.getString("screenActivity", "normal");
+
+        switch (screenActivity) {
+            case "normal":
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "always":
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "while_charging":
+                handler.post(checkCharging);
+                break;
+        }
 
         ArrayAdapter<CharSequence> adapter =
                 new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item );
@@ -167,6 +203,12 @@ public class AddRequestGroupActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(checkCharging);
     }
 
 }

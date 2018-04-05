@@ -39,6 +39,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -52,6 +53,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.micro_gis.microgistracker.MicroGisApplication;
+import com.micro_gis.microgistracker.Power;
 import com.micro_gis.microgistracker.WebAppInterface;
 import com.micro_gis.microgistracker.components.DaggerMicroGisActivityComponent;
 import com.micro_gis.microgistracker.components.MicroGisActivityComponent;
@@ -151,6 +153,18 @@ public class MicroGisActivity extends AppCompatActivity
     @Inject
     WebAppInterface webAppInterface;
 
+
+    Runnable checkCharging = new Runnable() {
+        @Override
+        public void run() {
+            if (Power.isConnected(MicroGisActivity.this)){
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+            handler.postDelayed(this, 3000);
+        }
+    };
 
     Runnable runnable = new Runnable() {
         public void run() {
@@ -1309,6 +1323,7 @@ public class MicroGisActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         handler.removeCallbacks(requst);
+        handler.removeCallbacks(checkCharging);
         super.onStop();
     }
 
@@ -1520,6 +1535,22 @@ public class MicroGisActivity extends AppCompatActivity
         drawLine = sharedpreferences.getBoolean("drawLine", true);
         isSendingToServer = sharedpreferences.getString("switchKey", "false");
         buttonsOfControl = sharedpreferences.getBoolean("buttonsOfControl", true);
+
+        String screenActivity = sharedpreferences.getString("screenActivity", "normal");
+
+        switch (screenActivity) {
+            case "normal":
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "always":
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "while_charging":
+                handler.post(checkCharging);
+                break;
+        }
 
         if (buttonsOfControl){
             if (!isButtonControl){

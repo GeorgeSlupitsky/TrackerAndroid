@@ -5,9 +5,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.micro_gis.microgistracker.DBHelper;
+import com.micro_gis.microgistracker.Power;
 import com.micro_gis.microgistracker.R;
 import com.micro_gis.microgistracker.models.database.Track;
 import com.micro_gis.microgistracker.adapters.TrackCustomAdapter;
@@ -26,12 +29,25 @@ import java.util.Collections;
 
 public class TracksActivity extends AppCompatActivity {
 
-    ListView trackList;
-    TrackCustomAdapter trackCustomAdapter;
-    ArrayList<Track> trackArray = new ArrayList<Track>();
-    DBHelper dbHelper;
-    SharedPreferences preferences;
+    private ListView trackList;
+    private TrackCustomAdapter trackCustomAdapter;
+    private ArrayList<Track> trackArray = new ArrayList<Track>();
+    private DBHelper dbHelper;
+    private SharedPreferences preferences;
     private int tracksCount;
+    private Handler handler = new Handler();
+
+    Runnable checkCharging = new Runnable() {
+        @Override
+        public void run() {
+            if (Power.isConnected(TracksActivity.this)){
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+            handler.postDelayed(this, 3000);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +65,23 @@ public class TracksActivity extends AppCompatActivity {
         trackList = (ListView) findViewById(R.id.listView);
 
         preferences = getSharedPreferences("mypref", MODE_PRIVATE);
+
+        String screenActivity = preferences.getString("screenActivity", "normal");
+
+        switch (screenActivity) {
+            case "normal":
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "always":
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "while_charging":
+                handler.post(checkCharging);
+                break;
+        }
+
         tracksCount = preferences.getInt("tracksCount", 0);
 
         TextView title = findViewById(R.id.toolbar_title);
@@ -140,5 +173,11 @@ public class TracksActivity extends AppCompatActivity {
 
             viewGroup.addView(textView, index);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(checkCharging);
     }
 }

@@ -3,16 +3,34 @@ package com.micro_gis.microgistracker.activities;
 import android.annotation.TargetApi;
 import android.app.TabActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TabHost;
 
+import com.micro_gis.microgistracker.Power;
 import com.micro_gis.microgistracker.R;
 
 public class TagsSettingActivity extends TabActivity {
 
+    private SharedPreferences sharedPreferences;
+    private Handler handler = new Handler();
+
+    Runnable checkCharging = new Runnable() {
+        @Override
+        public void run() {
+            if (Power.isConnected(TagsSettingActivity.this)){
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+            handler.postDelayed(this, 3000);
+        }
+    };
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -26,6 +44,24 @@ public class TagsSettingActivity extends TabActivity {
                 finish();
             }
         });
+
+        sharedPreferences = getSharedPreferences("mypref", MODE_PRIVATE);
+        String screenActivity = sharedPreferences.getString("screenActivity", "normal");
+
+        switch (screenActivity) {
+            case "normal":
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "always":
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "while_charging":
+                handler.post(checkCharging);
+                break;
+        }
+
         TabHost tabHost = getTabHost();
         TabHost.TabSpec tabSpec;
 
@@ -57,5 +93,10 @@ public class TagsSettingActivity extends TabActivity {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(checkCharging);
+    }
 
 }

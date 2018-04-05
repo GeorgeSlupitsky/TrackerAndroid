@@ -214,6 +214,11 @@
     <string name="support_email"><u>support@micro-gis.com</u></string>
 
     <string name="less_distance">Distance can`t be less then 100 m</string>
-    <string name="less_time">Time can`t be less then 10 s</string>
+    <string name="less_time">Period can`t be less then 10 s</string>
     <string name="less_angle">Angle can`t be less then 10</string>
+
+    <string name="screen_activity">Screen activity:</string>
+    <string name="screen_activity_always">Always</string>
+    <string name="screen_activity_while_charging">While charging</string>
+    <string name="screen_activity_normal">Off</string>
 </resources>

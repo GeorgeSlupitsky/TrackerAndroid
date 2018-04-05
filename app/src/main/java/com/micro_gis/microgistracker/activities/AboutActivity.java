@@ -1,16 +1,21 @@
 package com.micro_gis.microgistracker.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.micro_gis.microgistracker.Power;
 import com.micro_gis.microgistracker.R;
 
 /**
@@ -23,6 +28,20 @@ public class AboutActivity extends AppCompatActivity{
     private TextView url;
     private TextView build;
     private TextView support;
+    private SharedPreferences sharedPreferences;
+    private Handler handler = new Handler();
+
+    Runnable checkCharging = new Runnable() {
+        @Override
+        public void run() {
+            if (Power.isConnected(AboutActivity.this)){
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+            handler.postDelayed(this, 3000);
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,6 +52,24 @@ public class AboutActivity extends AppCompatActivity{
         url = (TextView) findViewById(R.id.author_site);
         build = (TextView) findViewById(R.id.build_version);
         support = (TextView) findViewById(R.id.support);
+
+        sharedPreferences = getSharedPreferences("mypref", Context.MODE_PRIVATE);
+
+        String screenActivity = sharedPreferences.getString("screenActivity", "normal");
+
+        switch (screenActivity) {
+            case "normal":
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "always":
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "while_charging":
+                handler.post(checkCharging);
+                break;
+        }
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,5 +111,11 @@ public class AboutActivity extends AppCompatActivity{
             }
         });
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(checkCharging);
     }
 }

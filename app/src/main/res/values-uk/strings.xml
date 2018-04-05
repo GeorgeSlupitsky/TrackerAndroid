@@ -61,9 +61,9 @@
 
     <string name="track_color">Колір треку:</string>
     <string name="track_width">Ширина треку(px):</string>
-    <string name="min_satelites">Мінумум сателітів:</string>
-    <string name="min_speed">Мінімальна швидкість(км/г):</string>
-    <string name="max_speed">Максимальна швидкість(км/г):</string>
+    <string name="min_satelites">Мін. сателітів:</string>
+    <string name="min_speed">Мін. швидкість(км/г):</string>
+    <string name="max_speed">Макс. швидкість(км/г):</string>
     <string name="save">Зберегти</string>
     <string name="addGroup">Додати групу</string>
     <string name="spisok_pust">Список пустий</string>
@@ -165,8 +165,8 @@
     <string name="maxSpeed">Мейл по максимальній швидкості</string>
     <string name="loseCommunication">Мейл про втрату зв‘язку</string>
     <string name="loseCoordinates">Мейл про втрату координат</string>
-    <string name="sensorChangeOn">Мейл про зміну значення датчика на вкл</string>
-    <string name="sensorChangeOff">Мейл про зміну значення датчика на викл</string>
+    <string name="sensorChangeOn">Мейл про зміну значення датчика на вкл.</string>
+    <string name="sensorChangeOff">Мейл про зміну значення датчика на викл.</string>
     <string name="sensorValueInTheRange">Мейл про значення датчика в межах діапазону</string>
     <string name="sensorValueOutOfRange">Мейл про значення датчика за межами діапазону</string>
 
@@ -212,6 +212,11 @@
     <string name="support_email"><u>support@micro-gis.com</u></string>
 
     <string name="less_distance">Дистанція не може бути менше, ніж 100 м</string>
-    <string name="less_time">Час не може бути менше, ніж 10 с</string>
+    <string name="less_time">Період не може бути менше, ніж 10 с</string>
     <string name="less_angle">Кут не може бути менше, нAngle can`t be less then 10</string>
+
+    <string name="screen_activity">Активний екран:</string>
+    <string name="screen_activity_always">Завжди</string>
+    <string name="screen_activity_while_charging">При зарядці</string>
+    <string name="screen_activity_normal">Викл.</string>
 </resources>

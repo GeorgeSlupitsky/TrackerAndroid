@@ -1,18 +1,22 @@
 package com.micro_gis.microgistracker.activities;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.micro_gis.microgistracker.DBHelper;
+import com.micro_gis.microgistracker.Power;
 import com.micro_gis.microgistracker.adapters.GroupsCustomAdapter;
 import com.micro_gis.microgistracker.R;
 
@@ -28,19 +32,32 @@ import java.util.Map;
 
 public class GroupsActivity extends AppCompatActivity{
 
-    final String ATTRIBUTE_NAME_ID = "id";
-    final String ATTRIBUTE_NAME_TEXT = "text";
+    private final String ATTRIBUTE_NAME_ID = "id";
+    private final String ATTRIBUTE_NAME_TEXT = "text";
 
-    final String LOG_TAG = "myLogs";
+    private final String LOG_TAG = "myLogs";
 
-    ListView lvSimple;
-    TextView textView;
-    ArrayList<Map<String, Object>> data;
-    GroupsCustomAdapter groupsCustomAdapter;
-    DBHelper dbHelper;
-    RadioButton r;
-    SharedPreferences preferences;
+    private ListView lvSimple;
+    private TextView textView;
+    private ArrayList<Map<String, Object>> data;
+    private GroupsCustomAdapter groupsCustomAdapter;
+    private DBHelper dbHelper;
+    private RadioButton r;
+    private SharedPreferences preferences;
     private int groupsCount;
+    private Handler handler = new Handler();
+
+    Runnable checkCharging = new Runnable() {
+        @Override
+        public void run() {
+            if (Power.isConnected(GroupsActivity.this)){
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+            handler.postDelayed(this, 3000);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +73,23 @@ public class GroupsActivity extends AppCompatActivity{
         });
 
         preferences = getSharedPreferences("mypref", MODE_PRIVATE);
+
+        String screenActivity = preferences.getString("screenActivity", "normal");
+
+        switch (screenActivity) {
+            case "normal":
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "always":
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                handler.removeCallbacks(checkCharging);
+                break;
+            case "while_charging":
+                handler.post(checkCharging);
+                break;
+        }
+
         groupsCount = preferences.getInt("groupsCount", 0);
 
         TextView title = findViewById(R.id.toolbar_title);
@@ -126,5 +160,11 @@ public class GroupsActivity extends AppCompatActivity{
         if (!data.isEmpty()){
             textView.setText("");
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(checkCharging);
     }
 }
