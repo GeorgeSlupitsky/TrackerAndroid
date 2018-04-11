@@ -1986,7 +1986,7 @@ public class MicroGisActivity extends AppCompatActivity
         if ((i > 345) || (i < 15))
             i = 0;
         myWebView.loadUrl("javascript: var navig;var myIconNav = new L.icon({\niconUrl: 'file:///android_asset/nav/" + i + ".png'," +
-                "\niconSize: [36,36],\nshadowUrl: null,\nshadowSize: null,\npopupAnchor: [0, 0]\n});\nif(typeof(navig)==='undefined')\n " +
+                "\niconSize: [36,36],\nshadowUrl: null,\nshadowSize: null,\npopupAnchor: [0, -15]\n});\nif(typeof(navig)==='undefined')\n " +
                 "{\n navig = new L.marker([" + paramLocation.getLatitude() + ", " + paramLocation.getLongitude() + "], " +
                 "{icon: myIconNav}).addTo(map);\n}else{\nnavig.setIcon(myIconNav);navig.setLatLng([" + paramLocation.getLatitude() + ", " + paramLocation.getLongitude() + "]).addTo(map);\n}\n");
     }
