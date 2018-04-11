@@ -2033,6 +2033,12 @@ public class MicroGisActivity extends AppCompatActivity
                 "}\n" +
                 "map.closePopup()\n"+
                 "});");
+        myWebView.loadUrl("javascript:" +
+                "if (isClusterEnabled){\n" +
+                    "cluster.eachLayer(function(layer) {\n" +
+                        "cluster.removeLayer(layer)\n" +
+                    "});\n" +
+                "}");
     }
 
     private void clearCarsFromMap(){
@@ -2054,6 +2060,12 @@ public class MicroGisActivity extends AppCompatActivity
                         "}\n" +
                     "}\n" +
                 "});");
+        myWebView.loadUrl("javascript:" +
+                "if (isClusterEnabled){\n" +
+                    "cluster.eachLayer(function(layer) {\n" +
+                        "cluster.removeLayer(layer)\n" +
+                    "});\n" +
+                "}");
         getMarkers();
     }
 
