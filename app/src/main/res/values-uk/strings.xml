@@ -213,7 +213,7 @@
 
     <string name="less_distance">Дистанція не може бути менше, ніж 100 м</string>
     <string name="less_time">Період не може бути менше, ніж 10 с</string>
-    <string name="less_angle">Кут не може бути менше, нAngle can`t be less then 10</string>
+    <string name="less_angle">Кут не може бути менше, ніж 10</string>
 
     <string name="screen_activity">Активний екран:</string>
     <string name="screen_activity_always">Завжди</string>

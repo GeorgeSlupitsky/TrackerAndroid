@@ -103,6 +103,8 @@ public class MicroGisActivity extends AppCompatActivity
 
     private MicroGisActivityComponent microGisActivityComponent;
 
+    private static final String TAG = "myLogs";
+
     Double lat, lon;
     LocationManager mLocationManager;
     static String gprmc, gpgga, imeis, server, port;
@@ -135,6 +137,7 @@ public class MicroGisActivity extends AppCompatActivity
     boolean isLabelEnabled, isClusterEnabled, isGeocoderEnabled, isNavigationEnabled, changeLabelsOnDriversName, drawLine, buttonsOfControl;
     boolean isButtonControl;
     List<Device> devices;
+    boolean isTracking = false;
 
     private HashMap<Integer, List<String>> mapCoordinatesForTrackLine;
 
@@ -706,7 +709,7 @@ public class MicroGisActivity extends AppCompatActivity
             try {
                 timerCount++;
                 AVLData avlData = parse(gprmc, gpgga);
-                if (gpgga ==null & Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (gpgga == null & Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     mLastLocation = getLastKnownLocation();
                     if (mLastLocation != null) {
                         avlData = parseAvl(mLastLocation);
@@ -715,6 +718,29 @@ public class MicroGisActivity extends AppCompatActivity
 
                 int minspeed = Integer.parseInt(sharedpreferences.getString("minSpeed", "3"));
                 int maxspeed = Integer.parseInt(sharedpreferences.getString("maxSpeed", "160"));
+
+                if (isNavigationEnabled){
+                    if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                        if (mPreviousLocation != null && mLastLocation != null){
+                            if (firstStart <= 9){
+                                navigation(getLastKnownLocation(), (int) finalBearing(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                            }
+                            if (avlData.getSpeed() > 3){
+                                if (avlData.getHeading() == 0.0){
+                                    navigation(getLastKnownLocation(), (int) finalBearing(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                                } else {
+                                    navigation(getLastKnownLocation(), (int) avlData.getHeading());
+                                }
+                            }
+                        }
+                    } else {
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                getString(R.string.enable_gps), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                }
+
+                Log.d(TAG, "Heading:" + avlData.getHeading());
 
                 if (avlData.getLongitude() != 0.0 & avlData.getSpeed() >= minspeed & avlData.getSpeed() <= maxspeed) {
                     if (points.size() == 0) {
@@ -791,7 +817,7 @@ public class MicroGisActivity extends AppCompatActivity
                 Log.i("run Exeption", x.getMessage());
             }
             fullLenght = lenght;
-            handler.postDelayed(this, 1000);
+            handler.postDelayed(this, 3000);
             onResume();
         }
     };
@@ -898,7 +924,7 @@ public class MicroGisActivity extends AppCompatActivity
                 if (isNavigationEnabled){
                     if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
                         if (mPreviousLocation != null && mLastLocation != null){
-                            navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                            navigation(getLastKnownLocation(), (int) finalBearing(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
                         }
                     } else {
                         Toast toast = Toast.makeText(getApplicationContext(),
@@ -922,7 +948,7 @@ public class MicroGisActivity extends AppCompatActivity
                         if (isNavigationEnabled){
                             if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
                                 if (mPreviousLocation != null && mLastLocation != null){
-                                    navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                                    navigation(getLastKnownLocation(), (int) finalBearing(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
                                 }
                             } else {
                                 Toast toast = Toast.makeText(getApplicationContext(),
@@ -979,7 +1005,7 @@ public class MicroGisActivity extends AppCompatActivity
                         if (isNavigationEnabled){
                             if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
                                 if (mPreviousLocation != null && mLastLocation != null){
-                                    navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                                    navigation(getLastKnownLocation(), (int) finalBearing(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
                                 }
                             } else {
                                 Toast toast = Toast.makeText(getApplicationContext(),
@@ -1041,7 +1067,7 @@ public class MicroGisActivity extends AppCompatActivity
                     if (isNavigationEnabled){
                         if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
                             if (mPreviousLocation != null && mLastLocation != null){
-                                navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                                navigation(getLastKnownLocation(), (int) finalBearing(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
                             }
                         } else {
                             Toast toast = Toast.makeText(getApplicationContext(),
@@ -1054,7 +1080,6 @@ public class MicroGisActivity extends AppCompatActivity
         });
 
         handler.post(r);
-
 
         final Button start = (Button) findViewById(R.id.start);
         assert start != null;
@@ -1079,12 +1104,17 @@ public class MicroGisActivity extends AppCompatActivity
                         altitudeChart = new ArrayList<>();
                         sensors = new ArrayList<>();
 
+                        isTracking = true;
+
                         handler.post(trackWriting);
                         start.setBackgroundResource(R.drawable.resive);
                         isEnabl = true;
                     } else {
+                        isTracking = false;
                         mChronometer.stop();
                         clearMap();
+                        navigation(getLastKnownLocation(), (int) finalBearing(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+
                         if (pointsList.size() >= 2) {
                             hronTime = mChronometer.getText().toString();
                             timeStop = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
@@ -1594,7 +1624,7 @@ public class MicroGisActivity extends AppCompatActivity
         } else {
             if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
                 if (mPreviousLocation != null && mLastLocation != null){
-                    navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                    navigation(getLastKnownLocation(), (int) finalBearing(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
                 }
             } else {
                 Toast toast = Toast.makeText(getApplicationContext(),
@@ -1638,7 +1668,7 @@ public class MicroGisActivity extends AppCompatActivity
             if (isNavigationEnabled){
                 if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
                     if (mPreviousLocation != null && mLastLocation != null){
-                        navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                        navigation(getLastKnownLocation(), (int) finalBearing(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
                     }
                 } else {
                     Toast toast = Toast.makeText(getApplicationContext(),
@@ -1830,6 +1860,14 @@ public class MicroGisActivity extends AppCompatActivity
 
     @Override
     public void onLocationChanged(Location location) {
+        AVLData avlData = parse(gprmc, gpgga);
+        if (gpgga == null & Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mLastLocation = getLastKnownLocation();
+            if (mLastLocation != null) {
+                avlData = parseAvl(mLastLocation);
+            }
+        }
+
         lat = location.getLatitude();
         lon = location.getLongitude();
         if (mLastLocation == null){
@@ -1840,10 +1878,22 @@ public class MicroGisActivity extends AppCompatActivity
         mLastLocation = location;
         setLtLn();
 
+        Log.d(TAG, "Location changed, angle: " + finalBearing(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+
         if (isNavigationEnabled){
+
             if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
                 if (mPreviousLocation != null && mLastLocation != null){
-                    navigation(getLastKnownLocation(), (int) getAngle(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                    if (firstStart <= 9){
+                        navigation(getLastKnownLocation(), (int) finalBearing(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                    }
+                    if (avlData.getSpeed() > 4 && !isTracking){
+                        if (avlData.getHeading() == 0.0){
+                            navigation(getLastKnownLocation(), (int) finalBearing(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                        } else {
+                            navigation(getLastKnownLocation(), (int) avlData.getHeading());
+                        }
+                    }
                 }
             } else {
                 Toast toast = Toast.makeText(getApplicationContext(),
@@ -1989,6 +2039,7 @@ public class MicroGisActivity extends AppCompatActivity
                 "\niconSize: [36,36],\nshadowUrl: null,\nshadowSize: null,\npopupAnchor: [0, -15]\n});\nif(typeof(navig)==='undefined')\n " +
                 "{\n navig = new L.marker([" + paramLocation.getLatitude() + ", " + paramLocation.getLongitude() + "], " +
                 "{icon: myIconNav}).addTo(map);\n}else{\nnavig.setIcon(myIconNav);navig.setLatLng([" + paramLocation.getLatitude() + ", " + paramLocation.getLongitude() + "]).addTo(map);\n}\n");
+        Log.d(TAG, "Navigation changed");
     }
 
     void setLtLn(){
@@ -2112,37 +2163,22 @@ public class MicroGisActivity extends AppCompatActivity
         return sbGPGGA.toString();
     }
 
-    public static double getAngle(double lat1, double lon1, double lat2, double lon2)
+    static public double finalBearing(double lat1, double long1, double lat2, double long2)
     {
-        //Formulas
+        return (_bearing(lat2, long2, lat1, long1) + 180.0) % 360;
+    }
 
-        //θ =   atan2(  sin(Δlong).cos(lat2),cos(lat1).sin(lat2) − sin(lat1).cos(lat2).cos(Δlong) )
-        // Δlong = long2 - long1
-        Log.i("angle", "Inside getAngle");
-        double latitude1 = Math.toRadians(lat1);
-        double longitude1 = Math.toRadians(lon1);
-        double latitude2 = Math.toRadians(lat2);
-        double longitude2 = Math.toRadians(lon2);
+    static private double _bearing(double lat1, double long1, double lat2, double long2)
+    {
+        double degToRad = Math.PI / 180.0;
+        double phi1 = lat1 * degToRad;
+        double phi2 = lat2 * degToRad;
+        double lam1 = long1 * degToRad;
+        double lam2 = long2 * degToRad;
 
-
-        double dlong = Math.toRadians(longitude2-longitude1);
-
-        double y = Math.sin(dlong) * Math.cos(latitude2);
-        double x = Math.cos(latitude1)*Math.sin(latitude2) - Math.sin(latitude1)*Math.cos(latitude2)*Math.cos(dlong);
-        double angle= Math.atan2(y, x);
-
-
-        if (angle < 0)
-            angle = Math.abs(angle);
-        else
-            angle = 2*Math.PI - angle;
-
-        Log.i("angle", String.valueOf(angle)+" in radians");
-
-        angle=Math.toDegrees(angle);
-        Log.i("angle", String.valueOf(angle)+" in degrees");
-
-        return angle;
+        return Math.atan2(Math.sin(lam2-lam1)*Math.cos(phi2),
+                Math.cos(phi1)*Math.sin(phi2) - Math.sin(phi1)*Math.cos(phi2)*Math.cos(lam2-lam1)
+        ) * 180/Math.PI;
     }
 
     public static String getCorrectPosition(double degree) {

@@ -301,8 +301,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         speed.setText("Speed: " + avl.getSpeed() + " Km/h");
         satellites.setText("Satellites: " + avl.getSatellites());
         HDOP.setText("HDOP: " + avl.getHdop());
-        direction.setText("Direction: " + (int) MicroGisActivity.getAngle(MicroGisActivity.mPreviousLocation.getLatitude(),
-                MicroGisActivity.mPreviousLocation.getLongitude(), MicroGisActivity.mLastLocation.getLatitude(), MicroGisActivity.mLastLocation.getLongitude()) + "°");
+        if (avl.getHeading() == 0.0){
+            direction.setText("Direction: " + (int) MicroGisActivity.finalBearing(MicroGisActivity.mPreviousLocation.getLatitude(),
+                    MicroGisActivity.mPreviousLocation.getLongitude(), MicroGisActivity.mLastLocation.getLatitude(), MicroGisActivity.mLastLocation.getLongitude()) + "°");
+        } else {
+            direction.setText("Direction: " + (int) avl.getHeading() + "°");
+        }
         altitude.setText("Altitude: " + avl.getAltitude());
         if (avl.getLongitude() == 0) {
             statusSignal.setText("No GPS signal!");
