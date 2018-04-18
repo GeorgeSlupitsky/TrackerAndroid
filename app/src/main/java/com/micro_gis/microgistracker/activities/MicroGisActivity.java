@@ -1700,8 +1700,9 @@ public class MicroGisActivity extends AppCompatActivity
         MenuItem menuTracks = navigationView.getMenu().findItem(R.id.tracks);
         menuTracks.setTitle(getString(R.string.my_tracks) + " (" + tracksCount + ")");
 
+        firstRequest = true;
+
         if (isRun) {
-            firstRequest = true;
 
             clearCarsFromMap();
 
