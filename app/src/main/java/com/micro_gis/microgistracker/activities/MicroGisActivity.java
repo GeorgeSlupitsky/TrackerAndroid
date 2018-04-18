@@ -138,8 +138,10 @@ public class MicroGisActivity extends AppCompatActivity
     boolean isButtonControl;
     List<Device> devices;
     boolean isTracking = false;
+    boolean firstRequest = true;
 
     private HashMap<Integer, List<String>> mapCoordinatesForTrackLine;
+    private List <String> coordinatesForBounds;
 
     @Inject
     Gson gson;
@@ -345,6 +347,8 @@ public class MicroGisActivity extends AppCompatActivity
                             objectsCount = devices.size();
 
                             int i = 0;
+
+                            coordinatesForBounds = new ArrayList<>();
 
                             myWebView.loadUrl("javascript: " +
                                     "var isClusterEnabled = " + isClusterEnabled + ";\n" +
@@ -565,7 +569,35 @@ public class MicroGisActivity extends AppCompatActivity
                                     }
                                 }
 
+                                if (firstRequest){
+                                    coordinatesForBounds.add("[" + device.getLat() + ", " + device.getLng() + "]");
+                                }
+
                                 i++;
+                            }
+
+                            if (firstRequest){
+                                Iterator iterator = coordinatesForBounds.iterator();
+
+                                String start = "[";
+                                String end = "]";
+                                String tempCoordinate = "";
+
+                                while (iterator.hasNext()){
+                                    String trailTrack = (String) iterator.next();
+                                    tempCoordinate = tempCoordinate + trailTrack;
+                                    if (iterator.hasNext()){
+                                        tempCoordinate = tempCoordinate + ", ";
+                                    }
+                                }
+
+                                String coordinates = start + tempCoordinate + end;
+
+                                myWebView.loadUrl("javascript: " +
+                                        "map.fitBounds(" + coordinates + ");\n"
+                                );
+
+                                firstRequest = false;
                             }
 
                             myWebView.loadUrl("javascript: " +
@@ -1669,6 +1701,8 @@ public class MicroGisActivity extends AppCompatActivity
         menuTracks.setTitle(getString(R.string.my_tracks) + " (" + tracksCount + ")");
 
         if (isRun) {
+            firstRequest = true;
+
             clearCarsFromMap();
 
             if (isNavigationEnabled){
