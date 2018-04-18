@@ -2,6 +2,7 @@ package com.micro_gis.microgistracker.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -158,6 +159,12 @@ public class StatusCodeCustomAdapter extends ArrayAdapter<Map<String, Object>> {
                 break;
         }
 
+
+        if (position % 2 == 0) {
+            row.setBackgroundColor(Color.parseColor("#f0efef"));
+        } else {
+            row.setBackgroundColor(Color.WHITE);
+        }
 
         holder.textViewText.setText(value);
 

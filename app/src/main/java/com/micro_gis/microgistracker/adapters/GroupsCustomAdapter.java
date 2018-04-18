@@ -3,6 +3,7 @@ package com.micro_gis.microgistracker.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -89,6 +90,13 @@ public class GroupsCustomAdapter extends BaseAdapter {
                 notifyDataSetChanged();
             }
         });
+
+        if (position % 2 == 0) {
+            v.setBackgroundColor(Color.parseColor("#f0efef"));
+        } else {
+            v.setBackgroundColor(Color.WHITE);
+        }
+
         return v;
     }
 }

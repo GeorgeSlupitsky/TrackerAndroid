@@ -219,4 +219,9 @@
     <string name="screen_activity_always">Завжди</string>
     <string name="screen_activity_while_charging">При зарядці</string>
     <string name="screen_activity_normal">Викл.</string>
+
+    <string name="server_error">Помилка сервера</string>
+
+    <string name="startTrack">Старт</string>
+    <string name="finishTrack">Фініш</string>
 </resources>

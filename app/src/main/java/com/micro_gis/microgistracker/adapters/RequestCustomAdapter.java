@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -136,6 +137,12 @@ public class RequestCustomAdapter extends ArrayAdapter<Map<String, Object>>{
                 alertDialog.show();
             }
         });
+
+        if (position % 2 == 0) {
+            row.setBackgroundColor(Color.parseColor("#f0efef"));
+        } else {
+            row.setBackgroundColor(Color.WHITE);
+        }
 
         return row;
     }

@@ -16,102 +16,133 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/black"
-            android:text="@string/sensor0s"
-            android:id="@+id/sensor0set" />
-        <EditText
-            android:layout_width="fill_parent"
+            android:orientation="vertical"
+            android:background="#f0efef">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/black"
+                android:text="@string/sensor0s"
+                android:id="@+id/sensor0set" />
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/sensor_0"
+                android:singleLine="true"
+                android:imeOptions="actionDone"
+                android:inputType="textCapSentences"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/sensor_0"
-            android:singleLine="true"
-            android:imeOptions="actionDone"
-            android:inputType="textCapSentences"/>
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/black"
+                android:text="@string/sensor1s"
+                android:id="@+id/sensor1set" />
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/sensor_1"
+                android:singleLine="true"
+                android:imeOptions="actionDone"
+                android:inputType="textCapSentences"/>
+        </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/black"
-            android:text="@string/sensor1s"
-            android:id="@+id/sensor1set" />
-        <EditText
-            android:layout_width="fill_parent"
+            android:orientation="vertical"
+            android:background="#f0efef">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/black"
+                android:text="@string/sensor2s"
+                android:id="@+id/sensor2set"/>
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/sensor_2"
+                android:singleLine="true"
+                android:imeOptions="actionDone"
+                android:inputType="textCapSentences"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/sensor_1"
-            android:singleLine="true"
-            android:imeOptions="actionDone"
-            android:inputType="textCapSentences"/>
-        <TextView
-            android:layout_width="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/black"
+                android:text="@string/sensor3s"
+                android:id="@+id/textView5"/>
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/sensor_3"
+                android:singleLine="true"
+                android:imeOptions="actionDone"
+                android:inputType="textCapSentences"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/black"
-            android:text="@string/sensor2s"
-            android:id="@+id/sensor2set"/>
+            android:orientation="vertical"
+            android:background="#f0efef">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/black"
+                android:text="@string/sensor4s"
+                android:id="@+id/sensor4set"/>
 
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/sensor_4"
+                android:singleLine="true"
+                android:imeOptions="actionDone"
+                android:inputType="textCapSentences"/>
+        </LinearLayout>
 
-
-
-
-        <EditText
-            android:layout_width="fill_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/sensor_2"
-            android:singleLine="true"
-            android:imeOptions="actionDone"
-            android:inputType="textCapSentences"/>
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/black"
+                android:text="@string/sensor5s"
+                android:id="@+id/textView7"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/black"
-            android:text="@string/sensor3s"
-            android:id="@+id/textView5"/>
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/sensor_5"
+                android:singleLine="true"
+                android:imeOptions="actionDone"
+                android:inputType="textCapSentences"/>
+        </LinearLayout>
 
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/sensor_3"
-            android:singleLine="true"
-            android:imeOptions="actionDone"
-            android:inputType="textCapSentences"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/black"
-            android:text="@string/sensor4s"
-            android:id="@+id/sensor4set"/>
-
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/sensor_4"
-            android:singleLine="true"
-            android:imeOptions="actionDone"
-            android:inputType="textCapSentences"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/black"
-            android:text="@string/sensor5s"
-            android:id="@+id/textView7"/>
-
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/sensor_5"
-            android:singleLine="true"
-            android:imeOptions="actionDone"
-            android:inputType="textCapSentences"/>
 
         <Button
             android:layout_width="wrap_content"

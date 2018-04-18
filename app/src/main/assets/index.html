@@ -211,7 +211,7 @@ function drawLineTrack(trackIntent, i) {
     drawLine.addTo(map);
 }
 
-function lineTrack(trackIntent, begin, end) {
+function lineTrack(trackIntent, begin, end, start, finish) {
 
     polyline = new L.Polyline(trackIntent, {
         opacity: 0.5,
@@ -222,21 +222,20 @@ function lineTrack(trackIntent, begin, end) {
 
     beginMarker = new L.marker(begin, {icon: startIcon});
     beginMarker.addTo(map).addTo(map);
+    beginMarker.bindPopup(start);
     beginMarker.typeMarker = 'flag';
 
     endMarker = new L.marker(end, {icon: finishIcon});
     endMarker.addTo(map);
+    endMarker.bindPopup(finish);
     endMarker.typeMarker = 'flag';
-
-    beginMarker.bindPopup("Start").bindPopup();
-    endMarker.bindPopup("Finish").bindPopup();
 }
 
 
 //actual track
 var navig;
 
-function onlineTrack(trackIntent, begin, end) {
+function onlineTrack(trackIntent, begin, end, start) {
     var polylineOnline = new L.Polyline(trackIntent, {
         color: 'red',
         weight: 3,
@@ -248,7 +247,7 @@ function onlineTrack(trackIntent, begin, end) {
     if (typeof(startMarker) === 'undefined') {
         startMarker = new L.marker(begin, {icon: startIcon});
         startMarker.addTo(map);
-        startMarker.bindPopup("  start").openPopup();
+        startMarker.bindPopup(start).openPopup();
         startMarker.typeMarker = 'flag';
     }
 

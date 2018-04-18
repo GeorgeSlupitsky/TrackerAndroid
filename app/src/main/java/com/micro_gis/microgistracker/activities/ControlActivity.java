@@ -111,12 +111,12 @@ public class ControlActivity extends AppCompatActivity implements View.OnLongCli
 //        sensorSetting.setOnClickListener(this);
 
         SharedPreferences sharedpreferences = getSharedPreferences("sensorpref", Context.MODE_PRIVATE);
-        button0.setText(sharedpreferences.getString(SettingSensorsActivity.S0, "").equals("") ? "SENSOR 0" : sharedpreferences.getString(SettingSensorsActivity.S0, ""));
-        button1.setText(sharedpreferences.getString(SettingSensorsActivity.S1, "").equals("") ? "SENSOR 1" : sharedpreferences.getString(SettingSensorsActivity.S1, ""));
-        button2.setText(sharedpreferences.getString(SettingSensorsActivity.S2, "").equals("") ? "SENSOR 2" : sharedpreferences.getString(SettingSensorsActivity.S2, ""));
-        button3.setText(sharedpreferences.getString(SettingSensorsActivity.S3, "").equals("") ? "SENSOR 3" : sharedpreferences.getString(SettingSensorsActivity.S3, ""));
-        button4.setText(sharedpreferences.getString(SettingSensorsActivity.S4, "").equals("") ? "SENSOR 4" : sharedpreferences.getString(SettingSensorsActivity.S4, ""));
-        button5.setText(sharedpreferences.getString(SettingSensorsActivity.S5, "").equals("") ? "SENSOR 5" : sharedpreferences.getString(SettingSensorsActivity.S5, ""));
+        button0.setText(sharedpreferences.getString(SettingSensorsActivity.S0, "").equals("") ? getString(R.string.sensor0) : sharedpreferences.getString(SettingSensorsActivity.S0, ""));
+        button1.setText(sharedpreferences.getString(SettingSensorsActivity.S1, "").equals("") ? getString(R.string.sensor1) : sharedpreferences.getString(SettingSensorsActivity.S1, ""));
+        button2.setText(sharedpreferences.getString(SettingSensorsActivity.S2, "").equals("") ? getString(R.string.sensor2) : sharedpreferences.getString(SettingSensorsActivity.S2, ""));
+        button3.setText(sharedpreferences.getString(SettingSensorsActivity.S3, "").equals("") ? getString(R.string.sensor3) : sharedpreferences.getString(SettingSensorsActivity.S3, ""));
+        button4.setText(sharedpreferences.getString(SettingSensorsActivity.S4, "").equals("") ? getString(R.string.sensor4) : sharedpreferences.getString(SettingSensorsActivity.S4, ""));
+        button5.setText(sharedpreferences.getString(SettingSensorsActivity.S5, "").equals("") ? getString(R.string.sensor5) : sharedpreferences.getString(SettingSensorsActivity.S5, ""));
         sos.setOnLongClickListener(new View.OnLongClickListener() {
 
             @Override
@@ -303,12 +303,12 @@ public class ControlActivity extends AppCompatActivity implements View.OnLongCli
         Button button5 = (Button) findViewById(R.id.button5);
 
         SharedPreferences sharedpreferences = getSharedPreferences("sensorpref", Context.MODE_PRIVATE);
-        button0.setText(sharedpreferences.getString(SettingSensorsActivity.S0, "").equals("") ? "SENSOR 0" : sharedpreferences.getString(SettingSensorsActivity.S0, ""));
-        button1.setText(sharedpreferences.getString(SettingSensorsActivity.S1, "").equals("") ? "SENSOR 1" : sharedpreferences.getString(SettingSensorsActivity.S1, ""));
-        button2.setText(sharedpreferences.getString(SettingSensorsActivity.S2, "").equals("") ? "SENSOR 2" : sharedpreferences.getString(SettingSensorsActivity.S2, ""));
-        button3.setText(sharedpreferences.getString(SettingSensorsActivity.S3, "").equals("") ? "SENSOR 3" : sharedpreferences.getString(SettingSensorsActivity.S3, ""));
-        button4.setText(sharedpreferences.getString(SettingSensorsActivity.S4, "").equals("") ? "SENSOR 4" : sharedpreferences.getString(SettingSensorsActivity.S4, ""));
-        button5.setText(sharedpreferences.getString(SettingSensorsActivity.S5, "").equals("") ? "SENSOR 5" : sharedpreferences.getString(SettingSensorsActivity.S5, ""));
+        button0.setText(sharedpreferences.getString(SettingSensorsActivity.S0, "").equals("") ? getString(R.string.sensor0) : sharedpreferences.getString(SettingSensorsActivity.S0, ""));
+        button1.setText(sharedpreferences.getString(SettingSensorsActivity.S1, "").equals("") ? getString(R.string.sensor1) : sharedpreferences.getString(SettingSensorsActivity.S1, ""));
+        button2.setText(sharedpreferences.getString(SettingSensorsActivity.S2, "").equals("") ? getString(R.string.sensor2) : sharedpreferences.getString(SettingSensorsActivity.S2, ""));
+        button3.setText(sharedpreferences.getString(SettingSensorsActivity.S3, "").equals("") ? getString(R.string.sensor3) : sharedpreferences.getString(SettingSensorsActivity.S3, ""));
+        button4.setText(sharedpreferences.getString(SettingSensorsActivity.S4, "").equals("") ? getString(R.string.sensor4) : sharedpreferences.getString(SettingSensorsActivity.S4, ""));
+        button5.setText(sharedpreferences.getString(SettingSensorsActivity.S5, "").equals("") ? getString(R.string.sensor5) : sharedpreferences.getString(SettingSensorsActivity.S5, ""));
 
     }
 

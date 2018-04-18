@@ -548,7 +548,7 @@ public class MapObjectFragment extends Fragment {
                                 String hexColor = String.format("#%06X", (0xFFFFFF & sharedPreferences.getInt("trackcolor", 0xffff0000)));
 
                                 webView.loadUrl("javascript: " +
-                                    "lineTrack(" + coordinates + "," + startCoordinate + "," + endCoordinate + ");\n" +
+                                    "lineTrack(" + coordinates + "," + startCoordinate + "," + endCoordinate + "," + "'" + getString(R.string.startTrack) + "'" + "," + "'" + getString(R.string.finishTrack) + "'" + ");\n" +
                                         "map.fitBounds([" + startCoordinate + ", " + endCoordinate + "]);\n"
 
                                 );

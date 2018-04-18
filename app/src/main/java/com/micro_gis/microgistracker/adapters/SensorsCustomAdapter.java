@@ -2,6 +2,7 @@ package com.micro_gis.microgistracker.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -87,12 +88,13 @@ public class SensorsCustomAdapter extends ArrayAdapter<Map<String, String>> {
 
         holder.textViewKey.setText(key);
 
-        return row;
-    }
+        if (position % 2 == 0) {
+            row.setBackgroundColor(Color.parseColor("#f0efef"));
+        } else {
+            row.setBackgroundColor(Color.WHITE);
+        }
 
-    static class InfoObjectHolder {
-        TextView textViewKey;
-        TextView textViewValue;
+        return row;
     }
 
 }

@@ -105,7 +105,7 @@ function drawLineTrack(trackIntent) {
     drawLine.addTo(map);
 }
 
-function lineTrack(trackIntent, begin, end) {
+function lineTrack(trackIntent, begin, end, start, finish) {
 
     polyline = new L.Polyline(trackIntent, {
         opacity: 0.5,
@@ -115,14 +115,13 @@ function lineTrack(trackIntent, begin, end) {
 
     beginMarker = new L.marker(begin, {icon: startIcon});
     beginMarker.addTo(map).addTo(map);
+    beginMarker.bindPopup(start);
     beginMarker.typeMarker = 'flag';
 
     endMarker = new L.marker(end, {icon: finishIcon});
     endMarker.addTo(map);
+    endMarker.bindPopup(finish);
     endMarker.typeMarker = 'flag';
-
-    beginMarker.bindPopup("Start").bindPopup();
-    endMarker.bindPopup("Finish").bindPopup();
 }
 
 </script>

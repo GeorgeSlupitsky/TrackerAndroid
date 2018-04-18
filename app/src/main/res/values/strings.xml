@@ -221,4 +221,9 @@
     <string name="screen_activity_always">Always</string>
     <string name="screen_activity_while_charging">While charging</string>
     <string name="screen_activity_normal">Off</string>
+
+    <string name="server_error">Server error</string>
+
+    <string name="startTrack">Start</string>
+    <string name="finishTrack">Finish</string>
 </resources>

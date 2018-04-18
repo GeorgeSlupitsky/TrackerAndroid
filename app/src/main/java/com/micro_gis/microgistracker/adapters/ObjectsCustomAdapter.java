@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -179,6 +180,12 @@ public class ObjectsCustomAdapter extends ArrayAdapter<Map<String, Object>> {
 
             }
         });
+
+        if (position % 2 == 0) {
+            row.setBackgroundColor(Color.parseColor("#f0efef"));
+        } else {
+            row.setBackgroundColor(Color.WHITE);
+        }
 
         return row;
     }

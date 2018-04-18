@@ -616,6 +616,11 @@ public class MicroGisActivity extends AppCompatActivity
                                     "}\n" +
                                     "}\n");
                         }
+                    } else {
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                getString(R.string.server_error), Toast.LENGTH_LONG);
+                        toast.show();
+                        sharedpreferences.edit().putString("groupObjects", "empty").apply();
                     }
 
                 }
@@ -1521,8 +1526,9 @@ public class MicroGisActivity extends AppCompatActivity
 //                webView.loadUrl("javascript:map.removeControl;");
                 String weight = sharedpreferences.getString("trackWidth", "3");
                 String hexColor = String.format("#%06X", (0xFFFFFF & sharedpreferences.getInt("trackcolor", 0xffff0000)));
-                webView.loadUrl("javascript:lineTrack(" + intent.getStringExtra("trackpoits") + "," + intent.getStringExtra("start") + "," + intent.getStringExtra("end") +
-                        ");");
+                webView.loadUrl("javascript:lineTrack(" + intent.getStringExtra("trackpoits") + "," + intent.getStringExtra("start") + "," + intent.getStringExtra("end") + "," + "'" + getString(R.string.startTrack) + "'" + "," + "'" + getString(R.string.finishTrack) + "'" + ");\n" +
+                                "map.fitBounds([" + intent.getStringExtra("start") + ", " + intent.getStringExtra("end") + "]);\n"
+                );
                 webView.loadUrl("javascript:polyline.setStyle({\n" +
                         "  color: '" + hexColor +/*",'\n" +
                         " weight: "+weight +*/
@@ -1855,7 +1861,7 @@ public class MicroGisActivity extends AppCompatActivity
         }
 
         WebView webView = (WebView) findViewById(R.id.webview);
-        webView.loadUrl("javascript:onlineTrack(" + points.toString() + "," + points.get(0).toString() + "," + points.get(points.size() - 1).toString() + ");");
+        webView.loadUrl("javascript:onlineTrack(" + points.toString() + "," + points.get(0).toString() + "," + points.get(points.size() - 1).toString() + "," + "'" + getString(R.string.startTrack) + "'" + ");");
     }
 
     @Override

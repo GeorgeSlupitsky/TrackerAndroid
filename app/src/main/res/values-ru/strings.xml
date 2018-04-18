@@ -219,8 +219,13 @@
     <string name="less_time">Период не может быть меньше, чем 10 с</string>
     <string name="less_angle">Угол не может быть меньше, чем 10</string>
 
-    <string name="screen_activity">Screen activity</string>
-    <string name="screen_activity_always">Always</string>
-    <string name="screen_activity_while_charging">While charging</string>
-    <string name="screen_activity_normal">Off</string>
+    <string name="screen_activity">Активный экран:</string>
+    <string name="screen_activity_always">Всегда</string>
+    <string name="screen_activity_while_charging">При зарядке</string>
+    <string name="screen_activity_normal">Выкл.</string>
+
+    <string name="server_error">Ошибка сервера</string>
+
+    <string name="startTrack">Старт</string>
+    <string name="finishTrack">Финиш</string>
 </resources>
