@@ -762,7 +762,7 @@ public class MicroGisActivity extends AppCompatActivity
                             if (firstStart <= 9){
                                 navigation(getLastKnownLocation(), (int) finalBearing(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
                             }
-                            if (avlData.getSpeed() > 3){
+                            if (avlData.getLongitude() != 0.0 & avlData.getSpeed() >= minspeed & avlData.getSpeed() <= maxspeed){
                                 if (avlData.getHeading() == 0.0){
                                     navigation(getLastKnownLocation(), (int) finalBearing(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(), mLastLocation.getLatitude(), mLastLocation.getLongitude()));
                                 } else {
