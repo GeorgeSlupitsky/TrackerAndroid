@@ -18,7 +18,6 @@ import android.location.Location;
 
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -72,6 +71,7 @@ import com.micro_gis.microgistracker.models.rest.ResponseGroupsMoving;
 import com.micro_gis.microgistracker.models.rest.ResponseStatuses;
 import com.micro_gis.microgistracker.modules.MicroGisActivityModule;
 import com.micro_gis.microgistracker.retrofit.API;
+import com.micro_gis.microgistracker.services.CheckNotificationService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -139,9 +139,11 @@ public class MicroGisActivity extends AppCompatActivity
     List<Device> devices;
     boolean isTracking = false;
     boolean firstRequest = true;
+    boolean isLogin = false;
 
     private HashMap<Integer, List<String>> mapCoordinatesForTrackLine;
     private List <String> coordinatesForBounds;
+    private boolean serviceStarted = false;
 
     @Inject
     Gson gson;
@@ -1319,6 +1321,8 @@ public class MicroGisActivity extends AppCompatActivity
                 }
             }
         }, 1500);
+
+
     }
 
     void getMarkers(){
@@ -1396,6 +1400,12 @@ public class MicroGisActivity extends AppCompatActivity
 
     @Override
     public void onDestroy() {
+
+        if (serviceStarted){
+            sharedpreferences.edit().putBoolean("appDestroy", true).apply();
+            stopService(new Intent(this, CheckNotificationService.class));
+        }
+
         addddd = 0;
         handler.removeCallbacks(r);
         handler.removeCallbacks(requst);
@@ -1479,6 +1489,9 @@ public class MicroGisActivity extends AppCompatActivity
             startActivityForResult(intent, 1);
         } else if (id == R.id.about){
             Intent intent = new Intent(this, AboutActivity.class);
+            startActivityForResult(intent, 1);
+        } else if (id == R.id.driver){
+            Intent intent = new Intent(this, DriverLoginActivity.class);
             startActivityForResult(intent, 1);
         } else if (id == R.id.exit) {
 
@@ -1603,6 +1616,8 @@ public class MicroGisActivity extends AppCompatActivity
         drawLine = sharedpreferences.getBoolean("drawLine", true);
         isSendingToServer = sharedpreferences.getString("switchKey", "false");
         buttonsOfControl = sharedpreferences.getBoolean("buttonsOfControl", true);
+        isLogin = sharedpreferences.getBoolean("loginIn", false);
+        serviceStarted = sharedpreferences.getBoolean("serviceStarted", false);
 
         String screenActivity = sharedpreferences.getString("screenActivity", "normal");
 

@@ -21,6 +21,7 @@
     <string name="info">INFO</string>
     <string name="groups">GROUPS</string>
     <string name="objects">OBJECTS</string>
+    <string name="drivers">DRIVER</string>
     <string name="sensors">SENSORS</string>
     <string name="my_tracks">MY TRACKS</string>
     <string name="app_setting">SETTINGS</string>
@@ -226,4 +227,37 @@
 
     <string name="startTrack">Start</string>
     <string name="finishTrack">Finish</string>
+
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="enter">Login</string>
+    <string name="remember_me">Remember me</string>
+
+    <string name="events">Events</string>
+    <string name="route">Route</string>
+    <string name="schedule">Schedule</string>
+
+    <string name="incorrect_password">Incorrect password</string>
+    <string name="login_empty">Login is empty</string>
+
+    <string name="logout">Are you sure to want logout?</string>
+    <string name="logout_driver">Logout from driver account</string>
+    <string name="no_actual_voyages">No actual voyages</string>
+
+    <string name="circle">Circle</string>
+
+    <string name="nextPoint">Next point</string>
+    <string name="previousPoint">Previous point</string>
+
+    <string name="tillEndShift">Till end of shift is left 5 minutes</string>
+    <string name="endShift">End of shift</string>
+    <string name="newShift">You have new shift:</string>
+    <string name="routeDriver">Route:</string>
+    <string name="scheduleDriver">Schedule:</string>
+    <string name="vehicle">Vehicle:</string>
+    <string name="shift">Shift:</string>
+    <string name="begin">begin</string>
+
+    <string name="newMassage">New massage</string>
+
 </resources>

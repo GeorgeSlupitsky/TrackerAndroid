@@ -15,6 +15,10 @@
             android:title="@string/objects"
             android:icon="@drawable/object"/>
         <item
+            android:id="@+id/driver"
+            android:title="@string/drivers"
+            android:icon="@drawable/driver"/>
+        <item
             android:id="@+id/places"
             android:title="@string/my_place"
             android:icon="@drawable/marker"/>

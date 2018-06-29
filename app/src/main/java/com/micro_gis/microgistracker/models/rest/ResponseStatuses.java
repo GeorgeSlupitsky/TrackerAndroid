@@ -18,7 +18,11 @@ public enum ResponseStatuses {
     WARNING_TEMPORARILY_SUSPENDED("has been temporarily suspended due to debts"),
     WARNING_KEY_HAS_NOT_ACCESS("This key have not access permission to account"),
     WARNING_HAVE_NOT_GROUP("have not group"),
-    WARNING_DOES_NOT_HAVE_ACCESS_TO_THE_DEVICE("does not have access to the device with id");
+    WARNING_DOES_NOT_HAVE_ACCESS_TO_THE_DEVICE("does not have access to the device with id"),
+    PASSWORD_NOT_VALID("PASSWORD_NOT_VALID"),
+    NO_ACTUAL_VOYAGES("NO_ACTUAL_VOYAGES"),
+    VOYAGE_EXPIRED("VOYAGE_EXPIRED"),
+    INCORRECT_PASSWORD("INCORRECT_PASSWORD");
 
     private final String status;
 

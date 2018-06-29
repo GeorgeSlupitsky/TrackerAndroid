@@ -19,6 +19,7 @@
     <string name="info">Інформація</string>
     <string name="groups">Групи</string>
     <string name="objects">Об`єкти</string>
+    <string name="drivers">Водій</string>
     <string name="sensors">Сенсори</string>
     <string name="my_tracks">Треки</string>
     <string name="app_setting">Налаштування</string>
@@ -224,4 +225,36 @@
 
     <string name="startTrack">Старт</string>
     <string name="finishTrack">Фініш</string>
+
+    <string name="login">Логін</string>
+    <string name="password">Пароль</string>
+    <string name="enter">Увійти</string>
+    <string name="remember_me">Запам`ятати</string>
+
+    <string name="events">Події</string>
+    <string name="route">Маршрут</string>
+    <string name="schedule">Графік</string>
+
+    <string name="incorrect_password">Не вірний пароль</string>
+    <string name="login_empty">Пусте поле логіна</string>
+
+    <string name="logout">Ви дійсно хочете вийти?</string>
+    <string name="logout_driver">Вихід з облікового запису водія</string>
+    <string name="no_actual_voyages">У Вас не має актуальних поїхдок</string>
+
+    <string name="circle">Коло</string>
+
+    <string name="nextPoint">Наступна точка</string>
+    <string name="previousPoint">Попередня точка</string>
+
+    <string name="tillEndShift">До кінця зміни залишилось 5 хв</string>
+    <string name="endShift">Кінець зміни</string>
+    <string name="newShift">Вам назначена зміна на:</string>
+    <string name="routeDriver">Маршрут:</string>
+    <string name="scheduleDriver">Графік:</string>
+    <string name="vehicle">ТС:</string>
+    <string name="shift">Зміна:</string>
+    <string name="begin">розпочато</string>
+
+    <string name="newMassage">Нове повідомлення</string>
 </resources>

@@ -28,6 +28,9 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("create table requestgroup ("
                 + "id integer primary key autoincrement, groupname text, account text, keyString text, url text, requestInterval text, groups text, timeZone text);");
 
+        db.execSQL("create table messages ("
+                + "id integer primary key autoincrement, time integer, message text, isSeen integer);");
+
     }
 
 
