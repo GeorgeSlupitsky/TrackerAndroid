@@ -15,7 +15,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.micro_gis.microgistracker.DBHelper;
-import com.micro_gis.microgistracker.activities.DriverNotificationActivity;
+import com.micro_gis.microgistracker.activities.DriverActivityTags;
 import com.micro_gis.microgistracker.models.rest.RequestDriverEvents;
 import com.micro_gis.microgistracker.models.rest.ResponseDriverEvents;
 import com.micro_gis.microgistracker.models.rest.ResponseStatuses;
@@ -26,7 +26,6 @@ import com.micro_gis.microgistracker.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -180,7 +179,7 @@ public class CheckNotificationService extends Service {
     };
 
     private void showNotification(String message){
-        Intent intent = new Intent(this, DriverNotificationActivity.class);
+        Intent intent = new Intent(this, DriverActivityTags.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
