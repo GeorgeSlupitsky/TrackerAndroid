@@ -45,8 +45,9 @@ public class DriverNotificationActivity extends AppCompatActivity {
     private final String ATTRIBUTE_MESSAGE = "message";
     private final String ATTRIBUTE_ID = "id";
     private final String ATTRIBUTE_IS_SEEN = "is seen";
+    private final String ATTRIBUTE_VOYAGE_ID = "voyage id";
 
-    private String[] from = {ATTRIBUTE_NAME_TIME, ATTRIBUTE_MESSAGE, ATTRIBUTE_ID, ATTRIBUTE_IS_SEEN};
+    private String[] from = {ATTRIBUTE_NAME_TIME, ATTRIBUTE_MESSAGE, ATTRIBUTE_ID, ATTRIBUTE_IS_SEEN, ATTRIBUTE_VOYAGE_ID};
 
     private ArrayList<Map<String, Object>> data;
 
@@ -90,6 +91,7 @@ public class DriverNotificationActivity extends AppCompatActivity {
                     int messageColIndex = c.getColumnIndex("message");
                     int idColIndex = c.getColumnIndex("id");
                     int isSeenColIndex = c.getColumnIndex("isSeen");
+                    int voyageIdColIndex = c.getColumnIndex("voyageId");
 
                     Map<String, Object> m = new HashMap<>();
 
@@ -97,6 +99,7 @@ public class DriverNotificationActivity extends AppCompatActivity {
                     m.put(ATTRIBUTE_MESSAGE, c.getString(messageColIndex));
                     m.put(ATTRIBUTE_ID, c.getInt(idColIndex));
                     m.put(ATTRIBUTE_IS_SEEN, c.getInt(isSeenColIndex));
+                    m.put(ATTRIBUTE_VOYAGE_ID, c.getLong(voyageIdColIndex));
 
                     data.add(m);
 
@@ -112,7 +115,11 @@ public class DriverNotificationActivity extends AppCompatActivity {
 
             listView.setAdapter(driverNotificationCustomAdapter);
 
-            handler.postDelayed(this, 25000);
+            if (data.isEmpty()){
+                handler.postDelayed(this,1000);
+            } else {
+                handler.postDelayed(this, 30000);
+            }
         }
     };
 
@@ -140,6 +147,7 @@ public class DriverNotificationActivity extends AppCompatActivity {
                 int messageColIndex = c.getColumnIndex("message");
                 int idColIndex = c.getColumnIndex("id");
                 int isSeenColIndex = c.getColumnIndex("isSeen");
+                int voyageIdColIndex = c.getColumnIndex("voyageId");
 
                 Map<String, Object> m = new HashMap<>();
 
@@ -147,6 +155,7 @@ public class DriverNotificationActivity extends AppCompatActivity {
                 m.put(ATTRIBUTE_MESSAGE, c.getString(messageColIndex));
                 m.put(ATTRIBUTE_ID, c.getInt(idColIndex));
                 m.put(ATTRIBUTE_IS_SEEN, c.getInt(isSeenColIndex));
+                m.put(ATTRIBUTE_VOYAGE_ID, c.getLong(voyageIdColIndex));
 
                 data.add(m);
             } while (c.moveToNext());
@@ -219,14 +228,23 @@ public class DriverNotificationActivity extends AppCompatActivity {
                 handler.post(checkCharging);
                 break;
         }
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         handler.post(checkForNotification);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        handler.removeCallbacks(checkForNotification);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         handler.removeCallbacks(checkCharging);
-        handler.removeCallbacks(checkForNotification);
     }
 }

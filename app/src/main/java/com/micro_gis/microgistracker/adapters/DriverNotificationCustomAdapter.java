@@ -69,11 +69,13 @@ public class DriverNotificationCustomAdapter extends ArrayAdapter<Map<String, Ob
 
             Integer idInt = (Integer) data.get(position).get(mFrom[2]);
             String id = String.valueOf(idInt);
+            Long voyageId = (Long) data.get(position).get(mFrom[4]);
 
             ContentValues cv = new ContentValues();
             cv.put("time", time);
             cv.put("message", message);
             cv.put("isSeen", 1);
+            cv.put("voyageId", voyageId);
 
             db.update("messages", cv, "id = ?", new String[] { id });
         }

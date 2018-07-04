@@ -51,6 +51,8 @@ public class CheckNotificationService extends Service {
 
     private final static String TAG = "NotificationService";
 
+    private NotificationManager notificationManager;
+
     Runnable checkNotificationForDriver = new Runnable() {
         @Override
         public void run() {
@@ -74,32 +76,36 @@ public class CheckNotificationService extends Service {
                             Long now = nowDate.getTime() / 1000;
 
                             for (Voyage voyage : voyages) {
+                                Long voyageId = voyage.getId();
                                 String message = null;
                                 if (voyage.isActive()) {
-                                    if (now >= voyage.getDateStart() && now < voyage.getDateStart() + 30){
+                                    Map<Long, String> activeMessages = voyage.getMessageByTime();
+
+                                    for (Long time: activeMessages.keySet()){
+                                        if (now >= time){
+                                            message = activeMessages.get(time);
+                                            addMessageToDB(cv, db, message, time, voyageId);
+                                        }
+                                    }
+
+                                    if (now >= voyage.getDateStart()){
                                         String startTimeShift = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date(voyage.getDateStart() * 1000));
                                         message = getString(R.string.shift) + " " + startTimeShift + "\n" +
                                                 getString(R.string.routeDriver) + " " + voyage.getRouteName() + "\n" +
                                                 getString(R.string.schedule) + " " + voyage.getScheduleName() + "\n" +
                                                 getString(R.string.vehicle) + " " + voyage.getDeviceName() + "\n" +
                                                 getString(R.string.begin);
-                                        showNotification(message);
+                                        addMessageToDB(cv, db, message, voyage.getDateStart(), voyageId);
                                     }
-                                    if (now >= voyage.getDateEnd() - 300 && now < voyage.getDateEnd() - 270){
+
+                                    if (now >= voyage.getDateEnd() - 300){
                                         message = getString(R.string.tillEndShift);
-                                        showNotification(message);
-                                    } else if (now >= voyage.getDateEnd() - 30 && now < voyage.getDateEnd()){
-                                        message = getString(R.string.endShift);
-                                        showNotification(message);
+                                        addMessageToDB(cv, db, message, voyage.getDateEnd() - 300, voyageId);
                                     }
 
-                                    Map<Long, String> activeMessages = voyage.getMessageByTime();
-
-                                    for (Long time: activeMessages.keySet()){
-                                        if (now >= time && now < time + 30){
-                                            message = activeMessages.get(time);
-                                            showNotification(message);
-                                        }
+                                    if (now >= voyage.getDateEnd() - 45){
+                                        message = getString(R.string.endShift);
+                                        addMessageToDB(cv, db, message, voyage.getDateEnd(), voyageId);
                                     }
 
                                 } else {
@@ -110,39 +116,17 @@ public class CheckNotificationService extends Service {
                                                 getString(R.string.routeDriver) + " " + voyage.getRouteName() + "\n" +
                                                 getString(R.string.schedule) + " " + voyage.getScheduleName() + "\n" +
                                                 getString(R.string.vehicle) + " " + voyage.getDeviceName();
-
-
-                                        Cursor c = db.query("messages", null, null, null, null, null, null);
-
-                                        boolean isInDB = false;
-
-                                        if (c.moveToFirst()) {
-                                            do {
-                                                int messageColIndex = c.getColumnIndex("message");
-
-                                                String dbMessage = c.getString(messageColIndex);
-
-                                                if (dbMessage.equals(message)) {
-                                                    isInDB = true;
-                                                }
-                                            } while (c.moveToNext());
-                                        }
-
-                                        if (isInDB){
-                                            message = null;
-                                        } else {
-                                            showNotification(message);
-                                        }
-
-                                        c.close();
+                                        addMessageToDB(cv, db, message, now, voyageId);
                                     }
-                                }
 
-                                if (message != null){
-                                    cv.put("time", now);
-                                    cv.put("message", message);
-                                    cv.put("isSeen", 0);
-                                    db.insert("messages", null, cv);
+                                    Map<Long, String> activeMessages = voyage.getMessageByTime();
+
+                                    for (Long time: activeMessages.keySet()){
+                                        if (now >= time){
+                                            message = activeMessages.get(time);
+                                            addMessageToDB(cv, db, message, time, voyageId);
+                                        }
+                                    }
                                 }
                             }
 
@@ -186,14 +170,47 @@ public class CheckNotificationService extends Service {
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(getString(R.string.newMassage))
                 .setContentIntent(pendingIntent)
+                .setDefaults(Notification.DEFAULT_ALL)
                 .setAutoCancel(true)
                 .setContentText(message);
 
         Notification notification = builder.build();
 
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(1, notification);
+    }
+
+    private void addMessageToDB(ContentValues cv, SQLiteDatabase db, String message, Long time, Long voyageId){
+        Cursor c = db.query("messages", null, null, null, null, null, null);
+
+        boolean isInDB = false;
+
+        if (c.moveToFirst()) {
+            do {
+                int messageColIndex = c.getColumnIndex("message");
+
+                String dbMessage = c.getString(messageColIndex);
+
+                if (dbMessage.equals(message)) {
+                    isInDB = true;
+                }
+            } while (c.moveToNext());
+        }
+
+        if (isInDB){
+            message = null;
+        } else {
+            showNotification(message);
+        }
+
+        if (message != null){
+            cv.put("time", time);
+            cv.put("message", message);
+            cv.put("isSeen", 0);
+            cv.put("voyageId", voyageId);
+            db.insert("messages", null, cv);
+        }
+
+        c.close();
     }
 
     @Override
@@ -210,8 +227,13 @@ public class CheckNotificationService extends Service {
         sharedPreferences.edit().putBoolean("serviceStarted", true).apply();
 
         url = sharedPreferences.getString("url", "http://track.micro-gis.com/api/");
+        driverLogin = sharedPreferences.getInt("driverLogin", 0);
+        driverPassword = sharedPreferences.getString("driverPassword", "");
 
         api = APIController.getApi(url);
+
+        notificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         handler.post(checkNotificationForDriver);
     }
@@ -227,8 +249,6 @@ public class CheckNotificationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         Log.d(TAG, "StartCommand");
-        driverLogin = intent.getIntExtra("driverLogin", 0);
-        driverPassword = intent.getStringExtra("driverPassword");
         return START_STICKY;
     }
 

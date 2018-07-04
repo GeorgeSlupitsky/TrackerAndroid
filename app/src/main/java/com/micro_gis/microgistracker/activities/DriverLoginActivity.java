@@ -124,8 +124,6 @@ public class DriverLoginActivity extends AppCompatActivity {
                                     startActivity(intent);
 
                                     Intent service = new Intent(DriverLoginActivity.this, CheckNotificationService.class);
-                                    service.putExtra("driverLogin", Integer.parseInt(login.getText().toString()));
-                                    service.putExtra("driverPassword", password.getText().toString());
                                     startService(service);
                                     finish();
                                 }

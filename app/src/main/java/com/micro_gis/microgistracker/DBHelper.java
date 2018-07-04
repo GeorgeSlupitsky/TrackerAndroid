@@ -29,7 +29,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "id integer primary key autoincrement, groupname text, account text, keyString text, url text, requestInterval text, groups text, timeZone text);");
 
         db.execSQL("create table messages ("
-                + "id integer primary key autoincrement, time integer, message text, isSeen integer);");
+                + "id integer primary key autoincrement, time integer, message text, isSeen integer, voyageId integer);");
 
     }
 

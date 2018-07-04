@@ -1322,6 +1322,12 @@ public class MicroGisActivity extends AppCompatActivity
             }
         }, 1500);
 
+        boolean isLoginIn = sharedpreferences.getBoolean("loginIn", false);
+
+        if (isLoginIn && !serviceStarted){
+            Intent intent = new Intent(MicroGisActivity.this, CheckNotificationService.class);
+            startService(intent);
+        }
 
     }
 
