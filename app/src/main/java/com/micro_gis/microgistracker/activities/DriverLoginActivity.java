@@ -69,6 +69,16 @@ public class DriverLoginActivity extends AppCompatActivity {
         if (sharedPreferences.getBoolean("rememberMe", false)){
             Intent intent = new Intent(DriverLoginActivity.this, DriverActivityTags.class);
             startActivity(intent);
+
+            boolean serviceStarted = sharedPreferences.getBoolean("serviceStarted", false);
+
+            if (!serviceStarted){
+                Intent service = new Intent(DriverLoginActivity.this, CheckNotificationService.class);
+                service.putExtra("driverLogin", Integer.parseInt(login.getText().toString()));
+                service.putExtra("driverPassword", password.getText().toString());
+                startService(service);
+            }
+
             finish();
         }
 
